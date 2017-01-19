@@ -1,0 +1,819 @@
+import React, { PropTypes, Component, Children, cloneElement } from 'react';
+import nth from 'lodash.nth';
+import merge from 'lodash.merge';
+import inRange from 'lodash.inrange';
+import isEqual from 'lodash.isequal';
+import ms from 'ms';
+import autobind from 'class-autobind';
+import classnames from 'classnames';
+import { Dots, Arrow } from './controls';
+import areChildImagesEqual from './utils/areChildImagesEqual';
+
+/**
+ * React component class that renders a carousel, which can contain images or other content.
+ *
+ * @extends React.Component
+ */
+export default class Carousel extends Component {
+
+  static get propTypes () {
+    return {
+      initialSlide: PropTypes.number,
+      className: PropTypes.string,
+      transition: PropTypes.oneOf(['slide', 'fade']),
+      dots: PropTypes.bool,
+      arrows: PropTypes.bool,
+      infinite: PropTypes.bool,
+      children: PropTypes.any,
+      viewportWidth: PropTypes.string,
+      viewportHeight: PropTypes.string,
+      width: PropTypes.string,
+      height: PropTypes.string,
+      imagesToPrefetch: PropTypes.number,
+      cellPadding: PropTypes.number,
+      slideWidth: PropTypes.string,
+      slideHeight: PropTypes.string,
+      beforeChange: PropTypes.func,
+      afterChange: PropTypes.func,
+      transitionDuration: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      autoplay: PropTypes.bool,
+      autoplaySpeed: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+      lazyLoad: PropTypes.bool,
+      controls: PropTypes.arrayOf(PropTypes.shape({
+        component: PropTypes.func.isRequired,
+        props: PropTypes.object,
+        position: PropTypes.oneOf(['top', 'bottom'])
+      })),
+      draggable: PropTypes.bool,
+      pauseOnHover: PropTypes.bool,
+      clickToNavigate: PropTypes.bool,
+      dragThreshold: PropTypes.number
+    };
+  }
+
+  static get defaultProps () {
+    return {
+      initialSlide: 0,
+      dots: true,
+      arrows: true,
+      infinite: true,
+      viewportWidth: '100%',
+      width: '100%',
+      height: 'auto',
+      imagesToPrefetch: 5,
+      cellPadding: 0,
+      transitionDuration: 500,
+      autoplay: false,
+      autoplaySpeed: 4000,
+      lazyLoad: true,
+      controls: [],
+      draggable: true,
+      pauseOnHover: true,
+      transition: 'slide',
+      dragThreshold: 0.2,
+      clickToNavigate: true
+    };
+  }
+
+  constructor (props) {
+    super(...arguments);
+    this.state = {
+      currentSlide: props.initialSlide,
+      loading: props.lazyLoad,
+      loadedImages: {},
+      slideDimensions: {},
+      dragOffset: 0,
+      transitionDuration: 0,
+      transitioningFrom: null,
+      leftOffset: 0
+    };
+    autobind(this);
+  }
+
+  componentWillReceiveProps (newProps) {
+    const { currentSlide } = this.state;
+    const numChildren = Children.count(newProps.children);
+
+    if (currentSlide >= numChildren) {
+      // The currentSlide index is no longer valid, so move to the last valid index
+      this.setState({
+        currentSlide: numChildren ? numChildren - 1 : 0
+      });
+    }
+  }
+
+  componentDidUpdate (prevProps, prevState) {
+    const { children, afterChange, autoplay } = this.props;
+    const { currentSlide, loadedImages, direction } = this.state;
+    const oldChildren = prevProps.children;
+
+    if (direction !== prevState.direction ||
+        currentSlide !== prevState.currentSlide ||
+        !isEqual(loadedImages, prevState.loadedImages)) {
+      // Whenever new images are loaded, the current slide index changes, or the transition direction changes, we need
+      // to recalculate the left offset positioning of the slides.
+      this.calcLeftOffset();
+    }
+
+    if (!areChildImagesEqual(Children.toArray(children), Children.toArray(oldChildren))) {
+      // If the image source or number of images changed, we need to refetch images and force an update
+      this._animating = false;
+      this.fetchImages();
+    }
+
+    if (autoplay && !prevProps.autoplay) {
+      this.startAutoplay();
+    }
+
+    if (currentSlide !== prevState.currentSlide) {
+      afterChange && afterChange(currentSlide);
+    }
+  }
+
+  componentDidMount () {
+    const { lazyLoad, autoplay } = this.props;
+    this._isMounted = true;
+
+    if (lazyLoad) {
+      this.fetchImages();
+    } else if (autoplay) {
+      this.startAutoplay();
+    }
+
+    window.addEventListener('resize', this.calcLeftOffset, false);
+  }
+
+  componentWillUnmount () {
+    window.removeEventListener('resize', this.calcLeftOffset, false);
+    clearTimeout(this._autoplayTimer);
+    this._isMounted = false;
+  }
+
+  /**
+   * Starts the autoplay timer if it is not already running.
+   */
+  startAutoplay () {
+    clearTimeout(this._autoplayTimer);
+    this._autoplayTimer = setTimeout(() => {
+      const { autoplay } = this.props;
+      if (autoplay) {
+        this.nextSlide();
+      }
+    }, ms('' + this.props.autoplaySpeed));
+  }
+
+  /**
+   * Loads images surrounding the specified slide index. The number of images fetched is controlled by the
+   * imagesToPrefetch prop.
+   */
+  fetchImages () {
+    const { children } = this.props;
+    const { loadedImages, currentSlide, loading } = this.state;
+    const slides = Children.toArray(children);
+    const currentImage = nth(slides, currentSlide).props.src;
+    const imagesToPrefetch = Math.min(this.props.imagesToPrefetch, slides.length);
+    const startIndex = currentSlide - Math.floor(imagesToPrefetch / 2);
+    const endIndex = startIndex + imagesToPrefetch;
+    const pendingImages = [];
+
+    for (let index = startIndex; index < endIndex; index++) {
+      const slide = nth(slides, index % slides.length);
+      const imageSrc = slide.props.src;
+      if (imageSrc && !loadedImages[imageSrc]) {
+        pendingImages.push(imageSrc);
+      }
+    }
+
+    if (pendingImages.length) {
+      pendingImages.forEach(image => {
+        const img = new Image();
+        img.onload = img.onerror = () => {
+          if (this._isMounted) {
+            const newState = { loadedImages: merge({}, this.state.loadedImages, { [image]: true }) };
+            const cb = this.state.loading && image === currentImage ? this.handleInitialLoad : null;
+            this.setState(newState, cb);
+          }
+        };
+        img.src = image;
+      });
+    } else if (loading) {
+      this.setState({
+        loading: false
+      });
+    }
+  }
+
+  /**
+   * Invoked when the carousel is using lazy loading and the currently selected slide's image is first rendered. This
+   * method will clear the loading state causing the carousel to render and will calculate the dimensions of the
+   * displayed slide to use as a loading shim if an explicit width/height were not specified.
+   */
+  handleInitialLoad () {
+    const { currentSlide } = this.state;
+    const { slideWidth, slideHeight } = this.props;
+    const slides = this._track.childNodes;
+    const newState = {
+      loading: false
+    };
+
+    if (!slideWidth || !slideHeight) {
+      for (let i = 0; i < slides.length; i++) {
+        const slide = slides[i];
+        if (parseInt(slide.getAttribute('data-index'), 10) === currentSlide) {
+          newState.slideDimensions = {
+            width: slide.offsetWidth,
+            height: slide.offsetHeight
+          };
+          break;
+        }
+      }
+    }
+
+    this.setState(newState, () => {
+      if (this.props.autoplay) {
+        this.startAutoplay();
+      }
+    });
+  }
+
+  /**
+   * Navigates to the specified slide index, moving in the specified direction.
+   *
+   * @param {Number} index - The slide index to move to.
+   * @param {String} direction - The direction to transition, should be 'right' or 'left'.
+   */
+  goToSlide (index, direction) {
+    const { beforeChange, transitionDuration } = this.props;
+    const { currentSlide } = this.state;
+
+    if (this._animating) {
+      return;
+    }
+
+    beforeChange && beforeChange(index, currentSlide);
+
+    this.setState({
+      transitionDuration
+    }, () => {
+      this._animating = true;
+      this.setState({
+        currentSlide: index,
+        direction,
+        transitioningFrom: currentSlide
+      }, () => {
+        if (!transitionDuration) {
+          // We don't actually animate if transitionDuration is 0, so immediately call the transition end callback
+          this.slideTransitionEnd();
+        }
+      });
+    });
+  }
+
+  /**
+   * Transitions to the next slide moving from left to right.
+   */
+  nextSlide () {
+    const { children } = this.props;
+    const { currentSlide } = this.state;
+    const newIndex = currentSlide < Children.count(children) - 1 ? currentSlide + 1 : 0;
+    this.goToSlide(newIndex, 'right');
+  }
+
+  /**
+   * Transitions to the previous slide moving from right to left.
+   */
+  prevSlide () {
+    const { children } = this.props;
+    const { currentSlide } = this.state;
+    const newIndex = currentSlide > 0 ? currentSlide - 1 : Children.count(children) - 1;
+    this.goToSlide(newIndex, 'left');
+  }
+
+  /**
+   * Invoked whenever a slide transition (CSS) completes.
+   */
+  slideTransitionEnd () {
+    this.setState({
+      transitionDuration: 0,
+      direction: null,
+      transitioningFrom: null
+    }, () => {
+      if (!this._allImagesLoaded) {
+        this.fetchImages();
+      }
+
+      this._animating = false;
+    });
+    if (this.props.autoplay) {
+      this.startAutoplay();
+    }
+  }
+
+  /**
+   * @returns {Array} Controls to be rendered with the carousel.
+   */
+  getControls () {
+    const { arrows, dots, controls } = this.props;
+    let arr = controls.slice(0);
+
+    if (dots) {
+      arr.push({ component: Dots });
+    }
+
+    if (arrows) {
+      arr = arr.concat([
+        { component: Arrow, props: { direction: 'left' } },
+        { component: Arrow, props: { direction: 'right' } }
+      ]);
+    }
+
+    return arr;
+  }
+
+  /**
+   * Renders the carousel.
+   *
+   * @returns {Object} Component to be rendered.
+   */
+  render () {
+    const { className, viewportWidth, viewportHeight, width, height, dots, infinite,
+      children, slideHeight, transition } = this.props;
+    const { loading, transitionDuration, dragOffset, currentSlide, leftOffset } = this.state;
+    const numSlides = Children.count(children);
+    const classes = classnames('carousel', className, {
+      'loaded': !loading
+    });
+    const containerStyle = {
+      width,
+      height
+    };
+    const innerContainerStyle = merge({}, containerStyle, {
+      marginBottom: dots ? '20px' : 0
+    });
+    const viewportStyle = {
+      width: viewportWidth,
+      height: viewportHeight || slideHeight || 'auto'
+    };
+    let trackStyle;
+    if (transition !== 'fade') {
+      const leftPos = leftOffset + dragOffset;
+      trackStyle = {
+        transform: `translateX(${leftPos}px)`,
+        transition: transitionDuration ? `transform ${ms('' + transitionDuration)}ms ease-in-out` : 'none'
+      };
+    }
+    const controls = this.getControls();
+
+    return (
+      <div className={ classes } style={ containerStyle }>
+        <div className='carousel-container-inner' style={ innerContainerStyle }>
+          {
+            controls.filter(Control => {
+              return Control.position === 'top';
+            }).map((Control, index) => (
+              <Control.component
+                { ...Control.props }
+                key={ `control-${index}` }
+                selectedIndex={ currentSlide }
+                numSlides={ numSlides }
+                nextSlide={ this.nextSlide }
+                prevSlide={ this.prevSlide }
+                goToSlide={ this.goToSlide }
+                infinite={ infinite } />
+            ))
+          }
+          <div className='carousel-viewport' ref={ v => { this._viewport = v; } } style={ viewportStyle }>
+            <ul
+              className='carousel-track'
+              style={ trackStyle }
+              ref={ t => { this._track = t; } }
+              onTransitionEnd={ this.slideTransitionEnd }
+              onMouseDown={ this.onMouseDown }
+              onMouseMove={ this.onMouseMove }
+              onMouseUp={ this.onMouseUp }
+              onMouseLeave={ this.onMouseLeave }
+              onMouseEnter={ this.onMouseEnter }
+              onTouchStart={ this.onTouchStart }
+              onTouchMove={ this.onTouchMove }
+              onTouchEnd={ this.onTouchEnd }
+            >
+              { this.renderSlides() }
+            </ul>
+          </div>
+          {
+            controls.filter(Control => {
+              return Control.position !== 'top';
+            }).map((Control, index) => (
+              <Control.component
+                { ...Control.props }
+                key={ `control-${index}` }
+                selectedIndex={ currentSlide }
+                numSlides={ numSlides }
+                nextSlide={ this.nextSlide }
+                prevSlide={ this.prevSlide }
+                goToSlide={ this.goToSlide }
+                infinite={ infinite } />
+            ))
+          }
+        </div>
+      </div>
+    );
+  }
+
+  /**
+   * Renders the slides within the carousel viewport.
+   *
+   * @returns {Array} Array of slide components to be rendered.
+   */
+  renderSlides () {
+    const { children, infinite, cellPadding, slideWidth, slideHeight, transition, transitionDuration } = this.props;
+    const { slideDimensions, currentSlide } = this.state;
+    this._allImagesLoaded = true;
+    let childrenToRender = Children.map(children, (child, index) => {
+      const key = `slide-${index}`;
+      const imgSrc = child.props.src;
+      const slideClasses = classnames(
+        'carousel-slide',
+        {
+          'carousel-slide-selected': index === currentSlide,
+          'carousel-slide-fade': transition === 'fade'
+        }
+      );
+      const slideStyle = {
+        marginLeft: `${cellPadding}px`,
+        height: slideHeight,
+        width: slideWidth
+      };
+
+      if (transition === 'fade') {
+        slideStyle.transition = `opacity ${ms('' + transitionDuration)}ms ease-in-out`;
+      }
+
+      if (slideHeight || slideWidth) {
+        // If slide height or slide width was specified, hide any overflow
+        slideStyle.overflow = 'hidden';
+      }
+
+      const loadingSlideStyle = {
+        marginLeft: slideStyle.marginLeft,
+        width: slideWidth || slideDimensions.width,
+        height: slideHeight || slideDimensions.height
+      };
+
+      if (this.shouldRenderSlide(child, index)) {
+        // The slide is either visible, the image has been fetched, or we are not lazy loading, so render slide
+        return (
+          <li
+            key={ key }
+            style={ slideStyle }
+            data-index={ index }
+            className={ slideClasses }
+            onClick={ this.handleSlideClick }
+          >
+            { child }
+          </li>
+        );
+      }
+
+      if (imgSrc) {
+        this._allImagesLoaded = false;
+      }
+
+      return (
+        <li
+          key={ key }
+          style={ loadingSlideStyle }
+          data-index={ index }
+          className={ classnames(slideClasses, 'carousel-slide-loading') }
+        ></li>
+      );
+    });
+
+    if (infinite && transition !== 'fade') {
+      // For infinite mode, create 2 clones on each side of the track
+      childrenToRender = this.addClones(childrenToRender);
+    }
+
+    return childrenToRender;
+  }
+
+  /**
+   * If lazy loading is enabled, this method attempts to determine whether the given slide index should be rendered.
+   * For img slides with src attributes, we render the slides only if the image has been fetched. For non-img slides,
+   * we attempt to determine whether the slide content should be rendered based on the currentSlide index and the
+   * transitioningFrom slide index, if set, to provide the best balance between showing the slides as they transition
+   * and keeping the DOM light if there are many slides in the carousel.
+   *
+   * @param {Object} slide The slide component to check.
+   * @param {Number} index The index of the specified slide component.
+   * @returns {Boolean} True if the slide should be rendered, else False.
+   */
+  shouldRenderSlide (slide, index) {
+    const { currentSlide, loadedImages, transitioningFrom } = this.state;
+    const { slideWidth, slideHeight, lazyLoad, children, infinite } = this.props;
+    const numSlides = Children.count(children);
+    const imgSrc = slide.props.src;
+
+    if (!lazyLoad) {
+      return true;
+    }
+
+    if (imgSrc) {
+      return !!loadedImages[imgSrc];
+    }
+
+    if (slideWidth && slideHeight) {
+      // Render at least 5 slides centered around the current slide, or the slide we just transitioned from
+      if (inRange(index, currentSlide - 2, currentSlide + 2) ||
+          (transitioningFrom !== null && inRange(index, transitioningFrom - 2, transitioningFrom + 2))) {
+        return true;
+      }
+
+      if (infinite) {
+        // In infinite mode, we also want to render the adjacent slide if we're at the beginning or the end
+        return (currentSlide === 0 && index === numSlides - 1) || (currentSlide === numSlides - 1 && index === 0);
+      }
+    }
+
+    // If we don't know the slide width/height, just render all slides.
+    return true;
+  }
+
+  addClones (originals) {
+    const numOriginals = originals.length;
+    const prependClones = [
+      cloneElement(nth(originals, numOriginals - 2), {
+        key: 'clone-1',
+        'data-index': -2
+      }),
+      cloneElement(nth(originals, numOriginals - 1), {
+        key: 'clone-0',
+        'data-index': -1
+      })
+    ];
+    const appendClones = [
+      cloneElement(nth(originals, 0), {
+        key: 'clone-2',
+        'data-index': numOriginals
+      }),
+      cloneElement(nth(originals, Math.min(1, numOriginals - 1)), {
+        key: 'clone-3',
+        'data-index': numOriginals + 1
+      })
+    ];
+
+    return prependClones.concat(originals).concat(appendClones);
+  }
+
+  /**
+   * Updates the component state with the correct left offset position so that the slides will be positioned correctly.
+   */
+  calcLeftOffset () {
+    const { loading, direction } = this.state;
+
+    if (loading || !this._track || !this._viewport) {
+      return;
+    }
+
+    const { infinite, children, cellPadding } = this.props;
+    let { currentSlide } = this.state;
+    const slides = this._track.childNodes;
+    const numChildren = Children.count(children);
+
+    if (infinite) {
+      if (currentSlide === 0 && direction === 'right') {
+        currentSlide = numChildren;
+      } else if (currentSlide === numChildren - 1 && direction === 'left') {
+        currentSlide = -1;
+      }
+    }
+
+    let leftOffset = 0;
+    let selectedSlide;
+    for (let i = 0; i < slides.length; i++) {
+      selectedSlide = slides[i];
+      leftOffset -= cellPadding;
+      if (parseInt(selectedSlide.getAttribute('data-index'), 10) === currentSlide) {
+        break;
+      }
+      leftOffset -= selectedSlide.offsetWidth;
+    }
+    const currentSlideWidth = selectedSlide.offsetWidth;
+    const viewportWidth = this._viewport.offsetWidth;
+
+    if (currentSlideWidth === 0 &&
+        viewportWidth === 0) {
+      // Sometimes there is a delay when the carousel is first rendering, so do a few retries
+      this._retryCount = this._retryCount || 0;
+      if (this._retryCount < 5) {
+        this._retryCount++;
+        setTimeout(this.calcLeftOffset, 100);
+      } else {
+        this._retryCount = 0;
+      }
+
+      this.setState({
+        leftOffset: 0
+      });
+    }
+
+    // Center the current slide within the viewport
+    leftOffset += (viewportWidth - currentSlideWidth) / 2;
+
+    this.setState({ leftOffset });
+  }
+
+  /**
+   * Invoked when a slide is clicked.
+   *
+   * @param {Event} e DOM event object.
+   */
+  handleSlideClick (e) {
+    const { clickToNavigate } = this.props;
+    const { currentSlide } = this.state;
+    const clickedIndex = parseInt(e.currentTarget.getAttribute('data-index'), 10);
+
+    // If the user clicked the current slide or it appears they are dragging, don't process the click
+    if (!clickToNavigate || clickedIndex === currentSlide || Math.abs(this._startX - e.clientX) > 0.01) {
+      return;
+    }
+    if (clickedIndex === currentSlide - 1) {
+      this.prevSlide();
+    } else if (clickedIndex === currentSlide + 1) {
+      this.nextSlide();
+    } else {
+      this.goToSlide(clickedIndex);
+    }
+  }
+
+  /**
+   * Invoked when mousedown occurs on a slide.
+   *
+   * @param {Event} e DOM event object.
+   */
+  onMouseDown (e) {
+    const { draggable, transition } = this.props;
+
+    e.preventDefault();
+
+    if (draggable && transition !== 'fade') {
+      if (this._autoplayTimer) {
+        clearTimeout(this._autoplayTimer);
+      }
+      this._dragging = true;
+      this._startX = e.clientX;
+      this.setState({ transitionDuration: 0 });
+    }
+  }
+
+  /**
+   * Invoked when the mouse is moved over a slide.
+   *
+   * @param {Event} e DOM event object.
+   */
+  onMouseMove (e) {
+    this.setHoverState(true);
+    if (this._dragging) {
+      e.preventDefault();
+      this.setState({
+        dragOffset: e.clientX - this._startX
+      });
+    }
+  }
+
+  /**
+   * Invoked when the mouse button is released, ends a dragging operation.
+   */
+  onMouseUp () {
+    this.stopDragging();
+  }
+
+  /**
+   * Invoked when the mouse cursor enters over a slide.
+   */
+  onMouseEnter () {
+    this.setHoverState(true);
+  }
+
+  /**
+   * Keeps track of the current hover state.
+   *
+   * @param {Boolean} hovering Current hover state.
+   */
+  setHoverState (hovering) {
+    const { pauseOnHover, autoplay } = this.props;
+
+    if (pauseOnHover && autoplay) {
+      clearTimeout(this._hoverTimer);
+
+      if (hovering) {
+        clearTimeout(this._autoplayTimer);
+        // If the mouse doesn't move for a few seconds, we want to restart the autoplay
+        this._hoverTimer = setTimeout(() => {
+          this.setHoverState(false);
+        }, 2000);
+      } else {
+        this.startAutoplay();
+      }
+    }
+  }
+
+  /**
+   * Invoked when the mouse cursor leaves a slide.
+   */
+  onMouseLeave () {
+    this.setHoverState(false);
+    this.stopDragging();
+  }
+
+  /**
+   * Invoked when a touchstart event occurs on a slide.
+   *
+   * @param {Event} e DOM event object.
+   */
+  onTouchStart (e) {
+    const { draggable, transition } = this.props;
+
+    if (draggable && transition !== 'fade') {
+      if (this._autoplayTimer) {
+        clearTimeout(this._autoplayTimer);
+      }
+      if (e.touches.length === 1) {
+        this._dragging = true;
+        this._startX = e.touches[0].clientX;
+      }
+    }
+  }
+
+  /**
+   * Invoked when a touchmove event occurs on a slide.
+   *
+   * @param {Event} e DOM event object.
+   */
+  onTouchMove (e) {
+    if (this._dragging) {
+      this.setState({
+        dragOffset: e.touches[0].clientX - this._startX
+      });
+    }
+  }
+
+  /**
+   * Invoked when a touchend event occurs on a slide.
+   */
+  onTouchEnd () {
+    this.stopDragging();
+  }
+
+  /**
+   * Completes a dragging operation, deciding whether to transition to another slide or snap back to the current slide.
+   */
+  stopDragging () {
+    const { dragThreshold, transitionDuration } = this.props;
+    const { dragOffset } = this.state;
+    const viewportWidth = this._viewport.offsetWidth || 1;
+    const percentDragged = Math.abs(dragOffset / viewportWidth);
+
+    if (this._dragging) {
+      this._dragging = false;
+      const duration = ms('' + transitionDuration) * (percentDragged > dragThreshold ? (1 - percentDragged) :
+        percentDragged);
+
+      this.setState({
+        transitionDuration: duration
+      }, () => {
+        const { children, infinite } = this.props;
+        const { currentSlide } = this.state;
+        const numSlides = Children.count(children);
+        let newSlideIndex = currentSlide;
+        let direction = '';
+
+        if (percentDragged > dragThreshold) {
+          if (dragOffset > 0) {
+            newSlideIndex--;
+            if (newSlideIndex < 0) {
+              newSlideIndex = infinite ? numSlides - 1 : currentSlide;
+            }
+          } else {
+            newSlideIndex++;
+            if (newSlideIndex === numSlides) {
+              newSlideIndex = infinite ? 0 : currentSlide;
+            }
+          }
+          direction = dragOffset > 0 ? 'left' : 'right';
+        }
+
+        this.setState({
+          dragOffset: 0,
+          currentSlide: newSlideIndex,
+          direction
+        });
+      });
+    }
+
+    if (this.props.autoplay) {
+      this.startAutoplay();
+    }
+
+  }
+}
