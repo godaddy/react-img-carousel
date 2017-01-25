@@ -140,6 +140,8 @@ export default class Carousel extends Component {
       this.startAutoplay();
     }
 
+    this.calcLeftOffset();
+
     window.addEventListener('resize', this.calcLeftOffset, false);
   }
 
@@ -616,17 +618,15 @@ export default class Carousel extends Component {
         this._retryCount = 0;
       }
 
-      this.setState({
-        leftOffset: 0
-      });
-
       return;
     }
 
     // Center the current slide within the viewport
     leftOffset += (viewportWidth - currentSlideWidth) / 2;
 
-    this.setState({ leftOffset });
+    if (leftOffset !== this.state.leftOffset) {
+      this.setState({ leftOffset });
+    }
   }
 
   /**
