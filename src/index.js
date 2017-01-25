@@ -572,6 +572,10 @@ export default class Carousel extends Component {
     const { loading, direction } = this.state;
 
     if (loading || !this._track || !this._viewport) {
+      clearTimeout(this._retryTimer);
+      if (this._isMounted) {
+        this._retryTimer = setTimeout(this.calcLeftOffset, 10);
+      }
       return;
     }
 
@@ -615,6 +619,8 @@ export default class Carousel extends Component {
       this.setState({
         leftOffset: 0
       });
+
+      return;
     }
 
     // Center the current slide within the viewport
