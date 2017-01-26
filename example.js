@@ -38,14 +38,14 @@ class CustomDots extends React.Component {
 }
 
 const IMAGES = [
-  'https://placekitten.com/400/300',
-  'https://placekitten.com/275/300',
-  'https://placekitten.com/400/300',
-  'https://placekitten.com/350/300',
-  'https://placekitten.com/250/300',
-  'https://placekitten.com/375/300',
-  'https://placekitten.com/425/300',
-  'https://placekitten.com/325/300'
+  'http://lorempixel.com/400/300',
+  'http://lorempixel.com/275/300',
+  'http://lorempixel.com/400/300',
+  'http://lorempixel.com/350/300',
+  'http://lorempixel.com/250/300',
+  'http://lorempixel.com/375/300',
+  'http://lorempixel.com/425/300',
+  'http://lorempixel.com/325/300'
 ];
 let imgIndex = 1;
 
@@ -77,30 +77,30 @@ class TestPage extends Component {
           { imgElements }
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Infinite with only 2 slides</h2>
-        <Carousel width='450px' arrows={ false }>
-          <img src='https://placekitten.com/325/300'/>
-          <img src='https://placekitten.com/350/300'/>
+        <Carousel width='450px' arrows={ false } slideHeight='300px'>
+          <img src='http://lorempixel.com/325/300'/>
+          <img src='http://lorempixel.com/350/300'/>
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Infinite with only 1 slide</h2>
         <Carousel width='450px' infinite={ true } arrows={ false } dots={ false }>
-          <img src='https://placekitten.com/325/300'/>
+          <img src='http://lorempixel.com/325/300'/>
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Autoplay with background images</h2>
         <Carousel width='100%' slideWidth='100%' slideHeight='70vh' arrows={ false } autoplay={ true }>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Background images with fade</h2>
         <Carousel width='100%' slideWidth='100%' slideHeight='70vh' transition='fade' transitionDuration={ 1000 } autoplay={ true } arrows={ true }>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/750/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/725/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(https://placekitten.com/625/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/750/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/725/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://lorempixel.com/625/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Custom dots component</h2>
         <Carousel
