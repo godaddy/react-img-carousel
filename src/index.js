@@ -451,9 +451,14 @@ export default class Carousel extends Component {
         slideStyle.transition = `opacity ${ms('' + transitionDuration)}ms ease-in-out`;
       }
 
-      if (slideHeight || slideWidth) {
-        // If slide height or slide width was specified, hide any overflow
-        slideStyle.overflow = 'hidden';
+      if (slideHeight) {
+        slideStyle.overflowY = 'hidden';
+        slideStyle.minHeight = slideHeight; // Safari 9 bug
+      }
+
+      if (slideWidth) {
+        slideStyle.overflowX = 'hidden';
+        slideStyle.minWidth = slideWidth; // Safari 9 bug
       }
 
       const loadingSlideStyle = {
