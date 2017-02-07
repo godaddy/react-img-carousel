@@ -121,6 +121,21 @@ Optional callback which will be invoked before a slide change occurs. Should hav
 Optional callback which will be invoked after a slide change occurs. Should have method signature
 `function(newIndex)`
 
+#### style
+```
+React.PropTypes.shape({
+  container: PropTypes.object,
+  containerInner: PropTypes.object,
+  viewport: PropTypes.object,
+  track: PropTypes.object,
+  slide: PropTypes.object
+})
+```
+
+If your app is using inline styles, you can use this property to specify inline styling for the individual carousel
+elements. The properties correspond to the DOM elements with class names `carousel`, `carousel-container-inner`,
+`carousel-viewport`, `carousel-track`, and `carousel-slide` respectively.
+
 #### transition
 `React.PropTypes.oneOf(['fade', 'slide'])`
 
@@ -160,7 +175,13 @@ Controls whether mouse/touch swiping is enabled, defaults to `true`.
 Controls whether autoplay will pause when the user hovers the mouse cursor over the image, defaults to `true`.
 
 #### controls
-`React.PropTypes.arrayOf(React.PropTypes.shape({ component: React.PropTypes.func.isRequired, props: React.PropTypes.object, position: PropTypes.oneOf(['top', 'bottom']) }))`
+```
+React.PropTypes.arrayOf(React.PropTypes.shape({
+  component: React.PropTypes.func.isRequired,
+  props: React.PropTypes.object,
+  position: PropTypes.oneOf(['top', 'bottom'])
+}))
+```
 
 Optional array of controls to be rendered in the carousel container. Each control's component property should be a React
 component constructor, and will be passed callback props `nextSlide`, `prevSlide` and `goToSlide` for controlling
