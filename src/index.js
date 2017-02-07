@@ -47,7 +47,14 @@ export default class Carousel extends Component {
       draggable: PropTypes.bool,
       pauseOnHover: PropTypes.bool,
       clickToNavigate: PropTypes.bool,
-      dragThreshold: PropTypes.number
+      dragThreshold: PropTypes.number,
+      style: PropTypes.shape({
+        container: PropTypes.object,
+        containerInner: PropTypes.object,
+        viewport: PropTypes.object,
+        track: PropTypes.object,
+        slide: PropTypes.object
+      })
     };
   }
 
@@ -71,7 +78,8 @@ export default class Carousel extends Component {
       pauseOnHover: true,
       transition: 'slide',
       dragThreshold: 0.2,
-      clickToNavigate: true
+      clickToNavigate: true,
+      style: {}
     };
   }
 
@@ -335,30 +343,32 @@ export default class Carousel extends Component {
    */
   render () {
     const { className, viewportWidth, viewportHeight, width, height, dots, infinite,
-      children, slideHeight, transition } = this.props;
+      children, slideHeight, transition, style } = this.props;
     const { loading, transitionDuration, dragOffset, currentSlide, leftOffset } = this.state;
     const numSlides = Children.count(children);
     const classes = classnames('carousel', className, {
       'loaded': !loading
     });
-    const containerStyle = {
+    const containerStyle = merge({}, style.container || {}, {
       width,
       height
-    };
-    const innerContainerStyle = merge({}, containerStyle, {
+    });
+    const innerContainerStyle = merge({}, style.containerInner || {}, {
+      width,
+      height,
       marginBottom: dots ? '20px' : 0
     });
-    const viewportStyle = {
+    const viewportStyle = merge({}, style.viewport || {}, {
       width: viewportWidth,
       height: viewportHeight || slideHeight || 'auto'
-    };
-    let trackStyle;
+    });
+    let trackStyle = style.track || {};
     if (transition !== 'fade') {
       const leftPos = leftOffset + dragOffset;
-      trackStyle = {
+      trackStyle = merge({}, trackStyle, {
         transform: `translateX(${leftPos}px)`,
         transition: transitionDuration ? `transform ${ms('' + transitionDuration)}ms ease-in-out` : 'none'
-      };
+      });
     }
     const controls = this.getControls();
 
@@ -424,7 +434,8 @@ export default class Carousel extends Component {
    * @returns {Array} Array of slide components to be rendered.
    */
   renderSlides () {
-    const { children, infinite, cellPadding, slideWidth, slideHeight, transition, transitionDuration } = this.props;
+    const { children, infinite, cellPadding, slideWidth, slideHeight, transition, transitionDuration,
+      style } = this.props;
     const { slideDimensions, currentSlide } = this.state;
     this._allImagesLoaded = true;
     let childrenToRender = Children.map(children, (child, index) => {
@@ -437,11 +448,11 @@ export default class Carousel extends Component {
           'carousel-slide-fade': transition === 'fade'
         }
       );
-      const slideStyle = {
+      const slideStyle = merge({}, style.slide || {}, {
         marginLeft: `${cellPadding}px`,
         height: slideHeight,
         width: slideWidth
-      };
+      });
 
       if (transition === 'fade') {
         slideStyle.transition = `opacity ${ms('' + transitionDuration)}ms ease-in-out`;

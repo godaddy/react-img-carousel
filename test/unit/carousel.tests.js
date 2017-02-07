@@ -265,4 +265,42 @@ describe('Carousel', () => {
     expect(dots.length).to.equal(2);
     expect(dots[1].className).to.contain('selected');
   });
+
+  it('should apply passed inline styling', () => {
+    const styles = {
+      container: {
+        opacity: 0.5
+      },
+      containerInner: {
+        opacity: 0.6
+      },
+      viewport: {
+        opacity: 0.7
+      },
+      track: {
+        opacity: 0.8
+      },
+      slide: {
+        opacity: 0.9
+      }
+    };
+    renderToJsdom(
+      <Carousel initialSlide={ 2 } slideWidth='300px' viewportWidth='300px' style={ styles }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+      </Carousel>
+    );
+
+    const container = document.querySelector('.carousel');
+    expect(container.style.opacity).to.equal('0.5');
+    const innerContainer = document.querySelector('.carousel-container-inner');
+    expect(innerContainer.style.opacity).to.equal('0.6');
+    const viewport = document.querySelector('.carousel-viewport');
+    expect(viewport.style.opacity).to.equal('0.7');
+    const track = document.querySelector('.carousel-track');
+    expect(track.style.opacity).to.equal('0.8');
+    const slide = document.querySelector('.carousel-slide');
+    expect(slide.style.opacity).to.equal('0.9');
+  });
 });
