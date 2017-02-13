@@ -111,7 +111,7 @@ export default class Carousel extends Component {
   }
 
   componentDidUpdate (prevProps, prevState) {
-    const { children, afterChange, autoplay } = this.props;
+    const { children, autoplay } = this.props;
     const { currentSlide, loadedImages, direction, loading } = this.state;
     const oldChildren = prevProps.children;
 
@@ -131,10 +131,6 @@ export default class Carousel extends Component {
 
     if (autoplay && (!loading && prevState.loading || !prevProps.autoplay)) {
       this.startAutoplay();
-    }
-
-    if (currentSlide !== prevState.currentSlide) {
-      afterChange && afterChange(currentSlide);
     }
   }
 
@@ -299,6 +295,9 @@ export default class Carousel extends Component {
    * Invoked whenever a slide transition (CSS) completes.
    */
   slideTransitionEnd () {
+    const { currentSlide } = this.state;
+    const { afterChange } = this.props;
+
     this.setState({
       transitionDuration: 0,
       direction: null,
@@ -313,6 +312,8 @@ export default class Carousel extends Component {
     if (this.props.autoplay) {
       this.startAutoplay();
     }
+
+    afterChange && afterChange(currentSlide);
   }
 
   /**
