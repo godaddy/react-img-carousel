@@ -291,6 +291,8 @@ export default class Carousel extends Component {
 
   /**
    * Invoked whenever a slide transition (CSS) completes.
+   *
+   * @param {Object} e Event object
    */
   slideTransitionEnd (e) {
     const { currentSlide } = this.state;
