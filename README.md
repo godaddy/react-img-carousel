@@ -128,13 +128,33 @@ React.PropTypes.shape({
   containerInner: PropTypes.object,
   viewport: PropTypes.object,
   track: PropTypes.object,
-  slide: PropTypes.object
+  slide: PropTypes.object,
+  selectedSlide: PropTypes.object
 })
 ```
 
 If your app is using inline styles, you can use this property to specify inline styling for the individual carousel
 elements. The properties correspond to the DOM elements with class names `carousel`, `carousel-container-inner`,
-`carousel-viewport`, `carousel-track`, and `carousel-slide` respectively.
+`carousel-viewport`, `carousel-track`, `carousel-slide`, and `carousel-slide-selected` respectively. If both `slide`
+and `selectedSlide` are specified, both will be applied with the latter overriding the former.
+
+Example:
+
+```
+<Carousel
+  ...
+  style={{
+    slide: {
+      opacity: 0.2
+    },
+    selectedSlide: {
+      opacity: 1
+    }
+  }}
+>
+...
+</Carousel>
+```
 
 #### transition
 `React.PropTypes.oneOf(['fade', 'slide'])`

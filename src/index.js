@@ -52,7 +52,8 @@ export default class Carousel extends Component {
         containerInner: PropTypes.object,
         viewport: PropTypes.object,
         track: PropTypes.object,
-        slide: PropTypes.object
+        slide: PropTypes.object,
+        selectedSlide: PropTypes.object
       })
     };
   }
@@ -452,11 +453,11 @@ export default class Carousel extends Component {
           'carousel-slide-fade': transition === 'fade'
         }
       );
-      const slideStyle = merge({}, style.slide || {}, {
+      let slideStyle = {
         marginLeft: `${cellPadding}px`,
         height: slideHeight,
         width: slideWidth
-      });
+      };
 
       if (transition === 'fade') {
         slideStyle.transition = `opacity ${ms('' + transitionDuration)}ms ease-in-out`;
@@ -471,6 +472,8 @@ export default class Carousel extends Component {
         slideStyle.overflowX = 'hidden';
         slideStyle.minWidth = slideWidth; // Safari 9 bug
       }
+
+      slideStyle = merge({}, slideStyle, style.slide || {}, index === currentSlide ? style.selectedSlide || {} : {});
 
       const loadingSlideStyle = {
         marginLeft: slideStyle.marginLeft,
