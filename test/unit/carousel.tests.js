@@ -15,7 +15,7 @@ global.Image = class MyImage {
     imagesFetched.push(val);
     this.onload && this.onload();
   }
-}
+};
 
 describe('Carousel', () => {
 
@@ -282,6 +282,9 @@ describe('Carousel', () => {
       },
       slide: {
         opacity: 0.9
+      },
+      selectedSlide: {
+        opacity: 1
       }
     };
     renderToJsdom(
@@ -302,5 +305,7 @@ describe('Carousel', () => {
     expect(track.style.opacity).to.equal('0.8');
     const slide = document.querySelector('.carousel-slide');
     expect(slide.style.opacity).to.equal('0.9');
+    const selectedSlide = document.querySelector('.carousel-slide-selected');
+    expect(selectedSlide.style.opacity).to.equal('1');
   });
 });
