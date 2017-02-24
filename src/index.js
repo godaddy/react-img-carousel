@@ -145,7 +145,6 @@ export default class Carousel extends Component {
     }
 
     this.calcLeftOffset();
-
     window.addEventListener('resize', this.calcLeftOffset, false);
   }
 
@@ -409,13 +408,9 @@ export default class Carousel extends Component {
               ref={ t => { this._track = t; } }
               onTransitionEnd={ this.slideTransitionEnd }
               onMouseDown={ this.onMouseDown }
-              onMouseMove={ this.onMouseMove }
-              onMouseUp={ this.onMouseUp }
               onMouseLeave={ this.onMouseLeave }
               onMouseEnter={ this.onMouseEnter }
               onTouchStart={ this.onTouchStart }
-              onTouchMove={ this.onTouchMove }
-              onTouchEnd={ this.onTouchEnd }
             >
               { this.renderSlides() }
             </ul>
@@ -677,7 +672,7 @@ export default class Carousel extends Component {
     const clickedIndex = parseInt(e.currentTarget.getAttribute('data-index'), 10);
 
     // If the user clicked the current slide or it appears they are dragging, don't process the click
-    if (!clickToNavigate || clickedIndex === currentSlide || Math.abs(this._startX - e.clientX) > 0.01) {
+    if (!clickToNavigate || clickedIndex === currentSlide || Math.abs(this._startPos.x - e.clientX) > 0.01) {
       return;
     }
     if (clickedIndex === currentSlide - 1) {
@@ -703,32 +698,23 @@ export default class Carousel extends Component {
       if (this._autoplayTimer) {
         clearTimeout(this._autoplayTimer);
       }
-      this._dragging = true;
-      this._startX = e.clientX;
+      this._startPos = { x: e.clientX, y: e.clientY };
       this.setState({ transitionDuration: 0 });
+      document.addEventListener('mousemove', this.onMouseMove, { passive: false });
+      document.addEventListener('mouseup', this.stopDragging, false);
     }
   }
 
   /**
-   * Invoked when the mouse is moved over a slide.
+   * Invoked when the mouse is moved over a slide while dragging.
    *
    * @param {Event} e DOM event object.
    */
   onMouseMove (e) {
-    this.setHoverState(true);
-    if (this._dragging) {
-      e.preventDefault();
-      this.setState({
-        dragOffset: e.clientX - this._startX
-      });
-    }
-  }
-
-  /**
-   * Invoked when the mouse button is released, ends a dragging operation.
-   */
-  onMouseUp () {
-    this.stopDragging();
+    e.preventDefault();
+    this.setState({
+      dragOffset: e.clientX - this._startPos.x
+    });
   }
 
   /**
@@ -782,8 +768,12 @@ export default class Carousel extends Component {
         clearTimeout(this._autoplayTimer);
       }
       if (e.touches.length === 1) {
-        this._dragging = true;
-        this._startX = e.touches[0].clientX;
+        this._startPos = {
+          x: e.touches[0].screenX,
+          y: e.touches[0].screenY
+        };
+        document.addEventListener('touchmove', this.onTouchMove, { passive: false });
+        document.addEventListener('touchend', this.stopDragging, false);
       }
     }
   }
@@ -794,19 +784,18 @@ export default class Carousel extends Component {
    * @param {Event} e DOM event object.
    */
   onTouchMove (e) {
-    if (this._dragging) {
+    const { x, y } = this._prevPos || this._startPos;
+    const { screenX, screenY } = e.touches[0];
+    const angle = Math.abs(Math.atan2(screenY - y, screenX - x)) * 180 / Math.PI;
+
+    this._prevPos = { x: screenX, y: screenY };
+
+    if (angle < 20 || angle > 160) {
       e.preventDefault();
       this.setState({
-        dragOffset: e.touches[0].clientX - this._startX
+        dragOffset: screenX - this._startPos.x
       });
     }
-  }
-
-  /**
-   * Invoked when a touchend event occurs on a slide.
-   */
-  onTouchEnd () {
-    this.stopDragging();
   }
 
   /**
@@ -817,47 +806,47 @@ export default class Carousel extends Component {
     const { dragOffset } = this.state;
     const viewportWidth = this._viewport.offsetWidth || 1;
     const percentDragged = Math.abs(dragOffset / viewportWidth);
+    const duration = ms('' + transitionDuration) * (percentDragged > dragThreshold ? (1 - percentDragged) :
+      percentDragged);
 
-    if (this._dragging) {
-      this._dragging = false;
-      const duration = ms('' + transitionDuration) * (percentDragged > dragThreshold ? (1 - percentDragged) :
-        percentDragged);
+    document.removeEventListener('mousemove', this.onMouseMove, { passive: false });
+    document.removeEventListener('mouseup', this.stopDragging, false);
+    document.removeEventListener('touchmove', this.onTouchMove, { passive: false });
+    document.removeEventListener('touchend', this.stopDragging, false);
+
+    this.setState({
+      transitionDuration: duration
+    }, () => {
+      const { children, infinite } = this.props;
+      const { currentSlide } = this.state;
+      const numSlides = Children.count(children);
+      let newSlideIndex = currentSlide;
+      let direction = '';
+
+      if (percentDragged > dragThreshold) {
+        if (dragOffset > 0) {
+          newSlideIndex--;
+          if (newSlideIndex < 0) {
+            newSlideIndex = infinite ? numSlides - 1 : currentSlide;
+          }
+        } else {
+          newSlideIndex++;
+          if (newSlideIndex === numSlides) {
+            newSlideIndex = infinite ? 0 : currentSlide;
+          }
+        }
+        direction = dragOffset > 0 ? 'left' : 'right';
+      }
 
       this.setState({
-        transitionDuration: duration
-      }, () => {
-        const { children, infinite } = this.props;
-        const { currentSlide } = this.state;
-        const numSlides = Children.count(children);
-        let newSlideIndex = currentSlide;
-        let direction = '';
-
-        if (percentDragged > dragThreshold) {
-          if (dragOffset > 0) {
-            newSlideIndex--;
-            if (newSlideIndex < 0) {
-              newSlideIndex = infinite ? numSlides - 1 : currentSlide;
-            }
-          } else {
-            newSlideIndex++;
-            if (newSlideIndex === numSlides) {
-              newSlideIndex = infinite ? 0 : currentSlide;
-            }
-          }
-          direction = dragOffset > 0 ? 'left' : 'right';
-        }
-
-        this.setState({
-          dragOffset: 0,
-          currentSlide: newSlideIndex,
-          direction
-        });
+        dragOffset: 0,
+        currentSlide: newSlideIndex,
+        direction
       });
-    }
+    });
 
     if (this.props.autoplay) {
       this.startAutoplay();
     }
-
   }
 }
