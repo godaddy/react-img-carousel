@@ -194,7 +194,11 @@ export default class Carousel extends Component {
         const img = new Image();
         img.onload = img.onerror = () => {
           if (this._isMounted) {
-            this.setState({ loadedImages: merge({}, this.state.loadedImages, { [image]: { width: img.width, height: img.height } }) });
+            this.setState({
+              loadedImages: merge({}, this.state.loadedImages, {
+                [image]: { width: img.width || 'auto', height: img.height || 'auto' }
+              })
+            });
           }
         };
         img.src = image;
@@ -348,7 +352,7 @@ export default class Carousel extends Component {
    */
   render () {
     const { className, viewportWidth, viewportHeight, width, height, dots, infinite,
-      children, slideHeight, transition, style } = this.props;
+      children, slideHeight, transition, style, draggable } = this.props;
     const { loading, transitionDuration, dragOffset, currentSlide, leftOffset } = this.state;
     const numSlides = Children.count(children);
     const classes = classnames('carousel', className, {
@@ -374,6 +378,9 @@ export default class Carousel extends Component {
         transform: `translateX(${leftPos}px)`,
         transition: transitionDuration ? `transform ${ms('' + transitionDuration)}ms ease-in-out` : 'none'
       });
+    }
+    if (!draggable) {
+      trackStyle.touchAction = 'auto';
     }
     const controls = this.getControls();
 
@@ -788,6 +795,7 @@ export default class Carousel extends Component {
    */
   onTouchMove (e) {
     if (this._dragging) {
+      e.preventDefault();
       this.setState({
         dragOffset: e.touches[0].clientX - this._startX
       });
