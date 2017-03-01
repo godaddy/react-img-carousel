@@ -169,7 +169,7 @@ describe('Carousel', () => {
   });
 
   it('should navigate to the next slide when a swipe event occurs', done => {
-    renderToJsdom(
+    const carousel = renderToJsdom(
       <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false }>
         <div id='slide1'/>
         <div id='slide2'/>
@@ -183,8 +183,8 @@ describe('Carousel', () => {
       expect(dots.length).to.equal(3);
       expect(dots[0].className).to.contain('selected');
       Simulate.mouseDown(track, { clientX: 0 });
-      Simulate.mouseMove(track, { clientX: -150 });
-      Simulate.mouseUp(track);
+      carousel.onMouseMove({ preventDefault: () => {}, clientX: -150 });
+      carousel.stopDragging();
       setImmediate(() => {
         expect(dots[0].className).to.not.contain('selected');
         expect(dots[1].className).to.contain('selected');
@@ -194,7 +194,7 @@ describe('Carousel', () => {
   });
 
   it('should navigate to the last slide when a right swipe event occurs on the first slide', done => {
-    renderToJsdom(
+    const carousel = renderToJsdom(
       <Carousel slideWidth='300px' viewportWidth='300px' infinite={ true }>
         <div id='slide1'/>
         <div id='slide2'/>
@@ -208,8 +208,8 @@ describe('Carousel', () => {
       expect(dots.length).to.equal(3);
       expect(dots[0].className).to.contain('selected');
       Simulate.mouseDown(track, { clientX: 0 });
-      Simulate.mouseMove(track, { clientX: 150 });
-      Simulate.mouseUp(track);
+      carousel.onMouseMove({ preventDefault: () => {}, clientX: 150 });
+      carousel.stopDragging();
       setImmediate(() => {
         expect(dots[0].className).to.not.contain('selected');
         expect(dots[2].className).to.contain('selected');
@@ -219,7 +219,7 @@ describe('Carousel', () => {
   });
 
   it('should navigate to the next slide in response to touch events', done => {
-    renderToJsdom(
+    const carousel = renderToJsdom(
       <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false }>
         <div id='slide1'/>
         <div id='slide2'/>
@@ -232,9 +232,10 @@ describe('Carousel', () => {
       const track = document.querySelector('.carousel-track');
       expect(dots.length).to.equal(3);
       expect(dots[0].className).to.contain('selected');
-      Simulate.touchStart(track, { touches: [{ clientX: 0 }] });
-      Simulate.touchMove(track, { touches: [{ clientX: -150 }] });
-      Simulate.touchEnd(track);
+      Simulate.touchStart(track, { touches: [{ screenX: 0, screenY: 0 }] });
+      carousel.onTouchMove({ preventDefault: () => {}, touches: [{ screenX: -150, screenY: 0 }] });
+      carousel.stopDragging();
+
       setImmediate(() => {
         expect(dots[0].className).to.not.contain('selected');
         expect(dots[1].className).to.contain('selected');
