@@ -247,6 +247,9 @@ export default class Carousel extends Component {
   goToSlide (index, direction) {
     const { beforeChange, transitionDuration, transition } = this.props;
     const { currentSlide } = this.state;
+    if (currentSlide === index) {
+      return;
+    }
 
     if (this._animating) {
       return;
@@ -255,11 +258,9 @@ export default class Carousel extends Component {
     this._animating = true;
 
     beforeChange && beforeChange(index, currentSlide);
-
     this.setState({
       transitionDuration
     }, () => {
-
       this.setState({
         currentSlide: index,
         direction,
@@ -752,7 +753,7 @@ export default class Carousel extends Component {
    */
   onMouseLeave () {
     this.setHoverState(false);
-    this.stopDragging();
+    !this._animating && this.stopDragging();
   }
 
   /**
