@@ -148,6 +148,27 @@ describe('Carousel', () => {
     });
   });
 
+  it('should not freeze when a selected dot is clicked', done => {
+    renderToJsdom(
+      <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      const dots = document.querySelectorAll('.carousel-dot');
+      expect(dots.length).to.equal(3);
+      expect(dots[0].className).to.contain('selected');
+      Simulate.click(dots[0]);
+      Simulate.click(dots[2]);
+      expect(dots[0].className).to.not.contain('selected');
+      expect(dots[2].className).to.contain('selected');
+      done();
+    });
+  });
+
   it('should prefetch the specified number of images', done => {
     renderToJsdom(
       <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false } imagesToPrefetch={ 3 }>
