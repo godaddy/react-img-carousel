@@ -93,7 +93,8 @@ export default class Carousel extends Component {
       dragOffset: 0,
       transitionDuration: 0,
       transitioningFrom: null,
-      leftOffset: 0
+      leftOffset: 0,
+      paused: false
     };
     autobind(this);
   }
@@ -410,6 +411,7 @@ export default class Carousel extends Component {
               onTransitionEnd={ this.slideTransitionEnd }
               onMouseDown={ this.onMouseDown }
               onMouseLeave={ this.onMouseLeave }
+              onMouseOver={ this.onMouseOver }
               onMouseEnter={ this.onMouseEnter }
               onTouchStart={ this.onTouchStart }
             >
@@ -722,6 +724,20 @@ export default class Carousel extends Component {
    * Invoked when the mouse cursor enters over a slide.
    */
   onMouseEnter () {
+    document.addEventListener('mousemove', this.handleMovement, false);
+  }
+
+  /**
+   * Invoked when the mouse cursor moves around a slide.
+   */
+  handleMovement () {
+    this.setHoverState(true);
+  }
+
+  /**
+   * Invoked when the mouse cursor moves over a slide.
+   */
+  onMouseOver () {
     this.setHoverState(true);
   }
 
@@ -738,11 +754,13 @@ export default class Carousel extends Component {
 
       if (hovering) {
         clearTimeout(this._autoplayTimer);
+        this.setState({ paused: true });
         // If the mouse doesn't move for a few seconds, we want to restart the autoplay
         this._hoverTimer = setTimeout(() => {
           this.setHoverState(false);
         }, 2000);
       } else {
+        this.setState({ paused: false });
         this.startAutoplay();
       }
     }
@@ -752,6 +770,7 @@ export default class Carousel extends Component {
    * Invoked when the mouse cursor leaves a slide.
    */
   onMouseLeave () {
+    document.removeEventListener('mousemove', this.handleMovement, false);
     this.setHoverState(false);
     !this._animating && this.stopDragging();
   }

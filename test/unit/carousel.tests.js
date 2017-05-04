@@ -18,7 +18,6 @@ global.Image = class MyImage {
 };
 
 describe('Carousel', () => {
-
   beforeEach(() => {
     imagesFetched = [];
   });
@@ -211,6 +210,25 @@ describe('Carousel', () => {
         expect(dots[1].className).to.contain('selected');
         done();
       });
+    });
+  });
+
+  it('should pause when mouse is moving', done => {
+    const carousel = renderToJsdom(
+      <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false } autoplay={ true } pauseOnHover={ true }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      const track = document.querySelector('.carousel-viewport');
+      carousel.handleMovement(track);
+      expect(carousel.state.paused).to.be.true;
+      carousel.onMouseLeave(track);
+      expect(carousel.state.paused).to.be.false;
+      done();
     });
   });
 
