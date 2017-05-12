@@ -753,13 +753,11 @@ export default class Carousel extends Component {
 
       if (hovering) {
         clearTimeout(this._autoplayTimer);
-        this.setState({ paused: true });
         // If the mouse doesn't move for a few seconds, we want to restart the autoplay
         this._hoverTimer = setTimeout(() => {
           this.setHoverState(false);
         }, 2000);
       } else {
-        this.setState({ paused: false });
         this.startAutoplay();
       }
     }
