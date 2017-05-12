@@ -216,19 +216,20 @@ describe('Carousel', () => {
   it('should pause when mouse is moving', done => {
     const carousel = renderToJsdom(
       <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false } autoplay={ true } pauseOnHover={ true }>
-        <div id='slide1'/>
-        <div id='slide2'/>
-        <div id='slide3'/>
+        <div id='slide1' />
+        <div id='slide2' />
+        <div id='slide3' />
       </Carousel>
     );
 
     setImmediate(() => {
       const track = document.querySelector('.carousel-viewport');
+      const setHoverState = (bool) => {
+        expect(bool).to.be.true;
+        done();
+      };
+      carousel.setHoverState = setHoverState;
       carousel.handleMovement(track);
-      expect(carousel.state.paused).to.be.true;
-      carousel.onMouseLeave(track);
-      expect(carousel.state.paused).to.be.false;
-      done();
     });
   });
 
