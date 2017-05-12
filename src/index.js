@@ -93,8 +93,7 @@ export default class Carousel extends Component {
       dragOffset: 0,
       transitionDuration: 0,
       transitioningFrom: null,
-      leftOffset: 0,
-      paused: false
+      leftOffset: 0
     };
     autobind(this);
   }
