@@ -410,6 +410,7 @@ export default class Carousel extends Component {
               onTransitionEnd={ this.slideTransitionEnd }
               onMouseDown={ this.onMouseDown }
               onMouseLeave={ this.onMouseLeave }
+              onMouseOver={ this.onMouseOver }
               onMouseEnter={ this.onMouseEnter }
               onTouchStart={ this.onTouchStart }
             >
@@ -722,6 +723,20 @@ export default class Carousel extends Component {
    * Invoked when the mouse cursor enters over a slide.
    */
   onMouseEnter () {
+    document.addEventListener('mousemove', this.handleMovement, false);
+  }
+
+  /**
+   * Invoked when the mouse cursor moves around a slide.
+   */
+  handleMovement () {
+    this.setHoverState(true);
+  }
+
+  /**
+   * Invoked when the mouse cursor moves over a slide.
+   */
+  onMouseOver () {
     this.setHoverState(true);
   }
 
@@ -752,6 +767,7 @@ export default class Carousel extends Component {
    * Invoked when the mouse cursor leaves a slide.
    */
   onMouseLeave () {
+    document.removeEventListener('mousemove', this.handleMovement, false);
     this.setHoverState(false);
     !this._animating && this.stopDragging();
   }
