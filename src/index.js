@@ -1,4 +1,5 @@
-import React, { PropTypes, Component, Children, cloneElement } from 'react';
+import React, { Component, Children, cloneElement } from 'react';
+import PropTypes from 'prop-types';
 import nth from 'lodash.nth';
 import merge from 'lodash.merge';
 import inRange from 'lodash.inrange';
