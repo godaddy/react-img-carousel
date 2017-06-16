@@ -9,6 +9,8 @@ import classnames from 'classnames';
 import { Dots, Arrow } from './controls';
 import areChildImagesEqual from './utils/areChildImagesEqual';
 
+const SELECTED_CLASS = 'carousel-slide-selected';
+
 /**
  * React component class that renders a carousel, which can contain images or other content.
  *
@@ -454,7 +456,7 @@ export default class Carousel extends Component {
       const slideClasses = classnames(
         'carousel-slide',
         {
-          'carousel-slide-selected': index === currentSlide,
+          [SELECTED_CLASS]: index === currentSlide,
           'carousel-slide-fade': transition === 'fade'
         }
       );
@@ -578,24 +580,34 @@ export default class Carousel extends Component {
 
   addClones (originals) {
     const numOriginals = originals.length;
+    const originalsToClone = [
+      nth(originals, numOriginals - 2),
+      nth(originals, numOriginals - 1),
+      nth(originals, 0),
+      nth(originals, Math.min(1, numOriginals - 1))
+    ];
     const prependClones = [
-      cloneElement(nth(originals, numOriginals - 2), {
+      cloneElement(originalsToClone[0], {
         key: 'clone-1',
-        'data-index': -2
+        'data-index': -2,
+        className: originalsToClone[0].props.className.replace(SELECTED_CLASS, '')
       }),
-      cloneElement(nth(originals, numOriginals - 1), {
+      cloneElement(originalsToClone[1], {
         key: 'clone-0',
-        'data-index': -1
+        'data-index': -1,
+        className: originalsToClone[1].props.className.replace(SELECTED_CLASS, '')
       })
     ];
     const appendClones = [
-      cloneElement(nth(originals, 0), {
+      cloneElement(originalsToClone[2], {
         key: 'clone-2',
-        'data-index': numOriginals
+        'data-index': numOriginals,
+        className: originalsToClone[2].props.className.replace(SELECTED_CLASS, '')
       }),
-      cloneElement(nth(originals, Math.min(1, numOriginals - 1)), {
+      cloneElement(originalsToClone[3], {
         key: 'clone-3',
-        'data-index': numOriginals + 1
+        'data-index': numOriginals + 1,
+        className: originalsToClone[3].props.className.replace(SELECTED_CLASS, '')
       })
     ];
 
