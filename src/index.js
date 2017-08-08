@@ -482,11 +482,11 @@ export default class Carousel extends Component {
 
       slideStyle = merge({}, slideStyle, style.slide || {}, index === currentSlide ? style.selectedSlide || {} : {});
 
-      const loadingSlideStyle = {
+      const loadingSlideStyle = merge({}, slideStyle || {}, {
         marginLeft: slideStyle.marginLeft,
         width: slideWidth || slideDimensions.width,
         height: slideHeight || slideDimensions.height
-      };
+      });
 
       if (this.shouldRenderSlide(child, index)) {
         // If the slide contains an image, set explicit width/height and add load listener
@@ -713,7 +713,11 @@ export default class Carousel extends Component {
       if (this._autoplayTimer) {
         clearTimeout(this._autoplayTimer);
       }
-      this._startPos = { x: e.clientX, y: e.clientY };
+      this._startPos = {
+        x: e.clientX,
+        y: e.clientY,
+        startTime: Date.now()
+      };
       this.setState({ transitionDuration: 0 });
       document.addEventListener('mousemove', this.onMouseMove, { passive: false });
       document.addEventListener('mouseup', this.stopDragging, false);
@@ -782,7 +786,7 @@ export default class Carousel extends Component {
   onMouseLeave () {
     document.removeEventListener('mousemove', this.handleMovement, false);
     this.setHoverState(false);
-    !this._animating && this.stopDragging();
+    !this._animating && this._startPos && this.stopDragging();
   }
 
   /**
@@ -800,7 +804,8 @@ export default class Carousel extends Component {
       if (e.touches.length === 1) {
         this._startPos = {
           x: e.touches[0].screenX,
-          y: e.touches[0].screenY
+          y: e.touches[0].screenY,
+          startTime: Date.now()
         };
         document.addEventListener('touchmove', this.onTouchMove, { passive: false });
         document.addEventListener('touchend', this.stopDragging, false);
@@ -836,8 +841,18 @@ export default class Carousel extends Component {
     const { dragOffset } = this.state;
     const viewportWidth = this._viewport.offsetWidth || 1;
     const percentDragged = Math.abs(dragOffset / viewportWidth);
-    const duration = ms('' + transitionDuration) * (percentDragged > dragThreshold ? (1 - percentDragged) :
-      percentDragged);
+    const swipeDuration = (Date.now() - this._startPos.startTime) || 1;
+    const swipeSpeed = swipeDuration / (percentDragged * viewportWidth);
+    const isQuickSwipe = percentDragged > 0.05 && swipeDuration < 250;
+    let duration;
+
+    if (isQuickSwipe || percentDragged > dragThreshold) {
+      // Calculate the duration based on the speed of the swipe
+      duration = Math.min(swipeSpeed * (1 - percentDragged) * viewportWidth, ms('' + transitionDuration) * (1 - percentDragged));
+    } else {
+      // Just transition back to the center point
+      duration = ms('' + transitionDuration) * percentDragged;
+    }
 
     document.removeEventListener('mousemove', this.onMouseMove, { passive: false });
     document.removeEventListener('mouseup', this.stopDragging, false);
@@ -853,7 +868,7 @@ export default class Carousel extends Component {
       let newSlideIndex = currentSlide;
       let direction = '';
 
-      if (percentDragged > dragThreshold) {
+      if (percentDragged > dragThreshold || isQuickSwipe) {
         if (dragOffset > 0) {
           newSlideIndex--;
           if (newSlideIndex < 0) {
