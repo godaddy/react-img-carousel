@@ -1,7 +1,7 @@
 import React from 'react';
 import { render } from 'react-dom';
 import { expect } from 'chai';
-import { Simulate } from 'react-addons-test-utils';
+import { Simulate } from 'react-dom/test-utils';
 import Carousel from '../../src/index';
 
 function renderToJsdom(component) {
