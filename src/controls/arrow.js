@@ -6,7 +6,7 @@ import PropTypes from 'prop-types';
  */
 export default class Arrow extends Component {
 
-  static get propTypes () {
+  static get propTypes() {
     return {
       numSlides: PropTypes.number.isRequired,
       selectedIndex: PropTypes.number.isRequired,
@@ -20,13 +20,13 @@ export default class Arrow extends Component {
   /**
    * @returns {Boolean} True if there is a next slide to transition to, else False.
    */
-  hasNext () {
+  hasNext() {
     const { direction, infinite, numSlides, selectedIndex } = this.props;
 
     return infinite || (direction === 'left' ? selectedIndex > 0 : selectedIndex < numSlides - 1);
   }
 
-  render () {
+  render() {
     const { prevSlide, nextSlide, direction } = this.props;
 
     return (

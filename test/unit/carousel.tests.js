@@ -11,7 +11,7 @@ function renderToJsdom(component) {
 let imagesFetched;
 
 global.Image = class MyImage {
-  set src (val) {
+  set src(val) {
     imagesFetched.push(val);
     this.onload && this.onload();
   }

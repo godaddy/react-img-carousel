@@ -9,7 +9,7 @@ import classnames from 'classnames';
  */
 export default class Dots extends Component {
 
-  static get propTypes () {
+  static get propTypes() {
     return {
       numSlides: PropTypes.number.isRequired,
       selectedIndex: PropTypes.number.isRequired,
@@ -17,13 +17,13 @@ export default class Dots extends Component {
     };
   }
 
-  render () {
+  render() {
     const { numSlides, selectedIndex, goToSlide } = this.props;
     const dots = [];
 
     for (let index = 0; index < numSlides; index++) {
       const buttonClass = classnames('carousel-dot', {
-        'selected': index === selectedIndex
+        selected: index === selectedIndex
       });
 
       dots.push(
