@@ -50,6 +50,13 @@ export default class Carousel extends Component {
       pauseOnHover: PropTypes.bool,
       clickToNavigate: PropTypes.bool,
       dragThreshold: PropTypes.number,
+      easing: PropTypes.oneOf([
+        'ease',
+        'linear',
+        'ease-in',
+        'ease-out',
+        'ease-in-out'
+      ]),
       style: PropTypes.shape({
         container: PropTypes.object,
         containerInner: PropTypes.object,
@@ -82,6 +89,7 @@ export default class Carousel extends Component {
       transition: 'slide',
       dragThreshold: 0.2,
       clickToNavigate: true,
+      easing: 'ease-in-out',
       style: {}
     };
   }
@@ -355,7 +363,7 @@ export default class Carousel extends Component {
    */
   render() {
     const { className, viewportWidth, viewportHeight, width, height, dots, infinite,
-      children, slideHeight, transition, style, draggable } = this.props;
+      children, slideHeight, transition, style, draggable, easing } = this.props;
     const { loading, transitionDuration, dragOffset, currentSlide, leftOffset } = this.state;
     const numSlides = Children.count(children);
     const classes = classnames('carousel', className, {
@@ -379,7 +387,7 @@ export default class Carousel extends Component {
       const leftPos = leftOffset + dragOffset;
       trackStyle = merge({}, trackStyle, {
         transform: `translateX(${leftPos}px)`,
-        transition: transitionDuration ? `transform ${ms('' + transitionDuration)}ms ease-in-out` : 'none'
+        transition: transitionDuration ? `transform ${ms('' + transitionDuration)}ms ${easing}` : 'none'
       });
     }
     if (!draggable) {
@@ -447,7 +455,7 @@ export default class Carousel extends Component {
    */
   renderSlides() {
     const { children, infinite, cellPadding, slideWidth, slideHeight, transition, transitionDuration,
-      style } = this.props;
+      style, easing } = this.props;
     const { slideDimensions, currentSlide, loading, loadedImages } = this.state;
     this._allImagesLoaded = true;
     let childrenToRender = Children.map(children, (child, index) => {
@@ -467,7 +475,7 @@ export default class Carousel extends Component {
       };
 
       if (transition === 'fade') {
-        slideStyle.transition = `opacity ${ms('' + transitionDuration)}ms ease-in-out`;
+        slideStyle.transition = `opacity ${ms('' + transitionDuration)}ms ${easing}`;
       }
 
       if (slideHeight) {
