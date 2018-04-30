@@ -363,9 +363,9 @@ describe('Carousel', () => {
         </Carousel>
         <Carousel className='fading-carousel' slideWidth='300px' viewportWidth='300px' infinite={ false }
           transition='fade' transitionDuration={ 700 } easing='linear'>
-          <div id='slide1'/>
-          <div id='slide2'/>
-          <div id='slide3'/>
+          <div id='slide4'/>
+          <div id='slide5'/>
+          <div id='slide6'/>
         </Carousel>
       </Fragment>
     );
