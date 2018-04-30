@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import { expect } from 'chai';
 import { Simulate } from 'react-dom/test-utils';
@@ -348,5 +348,37 @@ describe('Carousel', () => {
     expect(slide.style.opacity).to.equal('0.9');
     const selectedSlide = document.querySelector('.carousel-slide-selected');
     expect(selectedSlide.style.opacity).to.equal('1');
+  });
+
+  it('should have transitions with the given duration and easing', done => {
+    let slidingCarousel;
+
+    renderToJsdom(
+      <Fragment>
+        <Carousel className='sliding-carousel' slideWidth='300px' viewportWidth='300px' infinite={ false }
+          transition='slide' transitionDuration={ 300 } easing='ease-out' ref={ el => { slidingCarousel = el; } }>
+          <div id='slide1'/>
+          <div id='slide2'/>
+          <div id='slide3'/>
+        </Carousel>
+        <Carousel className='fading-carousel' slideWidth='300px' viewportWidth='300px' infinite={ false }
+          transition='fade' transitionDuration={ 700 } easing='linear'>
+          <div id='slide1'/>
+          <div id='slide2'/>
+          <div id='slide3'/>
+        </Carousel>
+      </Fragment>
+    );
+
+    setImmediate(() => {
+      slidingCarousel.goToSlide(1);
+      const track = document.querySelector('.sliding-carousel .carousel-track');
+      expect(track.style.transition).to.equal('transform 300ms ease-out');
+
+      const slide = document.querySelector('.fading-carousel .carousel-slide');
+      expect(slide.style.transition).to.equal('opacity 700ms linear');
+
+      done();
+    });
   });
 });
