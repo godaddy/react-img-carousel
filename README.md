@@ -167,6 +167,11 @@ The type of transition to use between slides, defaults to `slide`.
 Time for the transition effect between slides, defaults to `500`. If a number is specified, it indicates the number of
 milliseconds. Strings are parsed using [ms](https://www.npmjs.com/package/ms).
 
+#### easing
+`PropTypes.oneOf(['ease', 'linear', 'ease-in', 'ease-out', 'ease-in-out'])`
+
+The easing function to use for the transition. Defaults to `ease-in-out`.
+
 #### clickToNavigate
 `PropTypes.bool`
 
