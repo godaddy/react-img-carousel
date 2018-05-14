@@ -130,8 +130,8 @@ export default class Carousel extends Component {
         currentSlide !== prevState.currentSlide ||
         loadedImages !== prevState.loadedImages ||
         slideWidth !== prevProps.slideWidth) {
-      // Whenever new images are loaded, the current slide index changes, or the transition direction changes, we need
-      // to recalculate the left offset positioning of the slides.
+      // Whenever new images are loaded, the current slide index changes, the transition direction changes, or the
+      // slide with changes, we need to recalculate the left offset positioning of the slides.
       this.calcLeftOffset();
     }
 
