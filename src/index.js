@@ -122,13 +122,14 @@ export default class Carousel extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { children, autoplay } = this.props;
+    const { children, autoplay, slideWidth } = this.props;
     const { currentSlide, loadedImages, direction, loading } = this.state;
     const oldChildren = prevProps.children;
 
     if (direction !== prevState.direction ||
         currentSlide !== prevState.currentSlide ||
-        loadedImages !== prevState.loadedImages) {
+        loadedImages !== prevState.loadedImages ||
+        slideWidth !== prevProps.slideWidth) {
       // Whenever new images are loaded, the current slide index changes, or the transition direction changes, we need
       // to recalculate the left offset positioning of the slides.
       this.calcLeftOffset();
