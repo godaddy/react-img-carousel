@@ -35,6 +35,7 @@ export default class Carousel extends Component {
       cellPadding: PropTypes.number,
       slideWidth: PropTypes.string,
       slideHeight: PropTypes.string,
+      changing: PropTypes.func,
       beforeChange: PropTypes.func,
       afterChange: PropTypes.func,
       transitionDuration: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -133,6 +134,7 @@ export default class Carousel extends Component {
       // Whenever new images are loaded, the current slide index changes, the transition direction changes, or the
       // slide width changes, we need to recalculate the left offset positioning of the slides.
       this.calcLeftOffset();
+      changing && changing({currentSlide, direction});
     }
 
     if (!areChildImagesEqual(Children.toArray(children), Children.toArray(oldChildren))) {
