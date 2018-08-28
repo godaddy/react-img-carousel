@@ -35,6 +35,9 @@ export default class Carousel extends Component {
       cellPadding: PropTypes.number,
       slideWidth: PropTypes.string,
       slideHeight: PropTypes.string,
+      onTouchStart: PropTypes.func,
+      onMouseDown: PropTypes.func,
+      slideClick: PropTypes.func,
       changing: PropTypes.func,
       beforeChange: PropTypes.func,
       afterChange: PropTypes.func,
@@ -134,7 +137,7 @@ export default class Carousel extends Component {
       // Whenever new images are loaded, the current slide index changes, the transition direction changes, or the
       // slide width changes, we need to recalculate the left offset positioning of the slides.
       this.calcLeftOffset();
-      changing && changing({currentSlide, direction});
+      changing && changing({ currentSlide, direction });
     }
 
     if (!areChildImagesEqual(Children.toArray(children), Children.toArray(oldChildren))) {
@@ -693,12 +696,13 @@ export default class Carousel extends Component {
    * @param {Event} e DOM event object.
    */
   handleSlideClick(e) {
-    const { clickToNavigate } = this.props;
+    const { clickToNavigate, slideClick } = this.props;
     const { currentSlide } = this.state;
     const clickedIndex = parseInt(e.currentTarget.getAttribute('data-index'), 10);
 
     // If the user clicked the current slide or it appears they are dragging, don't process the click
     if (!clickToNavigate || clickedIndex === currentSlide || Math.abs(this._startPos.x - e.clientX) > 0.01) {
+      slideClick && slideClick({ clickToNavigate, clickedIndex, currentSlide });
       return;
     }
     if (clickedIndex === currentSlide - 1) {
@@ -716,9 +720,12 @@ export default class Carousel extends Component {
    * @param {Event} e DOM event object.
    */
   onMouseDown(e) {
-    const { draggable, transition } = this.props;
+    const { draggable, transition, onMouseDown } = this.props;
+    const { currentSlide } = this.state;
 
     e.preventDefault();
+
+    onMouseDown && onMouseDown({ currentSlide });
 
     if (draggable && transition !== 'fade' && !this._animating) {
       if (this._autoplayTimer) {
@@ -806,7 +813,10 @@ export default class Carousel extends Component {
    * @param {Event} e DOM event object.
    */
   onTouchStart(e) {
-    const { draggable, transition } = this.props;
+    const { draggable, transition, onTouchStart } = this.props;
+    const { currentSlide } = this.state;
+
+    onTouchStart && onTouchStart({ currentSlide });
 
     if (draggable && transition !== 'fade' && !this._animating) {
       if (this._autoplayTimer) {
