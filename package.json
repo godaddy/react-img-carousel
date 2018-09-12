@@ -23,7 +23,7 @@
   "scripts": {
     "clean": "rimraf ./lib",
     "prebuild": "npm run clean",
-    "build": "babel src -d lib && lessc src/carousel.less lib/carousel.css && postcss --use autoprefixer -o lib/carousel.css lib/carousel.css",
+    "build": "babel src -d lib && lessc src/carousel.less lib/carousel.css && postcss --no-map --use autoprefixer -o lib/carousel.css lib/carousel.css",
     "eslint": "eslint-godaddy-react src/ test/",
     "unit": "gulp unit-coverage",
     "pretest": "npm run eslint",
