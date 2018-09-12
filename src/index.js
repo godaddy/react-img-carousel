@@ -161,7 +161,10 @@ export default class Carousel extends Component {
   }
 
   componentWillUnmount() {
+    // Remove all event listeners
+    this.removeDragListeners();
     window.removeEventListener('resize', this.calcLeftOffset, false);
+    document.removeEventListener('mousemove', this.handleMovement, false);
     clearTimeout(this._autoplayTimer);
     this._isMounted = false;
   }
@@ -843,16 +846,27 @@ export default class Carousel extends Component {
   }
 
   /**
+   * Removes event listeners that were added when starting a swipe operation
+   */
+  removeDragListeners() {
+    document.removeEventListener('mousemove', this.onMouseMove, { passive: false });
+    document.removeEventListener('mouseup', this.stopDragging, false);
+    document.removeEventListener('touchmove', this.onTouchMove, { passive: false });
+    document.removeEventListener('touchend', this.stopDragging, false);
+  }
+
+  /**
    * Completes a dragging operation, deciding whether to transition to another slide or snap back to the current slide.
    */
   stopDragging() {
     const { dragThreshold, transitionDuration } = this.props;
     const { dragOffset } = this.state;
-    const viewportWidth = this._viewport.offsetWidth || 1;
+    const viewportWidth = (this._viewport && this._viewport.offsetWidth) || 1;
     const percentDragged = Math.abs(dragOffset / viewportWidth);
     const swipeDuration = (Date.now() - this._startPos.startTime) || 1;
     const swipeSpeed = swipeDuration / (percentDragged * viewportWidth);
     const isQuickSwipe = percentDragged > 0.05 && swipeDuration < 250;
+
     let duration;
 
     if (isQuickSwipe || percentDragged > dragThreshold) {
@@ -863,10 +877,7 @@ export default class Carousel extends Component {
       duration = ms('' + transitionDuration) * percentDragged;
     }
 
-    document.removeEventListener('mousemove', this.onMouseMove, { passive: false });
-    document.removeEventListener('mouseup', this.stopDragging, false);
-    document.removeEventListener('touchmove', this.onTouchMove, { passive: false });
-    document.removeEventListener('touchend', this.stopDragging, false);
+    this.removeDragListeners();
 
     this.setState({
       transitionDuration: duration
