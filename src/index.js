@@ -37,7 +37,7 @@ export default class Carousel extends Component {
       slideHeight: PropTypes.string,
       onTouchStart: PropTypes.func,
       onMouseDown: PropTypes.func,
-      slideClick: PropTypes.func,
+      onSlideClick: PropTypes.func,
       changing: PropTypes.func,
       beforeChange: PropTypes.func,
       afterChange: PropTypes.func,
@@ -696,13 +696,13 @@ export default class Carousel extends Component {
    * @param {Event} e DOM event object.
    */
   handleSlideClick(e) {
-    const { clickToNavigate, slideClick } = this.props;
+    const { clickToNavigate, onSlideClick } = this.props;
     const { currentSlide } = this.state;
     const clickedIndex = parseInt(e.currentTarget.getAttribute('data-index'), 10);
 
     // If the user clicked the current slide or it appears they are dragging, don't process the click
     if (!clickToNavigate || clickedIndex === currentSlide || Math.abs(this._startPos.x - e.clientX) > 0.01) {
-      slideClick && slideClick({ clickToNavigate, clickedIndex, currentSlide });
+      onSlideClick && onSlideClick({ clickToNavigate, clickedIndex, currentSlide });
       return;
     }
     if (clickedIndex === currentSlide - 1) {
