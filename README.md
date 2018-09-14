@@ -11,7 +11,7 @@ you will need to use some kind of module loader/bundler like Webpack or Browseri
 ```js
 import React from 'react';
 import { render } from 'react-dom';
-import { Carousel } from 'react-carousel';
+import Carousel from 'react-carousel';
 
 require('react-carousel/lib/carousel.css');
 
