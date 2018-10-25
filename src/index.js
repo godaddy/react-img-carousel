@@ -1,8 +1,6 @@
 import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import nth from 'lodash.nth';
-import merge from 'lodash.merge';
-import inRange from 'lodash.inrange';
+import { nth, merge, inRange } from 'lodash';
 import ms from 'ms';
 import autobind from 'class-autobind';
 import classnames from 'classnames';
