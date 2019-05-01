@@ -272,7 +272,7 @@ export default class Carousel extends Component {
 
     this._animating = true;
 
-    beforeChange && beforeChange(index, currentSlide);
+    beforeChange && beforeChange(index, currentSlide, direction);
     this.setState({
       transitionDuration
     }, () => {
@@ -386,7 +386,7 @@ export default class Carousel extends Component {
       width: viewportWidth,
       height: viewportHeight || slideHeight || 'auto'
     });
-    let trackStyle = style.track || {};
+    let trackStyle = merge({}, style.track || {});
     if (transition !== 'fade') {
       const leftPos = leftOffset + dragOffset;
       trackStyle = merge({}, trackStyle, {
