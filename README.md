@@ -113,7 +113,7 @@ content.
 `PropTypes.func`
 
 Optional callback which will be invoked before a slide change occurs. Should have method signature
-`function(newIndex, prevIndex)`
+`function(newIndex, prevIndex, direction)`
 
 #### afterChange
 `PropTypes.func`
