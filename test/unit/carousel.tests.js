@@ -381,4 +381,74 @@ describe('Carousel', () => {
       done();
     });
   });
+
+  describe('maxRenderedSlides', () => {
+    it('should only render the specified maxRenderedSlides', () => {
+      renderToJsdom(
+        <Carousel
+          initialSlide={ 2 }
+          slideWidth='300px'
+          viewportWidth='300px'
+          maxRenderedSlides={ 3 }
+          infinite={ false }
+        >
+          <div id='slide1'/>
+          <div id='slide2'/>
+          <div id='slide3'/>
+          <div id='slide4'/>
+          <div id='slide5'/>
+          <div id='slide6'/>
+          <div id='slide7'/>
+          <div id='slide8'/>
+          <div id='slide9'/>
+          <div id='slide10'/>
+        </Carousel>
+      );
+      const loadingSlides = document.querySelectorAll('.carousel-slide.carousel-slide-loading');
+      expect(loadingSlides.length).to.equal(7);
+      expect(document.getElementById('slide1')).to.not.exist;
+      expect(document.getElementById('slide2')).to.exist;
+      expect(document.getElementById('slide3')).to.exist;
+      expect(document.getElementById('slide4')).to.exist;
+      expect(document.getElementById('slide5')).to.not.exist;
+      expect(document.getElementById('slide6')).to.not.exist;
+      expect(document.getElementById('slide7')).to.not.exist;
+      expect(document.getElementById('slide8')).to.not.exist;
+      expect(document.getElementById('slide9')).to.not.exist;
+      expect(document.getElementById('slide10')).to.not.exist;
+    });
+
+    it('should render the correct slides when infinite is true and the selected slide is near the end', () => {
+      renderToJsdom(
+        <Carousel
+          initialSlide={ 0 }
+          slideWidth='300px'
+          viewportWidth='300px'
+          maxRenderedSlides={ 3 }
+          infinite={ true }
+        >
+          <div id='slide1'/>
+          <div id='slide2'/>
+          <div id='slide3'/>
+          <div id='slide4'/>
+          <div id='slide5'/>
+          <div id='slide6'/>
+          <div id='slide7'/>
+          <div id='slide8'/>
+          <div id='slide9'/>
+          <div id='slide10'/>
+        </Carousel>
+      );
+      expect(document.getElementById('slide1')).to.exist;
+      expect(document.getElementById('slide2')).to.exist;
+      expect(document.getElementById('slide3')).to.not.exist;
+      expect(document.getElementById('slide4')).to.not.exist;
+      expect(document.getElementById('slide5')).to.not.exist;
+      expect(document.getElementById('slide6')).to.not.exist;
+      expect(document.getElementById('slide7')).to.not.exist;
+      expect(document.getElementById('slide8')).to.not.exist;
+      expect(document.getElementById('slide9')).to.not.exist;
+      expect(document.getElementById('slide10')).to.exist;
+    });
+  });
 });

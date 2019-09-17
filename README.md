@@ -84,14 +84,17 @@ If `true`, clicking next/previous when at the end/beginning of the slideshow wil
 #### lazyLoad
 `PropTypes.bool`
 
-If `false`, the carousel will render all children at mount time and will not attempt to lazy load images. Note that
-lazy loading will only work if the slides are `img` tags or if both `slideWidth` and `slideHeight` are specified.
+If `false`, the carousel will render all children at mount time and will not attempt to lazy load images. Note that lazy loading will only work if the slides are `img` tags or if both `slideWidth` and `slideHeight` are specified.
 
 #### imagesToPrefetch
 `PropTypes.number`
 
-If `lazyLoad` is set to `true`, this value will be used to determine how many images to fetch at mount time. Defaults
-to `5`.
+If `lazyLoad` is set to `true`, this value will be used to determine how many images to fetch at mount time. If the slides are not simple `img` elements, this prop will have no effect. Defaults to `5`.
+
+#### maxRenderedSlides
+`PropTypes.number`
+
+If `lazyLoad` is set to `true`, this value will be used to determine how many slides to fully render (including the currently selected slide). For example, if the currently selected slide is slide `10`, and this prop is set to `5`, then slides `8-12` will be rendered, and all other slides will render a lightweight placeholder. Note that this prop is ignored for slides that are simply `img` tags - these carousels should use the `imagesToPrefetch` prop instead. Defaults to `5`.
 
 #### cellPadding
 `PropTypes.number`

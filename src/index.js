@@ -2,7 +2,6 @@ import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import nth from 'lodash.nth';
 import merge from 'lodash.merge';
-import inRange from 'lodash.inrange';
 import ms from 'ms';
 import autobind from 'class-autobind';
 import classnames from 'classnames';
@@ -32,6 +31,7 @@ export default class Carousel extends Component {
       width: PropTypes.string,
       height: PropTypes.string,
       imagesToPrefetch: PropTypes.number,
+      maxRenderedSlides: PropTypes.number,
       cellPadding: PropTypes.number,
       slideWidth: PropTypes.string,
       slideHeight: PropTypes.string,
@@ -78,6 +78,7 @@ export default class Carousel extends Component {
       width: '100%',
       height: 'auto',
       imagesToPrefetch: 5,
+      maxRenderedSlides: 5,
       cellPadding: 0,
       transitionDuration: 500,
       autoplay: false,
@@ -109,7 +110,8 @@ export default class Carousel extends Component {
     autobind(this);
   }
 
-  componentWillReceiveProps(newProps) {
+  // eslint-disable-next-line
+  UNSAFE_componentWillReceiveProps(newProps) {
     const { currentSlide } = this.state;
     const numChildren = Children.count(newProps.children);
 
@@ -459,7 +461,7 @@ export default class Carousel extends Component {
    */
   renderSlides() {
     const { children, infinite, cellPadding, slideWidth, slideHeight, transition, transitionDuration,
-      style, easing } = this.props;
+      style, easing, lazyLoad } = this.props;
     const { slideDimensions, currentSlide, loading, loadedImages } = this.state;
     this._allImagesLoaded = true;
     let childrenToRender = Children.map(children, (child, index) => {
@@ -499,8 +501,11 @@ export default class Carousel extends Component {
         width: slideWidth || slideDimensions.width,
         height: slideHeight || slideDimensions.height
       });
+      const slidesToRender = this.getIndicesToRender();
 
-      if (this.shouldRenderSlide(child, index)) {
+      // Only render the actual slide content if lazy loading is disabled, the image is already loaded, or we
+      // are within the configured proximity to the selected slide index.
+      if (!lazyLoad || (imgSrc && loadedImages[imgSrc]) || slidesToRender.indexOf(index) > -1) {
         // If the slide contains an image, set explicit width/height and add load listener
         if (imgSrc && loadedImages[imgSrc]) {
           if (index === currentSlide && loading) {
@@ -547,47 +552,42 @@ export default class Carousel extends Component {
   }
 
   /**
-   * If lazy loading is enabled, this method attempts to determine whether the given slide index should be rendered.
-   * For img slides with src attributes, we render the slides only if the image has been fetched. For non-img slides,
-   * we attempt to determine whether the slide content should be rendered based on the currentSlide index and the
-   * transitioningFrom slide index, if set, to provide the best balance between showing the slides as they transition
-   * and keeping the DOM light if there are many slides in the carousel.
+   * This method returns the slides indices that should be fully rendered given the current lazyLoad and
+   * maxRenderedSlides settings.
    *
-   * @param {Object} slide The slide component to check.
-   * @param {Number} index The index of the specified slide component.
-   * @returns {Boolean} True if the slide should be rendered, else False.
+   * @returns {Array} Array of slide indices indicating which indices should be fully rendered.
    */
-  shouldRenderSlide(slide, index) {
-    const { currentSlide, loadedImages, transitioningFrom } = this.state;
-    const { lazyLoad, children, infinite } = this.props;
+  getIndicesToRender() {
+    const { currentSlide, transitioningFrom } = this.state;
+    const { children, infinite, maxRenderedSlides } = this.props;
     const numSlides = Children.count(children);
-    const imgSrc = slide.props.src;
 
-    if (!lazyLoad) {
-      return true;
-    }
-
-    if (imgSrc) {
-      return !!loadedImages[imgSrc];
-    }
-
-    // Render at least 5 slides centered around the current slide, or the slide we just transitioned from
-    if (inRange(index, currentSlide - 2, currentSlide + 3) ||
-        (transitioningFrom !== null && inRange(index, transitioningFrom - 2, transitioningFrom + 3))) {
-      return true;
-    } else if (infinite) {
-      // In infinite mode, we also want to render the adjacent slides if we're at the beginning or the end
-      if (currentSlide <= 1 && index >= numSlides - 2 ||
-          currentSlide >= numSlides - 2 && index <= 1 ||
-          transitioningFrom !== null && (
-            transitioningFrom <= 1 && index >= numSlides - 2 ||
-            transitioningFrom >= numSlides - 2 && index <= 1
-          )) {
-        return true;
+    function genIndices(startIndex, endIndex) {
+      const indices = [];
+      for (let i = startIndex; i <= endIndex; i++) {
+        if (infinite && i < 0) {
+          indices.push(numSlides + i);
+        } else if (infinite && i >= numSlides) {
+          indices.push(i - numSlides);
+        } else {
+          indices.push(i);
+        }
       }
+      return indices;
     }
 
-    return false;
+    // Figure out what slide indices need to be rendered
+    const maxSlides = Math.max(1, maxRenderedSlides);
+    const prevSlidesToRender = Math.floor((maxSlides - 1) / 2);
+    const nextSlidesToRender = Math.floor(maxSlides / 2);
+    let indices = genIndices(currentSlide - prevSlidesToRender, currentSlide + nextSlidesToRender);
+
+    if (transitioningFrom !== null) {
+      // Also render the slides around the previous slide during a transition
+      indices = indices.concat(genIndices(transitioningFrom - prevSlidesToRender, transitioningFrom + nextSlidesToRender));
+    }
+
+    return indices;
   }
 
   addClones(originals) {
