@@ -196,6 +196,7 @@ export default class Carousel extends Component {
     const startIndex = currentSlide - Math.floor(imagesToPrefetch / 2);
     const endIndex = startIndex + imagesToPrefetch;
     const pendingImages = [];
+    const currentImage = slides[currentSlide].props.src;
 
     for (let index = startIndex; index < endIndex; index++) {
       const slide = nth(slides, index % slides.length);
@@ -214,6 +215,10 @@ export default class Carousel extends Component {
               loadedImages: merge({}, this.state.loadedImages, {
                 [image]: { width: img.width || 'auto', height: img.height || 'auto' }
               })
+            }, () => {
+              if (image === currentImage) {
+                this.handleInitialLoad();
+              }
             });
           }
         };
@@ -462,7 +467,7 @@ export default class Carousel extends Component {
   renderSlides() {
     const { children, infinite, cellPadding, slideWidth, slideHeight, transition, transitionDuration,
       style, easing, lazyLoad } = this.props;
-    const { slideDimensions, currentSlide, loading, loadedImages } = this.state;
+    const { slideDimensions, currentSlide, loadedImages } = this.state;
     this._allImagesLoaded = true;
     let childrenToRender = Children.map(children, (child, index) => {
       const key = `slide-${index}`;
@@ -505,12 +510,9 @@ export default class Carousel extends Component {
 
       // Only render the actual slide content if lazy loading is disabled, the image is already loaded, or we
       // are within the configured proximity to the selected slide index.
-      if (!lazyLoad || (imgSrc && loadedImages[imgSrc]) || slidesToRender.indexOf(index) > -1) {
-        // If the slide contains an image, set explicit width/height and add load listener
+      if (!lazyLoad || (imgSrc ? !!loadedImages[imgSrc] : slidesToRender.indexOf(index) > -1)) {
+        // If the slide contains an image, set explicit width/height
         if (imgSrc && loadedImages[imgSrc]) {
-          if (index === currentSlide && loading) {
-            child = cloneElement(child, { onLoad: this.handleInitialLoad });
-          }
           const { width, height } = loadedImages[imgSrc];
           slideStyle.height = slideStyle.height || height;
           slideStyle.width = slideStyle.width || width;
@@ -631,7 +633,6 @@ export default class Carousel extends Component {
    */
   calcLeftOffset() {
     const { loading, direction } = this.state;
-
     if (loading || !this._track || !this._viewport) {
       clearTimeout(this._retryTimer);
       if (this._isMounted) {
