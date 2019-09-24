@@ -9,6 +9,8 @@ import { Dots, Arrow } from './controls';
 import areChildImagesEqual from './utils/areChildImagesEqual';
 
 const SELECTED_CLASS = 'carousel-slide-selected';
+const LOADING_CLASS = 'carousel-slide-loading';
+const MAX_LOAD_RETRIES = 500;
 
 /**
  * React component class that renders a carousel, which can contain images or other content.
@@ -104,8 +106,7 @@ export default class Carousel extends Component {
       slideDimensions: {},
       dragOffset: 0,
       transitionDuration: 0,
-      transitioningFrom: null,
-      leftOffset: 0
+      transitioningFrom: null
     };
     autobind(this);
   }
@@ -125,13 +126,15 @@ export default class Carousel extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { children, autoplay, slideWidth } = this.props;
-    const { currentSlide, loadedImages, direction, loading } = this.state;
+    const { currentSlide, loadedImages, direction, loading, slideDimensions } = this.state;
     const oldChildren = prevProps.children;
 
     if (direction !== prevState.direction ||
         currentSlide !== prevState.currentSlide ||
         loadedImages !== prevState.loadedImages ||
-        slideWidth !== prevProps.slideWidth) {
+        slideWidth !== prevProps.slideWidth ||
+        slideDimensions.width !== prevState.slideDimensions.width ||
+        slideDimensions.height !== prevState.slideDimensions.height) {
       // Whenever new images are loaded, the current slide index changes, the transition direction changes, or the
       // slide width changes, we need to recalculate the left offset positioning of the slides.
       this.calcLeftOffset();
@@ -154,11 +157,13 @@ export default class Carousel extends Component {
 
     if (lazyLoad) {
       this.fetchImages();
-    } else if (autoplay) {
-      this.startAutoplay();
+    } else {
+      if (autoplay) {
+        this.startAutoplay();
+      }
+      this.calcLeftOffset();
     }
 
-    this.calcLeftOffset();
     window.addEventListener('resize', this.calcLeftOffset, false);
   }
 
@@ -168,6 +173,8 @@ export default class Carousel extends Component {
     window.removeEventListener('resize', this.calcLeftOffset, false);
     document.removeEventListener('mousemove', this.handleMovement, false);
     clearTimeout(this._autoplayTimer);
+    clearTimeout(this._retryTimer);
+    clearTimeout(this._initialLoadTimer);
     this._isMounted = false;
   }
 
@@ -190,7 +197,7 @@ export default class Carousel extends Component {
    */
   fetchImages() {
     const { children } = this.props;
-    const { loadedImages, currentSlide, loading } = this.state;
+    const { loadedImages, currentSlide } = this.state;
     const slides = Children.toArray(children);
     const imagesToPrefetch = Math.min(this.props.imagesToPrefetch, slides.length);
     const startIndex = currentSlide - Math.floor(imagesToPrefetch / 2);
@@ -224,10 +231,8 @@ export default class Carousel extends Component {
         };
         img.src = image;
       });
-    } else if (loading) {
-      this.setState({
-        loading: false
-      });
+    } else {
+      this.calcLeftOffset();
     }
   }
 
@@ -238,26 +243,26 @@ export default class Carousel extends Component {
    */
   handleInitialLoad() {
     const { currentSlide } = this.state;
-    const { slideWidth, slideHeight } = this.props;
     const slides = this._track.childNodes;
-    const newState = {
-      loading: false
-    };
-
+    const { slideWidth, slideHeight } = this.props;
     if (!slideWidth || !slideHeight) {
       for (let i = 0; i < slides.length; i++) {
         const slide = slides[i];
         if (parseInt(slide.getAttribute('data-index'), 10) === currentSlide) {
-          newState.slideDimensions = {
-            width: slide.offsetWidth,
-            height: slide.offsetHeight
-          };
+          if (!slide.offsetWidth || !slide.offsetHeight) {
+            this._initialLoadTimer = setTimeout(this.handleInitialLoad, 10);
+            return;
+          }
+          this.setState({
+            slideDimensions: {
+              width: slide.offsetWidth,
+              height: slide.offsetHeight
+            }
+          });
           break;
         }
       }
     }
-
-    this.setState(newState);
   }
 
   /**
@@ -540,7 +545,7 @@ export default class Carousel extends Component {
           key={ key }
           style={ loadingSlideStyle }
           data-index={ index }
-          className={ classnames(slideClasses, 'carousel-slide-loading') }
+          className={ classnames(slideClasses, LOADING_CLASS) }
         ></li>
       );
     });
@@ -630,14 +635,17 @@ export default class Carousel extends Component {
 
   /**
    * Updates the component state with the correct left offset position so that the slides will be positioned correctly.
+   *
+   * @param {Number} retryCount Used when retries are needed due to slow slide loading
    */
-  calcLeftOffset() {
-    const { loading, direction } = this.state;
-    if (loading || !this._track || !this._viewport) {
-      clearTimeout(this._retryTimer);
-      if (this._isMounted) {
-        this._retryTimer = setTimeout(this.calcLeftOffset, 10);
-      }
+  calcLeftOffset(retryCount = 0) {
+    const { direction, loading } = this.state;
+    const viewportWidth = this._viewport && this._viewport.offsetWidth;
+
+    clearTimeout(this._retryTimer);
+
+    if (!this._track || !viewportWidth) {
+      this._retryTimer = setTimeout(this.calcLeftOffset, 10);
       return;
     }
 
@@ -656,36 +664,37 @@ export default class Carousel extends Component {
 
     let leftOffset = 0;
     let selectedSlide;
+    let foundZeroWidthSlide = false;
+    let isCurrentSlideLoading = false;
+    let currentSlideWidth;
     for (let i = 0; i < slides.length; i++) {
       selectedSlide = slides[i];
       leftOffset -= cellPadding;
+      isCurrentSlideLoading = selectedSlide.className.indexOf(LOADING_CLASS) !== -1;
+      currentSlideWidth = selectedSlide.offsetWidth;
+      foundZeroWidthSlide = foundZeroWidthSlide || (!currentSlideWidth && !isCurrentSlideLoading);
       if (parseInt(selectedSlide.getAttribute('data-index'), 10) === currentSlide) {
         break;
       }
-      leftOffset -= selectedSlide.offsetWidth;
-    }
-    const currentSlideWidth = selectedSlide.offsetWidth;
-    const viewportWidth = this._viewport.offsetWidth;
-
-    if (currentSlideWidth === 0 &&
-        viewportWidth === 0) {
-      // Sometimes there is a delay when the carousel is first rendering, so do a few retries
-      this._retryCount = this._retryCount || 0;
-      if (this._retryCount < 5) {
-        this._retryCount++;
-        setTimeout(this.calcLeftOffset, 100);
-      } else {
-        this._retryCount = 0;
-      }
-
-      return;
+      leftOffset -= currentSlideWidth;
     }
 
     // Center the current slide within the viewport
     leftOffset += (viewportWidth - currentSlideWidth) / 2;
+    const shouldRetry = foundZeroWidthSlide && retryCount < MAX_LOAD_RETRIES;
 
     if (leftOffset !== this.state.leftOffset) {
       this.setState({ leftOffset });
+    }
+
+    if (shouldRetry) {
+      this._retryTimer = setTimeout(this.calcLeftOffset.bind(this, ++retryCount), 10);
+      return;
+    }
+
+    if (loading) {
+      // We have correctly positioned the slides and are done loading images, so reveal the carousel
+      this.setState({ loading: false });
     }
   }
 

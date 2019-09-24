@@ -38,14 +38,14 @@ class CustomDots extends React.Component {
 }
 
 const IMAGES = [
-  'http://lorempixel.com/400/300',
-  'http://lorempixel.com/275/300',
-  'http://lorempixel.com/400/300',
-  'http://lorempixel.com/350/300',
-  'http://lorempixel.com/250/300',
-  'http://lorempixel.com/375/300',
-  'http://lorempixel.com/425/300',
-  'http://lorempixel.com/325/300'
+  'http://picsum.photos/400/300',
+  'http://picsum.photos/275/300',
+  'http://picsum.photos/400/300',
+  'http://picsum.photos/350/300',
+  'http://picsum.photos/250/300',
+  'http://picsum.photos/375/300',
+  'http://picsum.photos/425/300',
+  'http://picsum.photos/325/300'
 ];
 let imgIndex = 1;
 
@@ -78,29 +78,29 @@ class TestPage extends Component {
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Infinite with only 2 slides</h2>
         <Carousel width='450px' arrows={ false } slideHeight='300px'>
-          <img src='http://lorempixel.com/325/300'/>
-          <img src='http://lorempixel.com/350/300'/>
+          <img src='http://picsum.photos/325/300'/>
+          <img src='http://picsum.photos/350/300'/>
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Infinite with only 1 slide</h2>
         <Carousel width='450px' infinite={ true } arrows={ false } dots={ false }>
-          <img src='http://lorempixel.com/325/300'/>
+          <img src='http://picsum.photos/325/300'/>
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Autoplay with background images</h2>
         <Carousel width='100%' slideWidth='100%' slideHeight='70vh' arrows={ false } autoplay={ true }>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Background images with fade</h2>
         <Carousel width='100%' slideWidth='100%' slideHeight='70vh' transition='fade' transitionDuration={ 1000 } autoplay={ true } arrows={ true }>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/750/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/725/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
-          <div style={ { backgroundImage: 'url(http://lorempixel.com/625/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/750/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/725/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
+          <div style={ { backgroundImage: 'url(http://picsum.photos/625/300)', backgroundSize: 'cover', height: '100%', width: '100%' } }/>
         </Carousel>
         <h2 style={ { marginTop: 80 } }>Custom dots component</h2>
         <Carousel
