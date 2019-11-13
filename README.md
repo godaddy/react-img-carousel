@@ -181,6 +181,12 @@ The easing function to use for the transition. Defaults to `ease-in-out`.
 Controls whether or not clicking slides other than the currently selected one should navigate to the clicked slide.
 Defaults to `true`.
 
+#### preventDefaults
+`PropTypes.bool`
+
+Controls whether or not clicking on slides will call `preventDefault` on the mousedown event.
+Defaults to `true`.
+
 #### autoplay
 `PropTypes.bool`
 
