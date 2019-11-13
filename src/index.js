@@ -729,7 +729,11 @@ export default class Carousel extends Component {
   onMouseDown(e) {
     const { draggable, transition } = this.props;
 
-    e.preventDefault();
+    if (e.target.nodeName === 'IMG') {
+      // Disable native browser select/drag for img elements
+      e.preventDefault();
+    }
+
 
     if (draggable && transition !== 'fade' && !this._animating) {
       if (this._autoplayTimer) {
