@@ -1,3 +1,7 @@
+# 1.5.3 - Nov 2019
+
+***(Enhancement)*** Only call preventDefault in mousedown handler when the target is an img element
+
 # 1.5.2 - Sept 2019
 
 ***(Bug Fix)*** Fix issue that can cause the initial carousel positioning to be off
