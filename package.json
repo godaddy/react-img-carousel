@@ -1,6 +1,6 @@
 {
   "name": "react-img-carousel",
-  "version": "1.5.2",
+  "version": "1.5.3",
   "description": "Provides an image carousel React component.",
   "main": "lib/index.js",
   "repository": {
