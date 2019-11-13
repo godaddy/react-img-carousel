@@ -52,6 +52,7 @@ export default class Carousel extends Component {
       pauseOnHover: PropTypes.bool,
       clickToNavigate: PropTypes.bool,
       dragThreshold: PropTypes.number,
+      preventDefaults: PropTypes.bool,
       easing: PropTypes.oneOf([
         'ease',
         'linear',
@@ -89,6 +90,7 @@ export default class Carousel extends Component {
       controls: [],
       draggable: true,
       pauseOnHover: true,
+      preventDefaults: true,
       transition: 'slide',
       dragThreshold: 0.2,
       clickToNavigate: true,
@@ -727,9 +729,11 @@ export default class Carousel extends Component {
    * @param {Event} e DOM event object.
    */
   onMouseDown(e) {
-    const { draggable, transition } = this.props;
+    const { draggable, transition, preventDefaults } = this.props;
 
-    e.preventDefault();
+    if (preventDefaults) {
+      e.preventDefault();
+    }
 
     if (draggable && transition !== 'fade' && !this._animating) {
       if (this._autoplayTimer) {
