@@ -29,7 +29,8 @@
     "pretest": "npm run eslint",
     "test": "npm run unit",
     "prepublish": "npm run test && npm run build",
-    "start": "webpack-dev-server --open"
+    "start": "webpack-dev-server --open",
+    "storybook": "start-storybook"
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0 || ^16.0.0"
@@ -44,6 +45,7 @@
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
+    "@storybook/react": "^5.2.6",
     "autoprefixer": "^7.2.6",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
