@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Fragment, useState } from 'react';
 import Carousel from '../index';
 
 require('../carousel.less');
@@ -21,43 +21,36 @@ const IMAGES = [
 
 const imgElements = IMAGES.map((image, index) => <img src={ image } key={ index } />);
 
-/**
- * TODO: refactor this as a functional component
- */
-class CustomDots extends React.Component {
-    render () {
-      const { numSlides, selectedIndex, goToSlide } = this.props;
-      const dots = [];
+const CustomDots = ({ numSlides, selectedIndex, goToSlide, title }) => {
+    const dots = [];
   
-      for (let index = 0; index < numSlides; index++) {
-        const buttonStyle = {
-          border: 'none',
-          cursor: 'pointer',
-          background: 'transparent'
-        };
-  
-        if (index === selectedIndex) {
-          buttonStyle.color = 'red';
-        }
-  
-        dots.push(
-          <li key={ `dot-${index}` } style={ { display: 'inline-block' } }>
-            <button style={ buttonStyle } onClick={ goToSlide.bind(null, index) }>•</button>
-          </li>
-        );
+    for (let index = 0; index < numSlides; index++) {
+      const buttonStyle = {
+        border: 'none',
+        cursor: 'pointer',
+        background: 'transparent'
+      };
+
+      if (index === selectedIndex) {
+        buttonStyle.color = 'red';
       }
-  
-      return (
-        <div style={ { position: 'absolute', top: '10px', right: '10px', background: 'rgba(114, 114, 114, 0.6)', zIndex: '1' } }>
-          <h2>{ this.props.title }</h2>
-          <ul style={ { listStyle: 'none', padding: '0' } }>
-            { dots }
-          </ul>
-        </div>
+
+      dots.push(
+        <li key={ `dot-${index}` } style={ { display: 'inline-block' } }>
+          <button style={ buttonStyle } onClick={ goToSlide.bind(null, index) }>•</button>
+        </li>
       );
     }
-  }
-  
+
+    return (
+      <div style={ { position: 'absolute', top: '10px', right: '10px', background: 'rgba(114, 114, 114, 0.6)', zIndex: '1' } }>
+        <h2>{ title }</h2>
+        <ul style={ { listStyle: 'none', padding: '0' } }>
+          { dots }
+        </ul>
+      </div>
+    );
+}
 
 export const infiniteWithCellPadding = () => 
     <Carousel width='450px' cellPadding={ 5 }>
@@ -143,18 +136,31 @@ export const customDotsComponent = () =>
         { imgElements }
     </Carousel>
 
-// export const addImages = () => 
-//     <Carousel
-//     width='450px'
-//     cellPadding={ 5 }
-//     infinite={ true }
-//     dots={ false }
-//     arrows={ false }
-//     autoplay={ false }
-//     controls={ [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }] }
-//     >
-//     {
-//         images.map((image, index) => <img key={ index } src={ image }/>)
-//     }
-//     </Carousel>
-//     <button onClick={ this.addImage }>Add Image</button>
+export const addImages = () => {
+    const [images, setImages] = useState([IMAGES[0]]);
+
+    const addImage = () => {
+        if (images.length < IMAGES.length) {
+            setImages(images.concat(IMAGES[images.length]));
+          }      
+    }
+
+    return (
+        <Fragment>
+            <Carousel
+                width='450px'
+                cellPadding={ 5 }
+                infinite={ true }
+                dots={ false }
+                arrows={ false }
+                autoplay={ false }
+                controls={ [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }] }
+            >
+            {
+                images.map((image, index) => <img key={ index } src={ image }/>)
+            }
+            </Carousel>
+            <button onClick={ addImage }>Add Image</button>
+        </Fragment>    
+    )
+}
