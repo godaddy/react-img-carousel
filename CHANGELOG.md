@@ -1,3 +1,7 @@
+# 1.5.4 - Nov 2019
+
+***(Enhancement)*** Replaced example application with Storybook
+
 # 1.5.3 - Nov 2019
 
 ***(Enhancement)*** Only call preventDefault in mousedown handler when the target is an img element
