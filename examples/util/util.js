@@ -3,12 +3,12 @@ import React from 'react';
 export const IMAGES = [
   'http://picsum.photos/400/300',
   'http://picsum.photos/275/300',
-  'http://picsum.photos/400/300',
+  'http://picsum.photos/450/300',
   'http://picsum.photos/350/300',
   'http://picsum.photos/250/300',
   'http://picsum.photos/375/300',
   'http://picsum.photos/425/300',
-  'http://picsum.photos/325/300'
+  'http://picsum.photos/325/300',
 ];
 
 export const imgElements = IMAGES.map((image, index) => <img src={ image } key={ index } />);
