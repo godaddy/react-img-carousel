@@ -29,7 +29,7 @@
     "pretest": "npm run eslint",
     "test": "npm run unit",
     "prepublish": "npm run test && npm run build",
-    "storybook": "start-storybook"
+    "storybook": "start-storybook  -c ./node_modules/@exemplar/storybook-react"
   },
   "peerDependencies": {
     "react": "^0.14.0 || ^15.0.0 || ^16.0.0"
@@ -44,7 +44,9 @@
     "prop-types": "^15.7.2"
   },
   "devDependencies": {
-    "@storybook/react": "^5.2.6",
+    "@exemplar/storybook-react": "^1.1.2",
+    "@storybook/addon-knobs": "^5.2.8",
+    "@storybook/react": "^5.2.8",
     "autoprefixer": "^7.2.6",
     "babel-cli": "^6.26.0",
     "babel-core": "^6.26.3",
