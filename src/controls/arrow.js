@@ -13,13 +13,18 @@ export default class Arrow extends Component {
       infinite: PropTypes.bool.isRequired,
       prevSlide: PropTypes.func.isRequired,
       nextSlide: PropTypes.func.isRequired,
-      direction: PropTypes.oneOf(['left', 'right']).isRequired
+      direction: PropTypes.oneOf(['left', 'right']).isRequired,
+      customArrow: PropTypes.shape({
+        left: PropTypes.func.isRequired,
+        right: PropTypes.func.isRequired,
+        className: PropTypes.string
+      })
     };
   }
 
   /**
-   * @returns {Boolean} True if there is a next slide to transition to, else False.
-   */
+     * @returns {Boolean} True if there is a next slide to transition to, else False.
+     */
   hasNext() {
     const { direction, infinite, numSlides, selectedIndex } = this.props;
 
@@ -27,14 +32,23 @@ export default class Arrow extends Component {
   }
 
   render() {
-    const { prevSlide, nextSlide, direction } = this.props;
+    const { prevSlide, nextSlide, direction, customArrow } = this.props;
+    let arrowComponent = null;
+    let buttonClass = 'carousel-arrow-default';
+
+    if (customArrow) {
+      buttonClass = customArrow.className ? customArrow.className : '';
+      arrowComponent = direction === 'left' ? customArrow.left : customArrow.right;
+    }
 
     return (
       <button
         disabled={ !this.hasNext() }
         onClick={ direction === 'left' ? prevSlide : nextSlide }
-        className={ `carousel-arrow carousel-${direction}-arrow` }
-      />
+        className={ `carousel-arrow carousel-${direction}-arrow ${buttonClass}` }
+      >
+        { arrowComponent }
+      </button>
     );
   }
 }

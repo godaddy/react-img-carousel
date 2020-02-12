@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import { Simulate } from 'react-dom/test-utils';
 import Carousel from '../../src/index';
 
@@ -8,6 +10,7 @@ function renderToJsdom(component) {
   return render(component, window.document.querySelector('#root'));
 }
 
+chai.use(sinonChai);
 let imagesFetched;
 
 global.Image = class MyImage {
@@ -65,8 +68,14 @@ describe('Carousel', () => {
   });
 
   it('should navigate to the previous slide when the button is clicked', done => {
+    const onControlClickStub = sinon.stub();
+
     renderToJsdom(
-      <Carousel initialSlide={ 1 } slideWidth='300px' viewportWidth='300px' infinite={ false }>
+      <Carousel initialSlide={ 1 }
+        slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        onControlClick={ onControlClickStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -81,13 +90,20 @@ describe('Carousel', () => {
       Simulate.click(prevButton);
       expect(dots[1].className).to.not.contain('selected');
       expect(dots[0].className).to.contain('selected');
+      expect(onControlClickStub).to.have.been.calledOnce;
       done();
     });
   });
 
   it('should wrap around from the last to first slide if infinite is true and next is clicked', done => {
+    const onControlClickStub = sinon.stub();
+
     renderToJsdom(
-      <Carousel initialSlide={ 2 } slideWidth='300px' viewportWidth='300px' infinite={ true }>
+      <Carousel initialSlide={ 2 }
+        slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ true }
+        onControlClick={ onControlClickStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -102,6 +118,7 @@ describe('Carousel', () => {
       Simulate.click(nextButton);
       expect(dots[2].className).to.not.contain('selected');
       expect(dots[0].className).to.contain('selected');
+      expect(onControlClickStub).to.have.been.calledOnce;
       done();
     });
   });
@@ -128,8 +145,13 @@ describe('Carousel', () => {
   });
 
   it('should jump directly to a slide when the dot is clicked', done => {
+    const onControlClickStub = sinon.stub();
+
     renderToJsdom(
-      <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false }>
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        onControlClick={ onControlClickStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -143,6 +165,7 @@ describe('Carousel', () => {
       Simulate.click(dots[2]);
       expect(dots[0].className).to.not.contain('selected');
       expect(dots[2].className).to.contain('selected');
+      expect(onControlClickStub).to.have.been.calledOnce;
       done();
     });
   });
@@ -449,6 +472,35 @@ describe('Carousel', () => {
       expect(document.getElementById('slide8')).to.not.exist;
       expect(document.getElementById('slide9')).to.not.exist;
       expect(document.getElementById('slide10')).to.exist;
+    });
+  });
+
+  it('should render custom arrow', done => {
+    const customArrow = {
+      className: 'test-custom-arrow',
+      left: <span id='custom-left'>Left</span>,
+      right: <span id='custom-right'>Right</span>
+    };
+
+    renderToJsdom(
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        customArrow={ customArrow }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      const prevButton = document.querySelector('.carousel-left-arrow');
+      const nextButton = document.querySelector('.carousel-right-arrow');
+      expect(prevButton.className).to.contain('test-custom-arrow');
+      expect(nextButton.className).to.contain('test-custom-arrow');
+      expect(document.getElementById('custom-left')).to.exist;
+      expect(document.getElementById('custom-right')).to.exist;
+      done();
     });
   });
 });

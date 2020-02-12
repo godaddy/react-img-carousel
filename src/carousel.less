@@ -16,19 +16,23 @@
     text-align: left;
   }
 
-  .carousel-arrow {
-    position: absolute;
-    z-index: 1;
-    color: white;
-    border: 3px solid;
+  .carousel-arrow-default {
+    border: 3px solid !important;
     border-radius: 50%;
-    bottom: 23px;
+    color: white;
     height: 32px;
     width: 32px;
     font-weight: 900;
     background: rgba(0, 0, 0, 0.15);
+  }
+
+  .carousel-arrow {
+    position: absolute;
+    z-index: 1;
+    bottom: 23px;
     padding: 0;
     cursor: pointer;
+    border: none;
 
     &:focus {
       outline: none;
@@ -48,17 +52,27 @@
 
   .carousel-left-arrow {
     left: 23px;
-    &:before {
-      content: '<';
-      padding-right: 2px;
-    }
   }
 
   .carousel-right-arrow {
     right: 23px;
-    &:before {
-      content: '>';
-      padding-left: 2px;
+  }
+
+  .carousel-left-arrow {
+    &.carousel-arrow-default {
+      &:before {
+        content: '<';
+        padding-right: 2px;
+      }
+    }
+  }
+
+  .carousel-right-arrow {
+    &.carousel-arrow-default {
+      &:before {
+        content: '>';
+        padding-left: 2px;
+      }
     }
   }
 
