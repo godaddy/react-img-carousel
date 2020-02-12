@@ -23,8 +23,8 @@ export default class Arrow extends Component {
   }
 
   /**
-     * @returns {Boolean} True if there is a next slide to transition to, else False.
-     */
+   * @returns {Boolean} True if there is a next slide to transition to, else False.
+   */
   hasNext() {
     const { direction, infinite, numSlides, selectedIndex } = this.props;
 
@@ -45,8 +45,7 @@ export default class Arrow extends Component {
       <button
         disabled={ !this.hasNext() }
         onClick={ direction === 'left' ? prevSlide : nextSlide }
-        className={ `carousel-arrow carousel-${direction}-arrow ${buttonClass}` }
-      >
+        className={ `carousel-arrow carousel-${direction}-arrow ${buttonClass}` }>
         { arrowComponent }
       </button>
     );
