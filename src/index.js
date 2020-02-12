@@ -49,8 +49,8 @@ export default class Carousel extends Component {
         position: PropTypes.oneOf(['top', 'bottom'])
       })),
       customArrow: PropTypes.shape({
-        left: PropTypes.func.isRequired,
-        right: PropTypes.func.isRequired,
+        left: PropTypes.node.isRequired,
+        right: PropTypes.node.isRequired,
         className: PropTypes.string
       }),
       draggable: PropTypes.bool,
