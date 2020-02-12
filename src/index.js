@@ -390,7 +390,7 @@ export default class Carousel extends Component {
    */
   render() {
     const { className, viewportWidth, viewportHeight, width, height, dots, infinite,
-      children, slideHeight, transition, style, draggable, easing } = this.props;
+      children, slideHeight, transition, style, draggable, easing, customArrow } = this.props;
     const { loading, transitionDuration, dragOffset, currentSlide, leftOffset } = this.state;
     const numSlides = Children.count(children);
     const classes = classnames('carousel', className, {
@@ -467,7 +467,7 @@ export default class Carousel extends Component {
                 nextSlide={ this.nextSlide }
                 prevSlide={ this.prevSlide }
                 goToSlide={ this.goToSlide }
-                customArrow={ this.props.customArrow }
+                customArrow={ customArrow }
                 infinite={ infinite } />
             ))
           }
