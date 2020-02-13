@@ -60,6 +60,7 @@ describe('Carousel', () => {
       expect(dots.length).to.equal(3);
       expect(dots[0].className).to.contain('selected');
       const nextButton = document.querySelector('.carousel-right-arrow');
+      expect(nextButton.className).to.contain('carousel-arrow-default');
       Simulate.click(nextButton);
       expect(dots[0].className).to.not.contain('selected');
       expect(dots[1].className).to.contain('selected');
@@ -87,6 +88,7 @@ describe('Carousel', () => {
       expect(dots.length).to.equal(3);
       expect(dots[1].className).to.contain('selected');
       const prevButton = document.querySelector('.carousel-left-arrow');
+      expect(prevButton.className).to.contain('carousel-arrow-default');
       Simulate.click(prevButton);
       expect(dots[1].className).to.not.contain('selected');
       expect(dots[0].className).to.contain('selected');
@@ -476,7 +478,7 @@ describe('Carousel', () => {
   });
 
   it('should render custom arrow', done => {
-    const customArrow = {
+    const arrows = {
       className: 'test-custom-arrow',
       left: <span id='custom-left'>Left</span>,
       right: <span id='custom-right'>Right</span>
@@ -486,7 +488,7 @@ describe('Carousel', () => {
       <Carousel slideWidth='300px'
         viewportWidth='300px'
         infinite={ false }
-        customArrow={ customArrow }>
+        arrows={ arrows }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -502,5 +504,55 @@ describe('Carousel', () => {
       expect(document.getElementById('custom-right')).to.exist;
       done();
     });
+  });
+
+  it('should render custom arrow without className', done => {
+      const arrows = {
+          left: <span id='custom-left'>Left</span>,
+          right: <span id='custom-right'>Right</span>
+      };
+
+      renderToJsdom(
+          <Carousel slideWidth='300px'
+                    viewportWidth='300px'
+                    infinite={ false }
+                    arrows={ arrows }>
+              <div id='slide1'/>
+              <div id='slide2'/>
+              <div id='slide3'/>
+          </Carousel>
+      );
+
+      setImmediate(() => {
+          const prevButton = document.querySelector('.carousel-left-arrow');
+          const nextButton = document.querySelector('.carousel-right-arrow');
+          expect(prevButton.className).to.not.contain('carousel-arrow-default');
+          expect(nextButton.className).to.not.contain('carousel-arrow-default');
+          expect(document.getElementById('custom-left')).to.exist;
+          expect(document.getElementById('custom-right')).to.exist;
+          done();
+      });
+  });
+
+  it('should not call onControlClick on autoPlay', done => {
+      const onControlClickStub = sinon.stub();
+
+      renderToJsdom(
+          <Carousel initialSlide={ 2 }
+                    slideWidth='300px'
+                    viewportWidth='300px'
+                    infinite={ true }
+                    autoplay={ true }
+                    onControlClick={ onControlClickStub }>
+              <div id='slide1'/>
+              <div id='slide2'/>
+              <div id='slide3'/>
+          </Carousel>
+      );
+
+      setImmediate(() => {
+          expect(onControlClickStub).to.not.have.been.called;
+          done();
+      });
   });
 });
