@@ -26,12 +26,12 @@ export default class Carousel extends Component {
       transition: PropTypes.oneOf(['slide', 'fade']),
       dots: PropTypes.bool,
       arrows: PropTypes.oneOfType([
-          PropTypes.bool,
-          PropTypes.shape({
-              left: PropTypes.node.isRequired,
-              right: PropTypes.node.isRequired,
-              className: PropTypes.string
-          })
+        PropTypes.bool,
+        PropTypes.shape({
+          left: PropTypes.node.isRequired,
+          right: PropTypes.node.isRequired,
+          className: PropTypes.string
+        })
       ]),
       infinite: PropTypes.bool,
       children: PropTypes.any,
@@ -278,6 +278,7 @@ export default class Carousel extends Component {
    *
    * @param {Number} index - The slide index to move to.
    * @param {String} direction - The direction to transition, should be 'right' or 'left'.
+   * @param {Boolean} autoSlide - The source of slide transition, should be true for autoPlay and false for user click.
    */
   goToSlide(index, direction, autoSlide = false) {
     const { beforeChange, transitionDuration, transition, onControlClick } = this.props;
@@ -317,6 +318,7 @@ export default class Carousel extends Component {
 
   /**
    * Transitions to the next slide moving from left to right.
+   * @param {Object} e - The event that calls nextSlide, will be undefined for autoPlay.
    */
   nextSlide(e) {
     const { children } = this.props;

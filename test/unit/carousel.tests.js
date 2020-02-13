@@ -507,52 +507,52 @@ describe('Carousel', () => {
   });
 
   it('should render custom arrow without className', done => {
-      const arrows = {
-          left: <span id='custom-left'>Left</span>,
-          right: <span id='custom-right'>Right</span>
-      };
+    const arrows = {
+      left: <span id='custom-left'>Left</span>,
+      right: <span id='custom-right'>Right</span>
+    };
 
-      renderToJsdom(
-          <Carousel slideWidth='300px'
-                    viewportWidth='300px'
-                    infinite={ false }
-                    arrows={ arrows }>
-              <div id='slide1'/>
-              <div id='slide2'/>
-              <div id='slide3'/>
-          </Carousel>
-      );
+    renderToJsdom(
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        arrows={ arrows }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+      </Carousel>
+    );
 
-      setImmediate(() => {
-          const prevButton = document.querySelector('.carousel-left-arrow');
-          const nextButton = document.querySelector('.carousel-right-arrow');
-          expect(prevButton.className).to.not.contain('carousel-arrow-default');
-          expect(nextButton.className).to.not.contain('carousel-arrow-default');
-          expect(document.getElementById('custom-left')).to.exist;
-          expect(document.getElementById('custom-right')).to.exist;
-          done();
-      });
+    setImmediate(() => {
+      const prevButton = document.querySelector('.carousel-left-arrow');
+      const nextButton = document.querySelector('.carousel-right-arrow');
+      expect(prevButton.className).to.not.contain('carousel-arrow-default');
+      expect(nextButton.className).to.not.contain('carousel-arrow-default');
+      expect(document.getElementById('custom-left')).to.exist;
+      expect(document.getElementById('custom-right')).to.exist;
+      done();
+    });
   });
 
   it('should not call onControlClick on autoPlay', done => {
-      const onControlClickStub = sinon.stub();
+    const onControlClickStub = sinon.stub();
 
-      renderToJsdom(
-          <Carousel initialSlide={ 2 }
-                    slideWidth='300px'
-                    viewportWidth='300px'
-                    infinite={ true }
-                    autoplay={ true }
-                    onControlClick={ onControlClickStub }>
-              <div id='slide1'/>
-              <div id='slide2'/>
-              <div id='slide3'/>
-          </Carousel>
-      );
+    renderToJsdom(
+      <Carousel initialSlide={ 2 }
+        slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ true }
+        autoplay={ true }
+        onControlClick={ onControlClickStub }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+      </Carousel>
+    );
 
-      setImmediate(() => {
-          expect(onControlClickStub).to.not.have.been.called;
-          done();
-      });
+    setImmediate(() => {
+      expect(onControlClickStub).to.not.have.been.called;
+      done();
+    });
   });
 });

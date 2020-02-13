@@ -15,12 +15,12 @@ export default class Arrow extends Component {
       nextSlide: PropTypes.func.isRequired,
       direction: PropTypes.oneOf(['left', 'right']).isRequired,
       arrows: PropTypes.oneOfType([
-          PropTypes.bool,
-          PropTypes.shape({
-              left: PropTypes.node.isRequired,
-              right: PropTypes.node.isRequired,
-              className: PropTypes.string
-          })
+        PropTypes.bool,
+        PropTypes.shape({
+          left: PropTypes.node.isRequired,
+          right: PropTypes.node.isRequired,
+          className: PropTypes.string
+        })
       ])
     };
   }
