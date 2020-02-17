@@ -69,14 +69,14 @@ describe('Carousel', () => {
   });
 
   it('should navigate to the previous slide when the button is clicked', done => {
-    const onControlClickStub = sinon.stub();
+    const onSlideTransitionedStub = sinon.stub();
 
     renderToJsdom(
       <Carousel initialSlide={ 1 }
         slideWidth='300px'
         viewportWidth='300px'
         infinite={ false }
-        onControlClick={ onControlClickStub }>
+        onSlideTransitioned={ onSlideTransitionedStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -92,20 +92,24 @@ describe('Carousel', () => {
       Simulate.click(prevButton);
       expect(dots[1].className).to.not.contain('selected');
       expect(dots[0].className).to.contain('selected');
-      expect(onControlClickStub).to.have.been.calledOnce;
+      expect(onSlideTransitionedStub).to.have.been.calledWith({
+          autoPlay: false,
+          index: 0,
+          direction: 'left'
+      });
       done();
     });
   });
 
   it('should wrap around from the last to first slide if infinite is true and next is clicked', done => {
-    const onControlClickStub = sinon.stub();
+    const onSlideTransitionedStub = sinon.stub();
 
     renderToJsdom(
       <Carousel initialSlide={ 2 }
         slideWidth='300px'
         viewportWidth='300px'
         infinite={ true }
-        onControlClick={ onControlClickStub }>
+        onSlideTransitioned={ onSlideTransitionedStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -120,7 +124,11 @@ describe('Carousel', () => {
       Simulate.click(nextButton);
       expect(dots[2].className).to.not.contain('selected');
       expect(dots[0].className).to.contain('selected');
-      expect(onControlClickStub).to.have.been.calledOnce;
+      expect(onSlideTransitionedStub).to.have.been.calledWith({
+          autoPlay: false,
+          index: 0,
+          direction: 'right'
+      });
       done();
     });
   });
@@ -147,13 +155,13 @@ describe('Carousel', () => {
   });
 
   it('should jump directly to a slide when the dot is clicked', done => {
-    const onControlClickStub = sinon.stub();
+    const onSlideTransitionedStub = sinon.stub();
 
     renderToJsdom(
       <Carousel slideWidth='300px'
         viewportWidth='300px'
         infinite={ false }
-        onControlClick={ onControlClickStub }>
+        onSlideTransitioned={ onSlideTransitionedStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -167,7 +175,7 @@ describe('Carousel', () => {
       Simulate.click(dots[2]);
       expect(dots[0].className).to.not.contain('selected');
       expect(dots[2].className).to.contain('selected');
-      expect(onControlClickStub).to.have.been.calledOnce;
+      expect(onSlideTransitionedStub).to.have.been.calledOnce;
       done();
     });
   });
@@ -530,28 +538,6 @@ describe('Carousel', () => {
       expect(nextButton.className).to.not.contain('carousel-arrow-default');
       expect(document.getElementById('custom-left')).to.exist;
       expect(document.getElementById('custom-right')).to.exist;
-      done();
-    });
-  });
-
-  it('should not call onControlClick on autoPlay', done => {
-    const onControlClickStub = sinon.stub();
-
-    renderToJsdom(
-      <Carousel initialSlide={ 2 }
-        slideWidth='300px'
-        viewportWidth='300px'
-        infinite={ true }
-        autoplay={ true }
-        onControlClick={ onControlClickStub }>
-        <div id='slide1'/>
-        <div id='slide2'/>
-        <div id='slide3'/>
-      </Carousel>
-    );
-
-    setImmediate(() => {
-      expect(onControlClickStub).to.not.have.been.called;
       done();
     });
   });

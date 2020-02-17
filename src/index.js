@@ -59,7 +59,7 @@ export default class Carousel extends Component {
       pauseOnHover: PropTypes.bool,
       clickToNavigate: PropTypes.bool,
       dragThreshold: PropTypes.number,
-      onControlClick: PropTypes.func,
+      onSlideTransitioned: PropTypes.func,
       easing: PropTypes.oneOf([
         'ease',
         'linear',
@@ -281,11 +281,14 @@ export default class Carousel extends Component {
    * @param {Boolean} autoSlide - The source of slide transition, should be true for autoPlay and false for user click.
    */
   goToSlide(index, direction, autoSlide = false) {
-    const { beforeChange, transitionDuration, transition, onControlClick } = this.props;
+    const { beforeChange, transitionDuration, transition, onSlideTransitioned } = this.props;
 
-    if (!autoSlide && onControlClick) {
-      const event = typeof direction === 'object' ? 'index' : direction;
-      onControlClick(event);
+    if(onSlideTransitioned) {
+        onSlideTransitioned({
+            autoPlay: autoSlide,
+            index,
+            direction
+        });
     }
 
     const { currentSlide } = this.state;
