@@ -93,9 +93,9 @@ describe('Carousel', () => {
       expect(dots[1].className).to.not.contain('selected');
       expect(dots[0].className).to.contain('selected');
       expect(onSlideTransitionedStub).to.have.been.calledWith({
-          autoPlay: false,
-          index: 0,
-          direction: 'left'
+        autoPlay: false,
+        index: 0,
+        direction: 'left'
       });
       done();
     });
@@ -125,9 +125,9 @@ describe('Carousel', () => {
       expect(dots[2].className).to.not.contain('selected');
       expect(dots[0].className).to.contain('selected');
       expect(onSlideTransitionedStub).to.have.been.calledWith({
-          autoPlay: false,
-          index: 0,
-          direction: 'right'
+        autoPlay: false,
+        index: 0,
+        direction: 'right'
       });
       done();
     });
@@ -539,6 +539,36 @@ describe('Carousel', () => {
       expect(document.getElementById('custom-left')).to.exist;
       expect(document.getElementById('custom-right')).to.exist;
       done();
+    });
+  });
+
+  it('should call onSlideTransitioned with autoPlay true', done => {
+    const onSlideTransitionedStub = sinon.stub();
+    const carousel = renderToJsdom(
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        autoplay={ true }
+        pauseOnHover={ true }
+        onSlideTransitioned={ onSlideTransitionedStub }>
+        <div id='slide1' />
+        <div id='slide2' />
+        <div id='slide3' />
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      const track = document.querySelector('.carousel-viewport');
+      const setHoverState = (bool) => {
+        expect(bool).to.be.true;
+        done();
+      };
+      carousel.setHoverState = setHoverState;
+      carousel.handleMovement(track);
+      expect(onSlideTransitionedStub).to.have.been.calledWith({
+        autoPlay: true,
+        direction: 'right'
+      });
     });
   });
 });
