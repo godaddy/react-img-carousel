@@ -1,3 +1,7 @@
+# 1.6.0 - Feb 2020
+
+***(FEATURE)*** Add `onSlideTransitioned` callback and updated `arrows` prop to support custom arrows
+
 # 1.5.4 - Nov 2019
 
 ***(Enhancement)*** Replaced example application with Storybook

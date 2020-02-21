@@ -283,12 +283,12 @@ export default class Carousel extends Component {
   goToSlide(index, direction, autoSlide = false) {
     const { beforeChange, transitionDuration, transition, onSlideTransitioned } = this.props;
 
-    if(onSlideTransitioned) {
-        onSlideTransitioned({
-            autoPlay: autoSlide,
-            index,
-            direction
-        });
+    if (onSlideTransitioned) {
+      onSlideTransitioned({
+        autoPlay: autoSlide,
+        index,
+        direction
+      });
     }
 
     const { currentSlide } = this.state;
