@@ -25,7 +25,14 @@ export default class Carousel extends Component {
       className: PropTypes.string,
       transition: PropTypes.oneOf(['slide', 'fade']),
       dots: PropTypes.bool,
-      arrows: PropTypes.bool,
+      arrows: PropTypes.oneOfType([
+        PropTypes.bool,
+        PropTypes.shape({
+          left: PropTypes.node.isRequired,
+          right: PropTypes.node.isRequired,
+          className: PropTypes.string
+        })
+      ]),
       infinite: PropTypes.bool,
       children: PropTypes.any,
       viewportWidth: PropTypes.string,
@@ -52,6 +59,7 @@ export default class Carousel extends Component {
       pauseOnHover: PropTypes.bool,
       clickToNavigate: PropTypes.bool,
       dragThreshold: PropTypes.number,
+      onSlideTransitioned: PropTypes.func,
       easing: PropTypes.oneOf([
         'ease',
         'linear',
@@ -270,9 +278,19 @@ export default class Carousel extends Component {
    *
    * @param {Number} index - The slide index to move to.
    * @param {String} direction - The direction to transition, should be 'right' or 'left'.
+   * @param {Boolean} autoSlide - The source of slide transition, should be true for autoPlay and false for user click.
    */
-  goToSlide(index, direction) {
-    const { beforeChange, transitionDuration, transition } = this.props;
+  goToSlide(index, direction, autoSlide = false) {
+    const { beforeChange, transitionDuration, transition, onSlideTransitioned } = this.props;
+
+    if(onSlideTransitioned) {
+        onSlideTransitioned({
+            autoPlay: autoSlide,
+            index,
+            direction
+        });
+    }
+
     const { currentSlide } = this.state;
     if (currentSlide === index) {
       return;
@@ -303,12 +321,13 @@ export default class Carousel extends Component {
 
   /**
    * Transitions to the next slide moving from left to right.
+   * @param {Object} e - The event that calls nextSlide, will be undefined for autoPlay.
    */
-  nextSlide() {
+  nextSlide(e) {
     const { children } = this.props;
     const { currentSlide } = this.state;
     const newIndex = currentSlide < Children.count(children) - 1 ? currentSlide + 1 : 0;
-    this.goToSlide(newIndex, 'right');
+    this.goToSlide(newIndex, 'right', typeof e !== 'object');
   }
 
   /**
@@ -379,7 +398,7 @@ export default class Carousel extends Component {
    */
   render() {
     const { className, viewportWidth, viewportHeight, width, height, dots, infinite,
-      children, slideHeight, transition, style, draggable, easing } = this.props;
+      children, slideHeight, transition, style, draggable, easing, arrows } = this.props;
     const { loading, transitionDuration, dragOffset, currentSlide, leftOffset } = this.state;
     const numSlides = Children.count(children);
     const classes = classnames('carousel', className, {
@@ -456,6 +475,7 @@ export default class Carousel extends Component {
                 nextSlide={ this.nextSlide }
                 prevSlide={ this.prevSlide }
                 goToSlide={ this.goToSlide }
+                arrows={ arrows }
                 infinite={ infinite } />
             ))
           }

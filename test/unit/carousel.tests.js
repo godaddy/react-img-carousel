@@ -1,6 +1,8 @@
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
-import { expect } from 'chai';
+import chai, { expect } from 'chai';
+import sinon from 'sinon';
+import sinonChai from 'sinon-chai';
 import { Simulate } from 'react-dom/test-utils';
 import Carousel from '../../src/index';
 
@@ -8,6 +10,7 @@ function renderToJsdom(component) {
   return render(component, window.document.querySelector('#root'));
 }
 
+chai.use(sinonChai);
 let imagesFetched;
 
 global.Image = class MyImage {
@@ -57,6 +60,7 @@ describe('Carousel', () => {
       expect(dots.length).to.equal(3);
       expect(dots[0].className).to.contain('selected');
       const nextButton = document.querySelector('.carousel-right-arrow');
+      expect(nextButton.className).to.contain('carousel-arrow-default');
       Simulate.click(nextButton);
       expect(dots[0].className).to.not.contain('selected');
       expect(dots[1].className).to.contain('selected');
@@ -65,8 +69,14 @@ describe('Carousel', () => {
   });
 
   it('should navigate to the previous slide when the button is clicked', done => {
+    const onSlideTransitionedStub = sinon.stub();
+
     renderToJsdom(
-      <Carousel initialSlide={ 1 } slideWidth='300px' viewportWidth='300px' infinite={ false }>
+      <Carousel initialSlide={ 1 }
+        slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        onSlideTransitioned={ onSlideTransitionedStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -78,16 +88,28 @@ describe('Carousel', () => {
       expect(dots.length).to.equal(3);
       expect(dots[1].className).to.contain('selected');
       const prevButton = document.querySelector('.carousel-left-arrow');
+      expect(prevButton.className).to.contain('carousel-arrow-default');
       Simulate.click(prevButton);
       expect(dots[1].className).to.not.contain('selected');
       expect(dots[0].className).to.contain('selected');
+      expect(onSlideTransitionedStub).to.have.been.calledWith({
+        autoPlay: false,
+        index: 0,
+        direction: 'left'
+      });
       done();
     });
   });
 
   it('should wrap around from the last to first slide if infinite is true and next is clicked', done => {
+    const onSlideTransitionedStub = sinon.stub();
+
     renderToJsdom(
-      <Carousel initialSlide={ 2 } slideWidth='300px' viewportWidth='300px' infinite={ true }>
+      <Carousel initialSlide={ 2 }
+        slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ true }
+        onSlideTransitioned={ onSlideTransitionedStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -102,6 +124,11 @@ describe('Carousel', () => {
       Simulate.click(nextButton);
       expect(dots[2].className).to.not.contain('selected');
       expect(dots[0].className).to.contain('selected');
+      expect(onSlideTransitionedStub).to.have.been.calledWith({
+        autoPlay: false,
+        index: 0,
+        direction: 'right'
+      });
       done();
     });
   });
@@ -128,8 +155,13 @@ describe('Carousel', () => {
   });
 
   it('should jump directly to a slide when the dot is clicked', done => {
+    const onSlideTransitionedStub = sinon.stub();
+
     renderToJsdom(
-      <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false }>
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        onSlideTransitioned={ onSlideTransitionedStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -143,6 +175,7 @@ describe('Carousel', () => {
       Simulate.click(dots[2]);
       expect(dots[0].className).to.not.contain('selected');
       expect(dots[2].className).to.contain('selected');
+      expect(onSlideTransitionedStub).to.have.been.calledOnce;
       done();
     });
   });
@@ -449,6 +482,93 @@ describe('Carousel', () => {
       expect(document.getElementById('slide8')).to.not.exist;
       expect(document.getElementById('slide9')).to.not.exist;
       expect(document.getElementById('slide10')).to.exist;
+    });
+  });
+
+  it('should render custom arrow', done => {
+    const arrows = {
+      className: 'test-custom-arrow',
+      left: <span id='custom-left'>Left</span>,
+      right: <span id='custom-right'>Right</span>
+    };
+
+    renderToJsdom(
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        arrows={ arrows }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      const prevButton = document.querySelector('.carousel-left-arrow');
+      const nextButton = document.querySelector('.carousel-right-arrow');
+      expect(prevButton.className).to.contain('test-custom-arrow');
+      expect(nextButton.className).to.contain('test-custom-arrow');
+      expect(document.getElementById('custom-left')).to.exist;
+      expect(document.getElementById('custom-right')).to.exist;
+      done();
+    });
+  });
+
+  it('should render custom arrow without className', done => {
+    const arrows = {
+      left: <span id='custom-left'>Left</span>,
+      right: <span id='custom-right'>Right</span>
+    };
+
+    renderToJsdom(
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        arrows={ arrows }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      const prevButton = document.querySelector('.carousel-left-arrow');
+      const nextButton = document.querySelector('.carousel-right-arrow');
+      expect(prevButton.className).to.not.contain('carousel-arrow-default');
+      expect(nextButton.className).to.not.contain('carousel-arrow-default');
+      expect(document.getElementById('custom-left')).to.exist;
+      expect(document.getElementById('custom-right')).to.exist;
+      done();
+    });
+  });
+
+  it('should call onSlideTransitioned with autoPlay true', done => {
+    const onSlideTransitionedStub = sinon.stub();
+    const carousel = renderToJsdom(
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        autoplay={ true }
+        pauseOnHover={ true }
+        onSlideTransitioned={ onSlideTransitionedStub }>
+        <div id='slide1' />
+        <div id='slide2' />
+        <div id='slide3' />
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      const track = document.querySelector('.carousel-viewport');
+      const setHoverState = (bool) => {
+        expect(bool).to.be.true;
+        done();
+      };
+      carousel.setHoverState = setHoverState;
+      carousel.handleMovement(track);
+      expect(onSlideTransitionedStub).to.have.been.calledWith({
+        autoPlay: true,
+        direction: 'right'
+      });
     });
   });
 });
