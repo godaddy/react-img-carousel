@@ -1,3 +1,4 @@
+/* eslint max-statements: 0 */
 import React, { Fragment } from 'react';
 import { render } from 'react-dom';
 import chai, { expect } from 'chai';

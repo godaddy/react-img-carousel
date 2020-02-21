@@ -1,4 +1,5 @@
 import React, { Fragment, useState } from 'react';
+import PropTypes from 'prop-types';
 import Carousel from '../index';
 
 require('../carousel.less');
@@ -52,6 +53,13 @@ const CustomDots = ({ numSlides, selectedIndex, goToSlide, title }) => {
   );
 };
 
+CustomDots.propTypes = {
+  numSlides: PropTypes.number.isRequired,
+  selectedIndex: PropTypes.number,
+  goToSlide: PropTypes.func.isRequired,
+  title: PropTypes.node
+};
+
 export const infiniteWithCellPadding = () =>
   <Carousel width='450px' cellPadding={ 5 }>
     { imgElements }
@@ -97,10 +105,30 @@ export const autoplayWithBackgroundImages = () =>
     arrows={ false }
     autoplay={ true }
   >
-    <div style={{ backgroundImage: 'url(http://picsum.photos/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
-    <div style={{ backgroundImage: 'url(http://picsum.photos/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
-    <div style={{ backgroundImage: 'url(http://picsum.photos/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
-    <div style={{ backgroundImage: 'url(http://picsum.photos/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/600/300)',
+      backgroundSize: 'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/650/300)',
+      backgroundSize: 'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/675/300)',
+      backgroundSize: 'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/700/300)',
+      backgroundSize: 'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
   </Carousel>;
 
 export const backgroundImagesWithFade = () =>
@@ -113,13 +141,55 @@ export const backgroundImagesWithFade = () =>
     autoplay={ true }
     arrows={ true }
   >
-    <div style={{ backgroundImage: 'url(http://picsum.photos/600/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
-    <div style={{ backgroundImage: 'url(http://picsum.photos/650/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
-    <div style={{ backgroundImage: 'url(http://picsum.photos/675/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
-    <div style={{ backgroundImage: 'url(http://picsum.photos/700/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
-    <div style={{ backgroundImage: 'url(http://picsum.photos/750/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
-    <div style={{ backgroundImage: 'url(http://picsum.photos/725/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
-    <div style={{ backgroundImage: 'url(http://picsum.photos/625/300)', backgroundSize: 'cover', height: '100%', width: '100%' }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/600/300)',
+      backgroundSize:
+      'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/650/300)',
+      backgroundSize:
+      'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/675/300)',
+      backgroundSize:
+      'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/700/300)',
+      backgroundSize:
+      'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/750/300)',
+      backgroundSize:
+      'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/725/300)',
+      backgroundSize:
+      'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
+    <div style={{
+      backgroundImage: 'url(http://picsum.photos/625/300)',
+      backgroundSize:
+      'cover',
+      height: '100%',
+      width: '100%'
+    }}/>
   </Carousel>;
 
 export const customDotsComponent = () =>
