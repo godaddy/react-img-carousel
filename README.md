@@ -1,5 +1,7 @@
 # react-img-carousel
 
+[![Greenkeeper badge](https://badges.greenkeeper.io/godaddy/react-img-carousel.svg)](https://greenkeeper.io/)
+
 This component renders a carousel with support for lazy loading, autoplay, infinite scrolling, touch events and more.
 
 Usage:
