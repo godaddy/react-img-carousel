@@ -1,3 +1,7 @@
+/* eslint
+  jsx-a11y/mouse-events-have-key-events: 0,
+  jsx-a11y/no-noninteractive-element-interactions: 0,
+  jsx-a11y/click-events-have-key-events: 0 */
 import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import nth from 'lodash.nth';
@@ -211,6 +215,7 @@ export default class Carousel extends Component {
     const startIndex = currentSlide - Math.floor(imagesToPrefetch / 2);
     const endIndex = startIndex + imagesToPrefetch;
     const pendingImages = [];
+
     const currentImage = slides[currentSlide].props.src;
 
     for (let index = startIndex; index < endIndex; index++) {
@@ -383,8 +388,8 @@ export default class Carousel extends Component {
 
     if (arrows) {
       arr = arr.concat([
-        { component: Arrow, props: { direction: 'left' }},
-        { component: Arrow, props: { direction: 'right' }}
+        { component: Arrow, props: { direction: 'left' } },
+        { component: Arrow, props: { direction: 'right' } }
       ]);
     }
 
