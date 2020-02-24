@@ -65,8 +65,6 @@
     "eslint-plugin-jsx-a11y": "^6.2.3",
     "eslint-plugin-mocha": "^4.12.1",
     "eslint-plugin-react": "^7.14.3",
-    "godaddy-test-tools": "^15.0.0",
-    "gulp": "4.0.2",
     "html-webpack-plugin": "^2.30.1",
     "jsdom": "^16.2.0",
     "less": "^2.7.3",
