@@ -20,7 +20,7 @@ const IMAGES = [
   'http://picsum.photos/325/300'
 ];
 
-const imgElements = IMAGES.map((image, index) => <img src={ image } key={ index } />);
+const imgElements = IMAGES.map((image, index) => <img src={ image } key={ index } alt='A sample' />);
 
 const CustomDots = ({ numSlides, selectedIndex, goToSlide, title }) => {
   const dots = [];
@@ -83,8 +83,8 @@ export const fadeTransition = () =>
 
 export const infiniteWithOnly2Slides = () =>
   <Carousel width='450px' arrows={ false } slideHeight='300px'>
-    <img src='http://picsum.photos/325/300'/>
-    <img src='http://picsum.photos/350/300'/>
+    <img src='http://picsum.photos/325/300' alt='A sample' />
+    <img src='http://picsum.photos/350/300' alt='A sample' />
   </Carousel>;
 
 export const infiniteWithOnly1Slide = () =>
@@ -94,7 +94,7 @@ export const infiniteWithOnly1Slide = () =>
     arrows={ false }
     dots={ false }
   >
-    <img src='http://picsum.photos/325/300'/>
+    <img src='http://picsum.photos/325/300' alt='A sample' />
   </Carousel>;
 
 export const autoplayWithBackgroundImages = () =>
@@ -220,7 +220,7 @@ export const addImages = () => {
         controls={ [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }] }
       >
         {
-          images.map((image, index) => <img key={ index } src={ image }/>)
+          images.map((image, index) => <img key={ index } src={ image } alt='A sample' />)
         }
       </Carousel>
       <button onClick={ addImage }>Add Image</button>

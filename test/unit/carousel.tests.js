@@ -1,15 +1,11 @@
-/* eslint max-statements: 0 */
-import React, { Fragment } from 'react';
-import { render } from 'react-dom';
+/* eslint max-statements: 0, jsx-a11y/alt-text: 0 */
+import React from 'react';
+import { mount } from 'enzyme';
 import chai, { expect } from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
-import { Simulate } from 'react-dom/test-utils';
 import Carousel from '../../src/index';
 
-function renderToJsdom(component) {
-  return render(component, window.document.querySelector('#root'));
-}
 
 chai.use(sinonChai);
 let imagesFetched;
@@ -22,12 +18,19 @@ global.Image = class MyImage {
 };
 
 describe('Carousel', () => {
+  let tree;
+  function renderToJsdom(component) {
+    tree = mount(component);
+    return tree.instance();
+  }
+
   beforeEach(() => {
     imagesFetched = [];
   });
 
   afterEach(() => {
-    renderToJsdom(<div></div>);
+    tree && tree.unmount();
+    tree = null;
   });
 
   it('should render a carousel with the specified index selected', done => {
@@ -40,9 +43,9 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
+      const dots = tree.find('.carousel-dot');
       expect(dots.length).to.equal(3);
-      expect(dots[2].className).to.contain('selected');
+      expect(dots.at(2).prop('className')).to.contain('selected');
       done();
     });
   });
@@ -57,14 +60,15 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
+      let dots = tree.find('.carousel-dot');
       expect(dots.length).to.equal(3);
-      expect(dots[0].className).to.contain('selected');
-      const nextButton = document.querySelector('.carousel-right-arrow');
-      expect(nextButton.className).to.contain('carousel-arrow-default');
-      Simulate.click(nextButton);
-      expect(dots[0].className).to.not.contain('selected');
-      expect(dots[1].className).to.contain('selected');
+      expect(dots.at(0).prop('className')).to.contain('selected');
+      const nextButton = tree.find('.carousel-right-arrow');
+      expect(nextButton.prop('className')).to.contain('carousel-arrow-default');
+      nextButton.simulate('click');
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(0).prop('className')).to.not.contain('selected');
+      expect(dots.at(1).prop('className')).to.contain('selected');
       done();
     });
   });
@@ -85,14 +89,15 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
+      let dots = tree.find('.carousel-dot');
       expect(dots.length).to.equal(3);
-      expect(dots[1].className).to.contain('selected');
-      const prevButton = document.querySelector('.carousel-left-arrow');
-      expect(prevButton.className).to.contain('carousel-arrow-default');
-      Simulate.click(prevButton);
-      expect(dots[1].className).to.not.contain('selected');
-      expect(dots[0].className).to.contain('selected');
+      expect(dots.at(1).prop('className')).to.contain('selected');
+      const prevButton = tree.find('.carousel-left-arrow');
+      expect(prevButton.prop('className')).to.contain('carousel-arrow-default');
+      prevButton.simulate('click');
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(1).prop('className')).to.not.contain('selected');
+      expect(dots.at(0).prop('className')).to.contain('selected');
       expect(onSlideTransitionedStub).to.have.been.calledWith({
         autoPlay: false,
         index: 0,
@@ -118,13 +123,14 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
+      let dots = tree.find('.carousel-dot');
       expect(dots.length).to.equal(3);
-      expect(dots[2].className).to.contain('selected');
-      const nextButton = document.querySelector('.carousel-right-arrow');
-      Simulate.click(nextButton);
-      expect(dots[2].className).to.not.contain('selected');
-      expect(dots[0].className).to.contain('selected');
+      expect(dots.at(2).prop('className')).to.contain('selected');
+      const nextButton = tree.find('.carousel-right-arrow');
+      nextButton.simulate('click');
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(2).prop('className')).to.not.contain('selected');
+      expect(dots.at(0).prop('className')).to.contain('selected');
       expect(onSlideTransitionedStub).to.have.been.calledWith({
         autoPlay: false,
         index: 0,
@@ -144,13 +150,14 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
+      let dots = tree.find('.carousel-dot');
       expect(dots.length).to.equal(3);
-      expect(dots[2].className).to.contain('selected');
-      const nextButton = document.querySelector('.carousel-right-arrow');
-      Simulate.click(nextButton);
-      expect(dots[2].className).to.not.contain('selected');
-      expect(dots[0].className).to.contain('selected');
+      expect(dots.at(2).prop('className')).to.contain('selected');
+      const nextButton = tree.find('.carousel-right-arrow');
+      nextButton.simulate('click');
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(2).prop('className')).to.not.contain('selected');
+      expect(dots.at(0).prop('className')).to.contain('selected');
       done();
     });
   });
@@ -170,12 +177,13 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
+      let dots = tree.find('.carousel-dot');
       expect(dots.length).to.equal(3);
-      expect(dots[0].className).to.contain('selected');
-      Simulate.click(dots[2]);
-      expect(dots[0].className).to.not.contain('selected');
-      expect(dots[2].className).to.contain('selected');
+      expect(dots.at(0).prop('className')).to.contain('selected');
+      dots.at(2).simulate('click');
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(0).prop('className')).to.not.contain('selected');
+      expect(dots.at(2).prop('className')).to.contain('selected');
       expect(onSlideTransitionedStub).to.have.been.calledOnce;
       done();
     });
@@ -191,13 +199,17 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
+      let dots = tree.find('.carousel-dot');
       expect(dots.length).to.equal(3);
-      expect(dots[0].className).to.contain('selected');
-      Simulate.click(dots[0]);
-      Simulate.click(dots[2]);
-      expect(dots[0].className).to.not.contain('selected');
-      expect(dots[2].className).to.contain('selected');
+      expect(dots.at(0).prop('className')).to.contain('selected');
+      dots.at(0).simulate('click');
+
+      dots = tree.find('.carousel-dot');
+      dots.at(2).simulate('click');
+
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(0).prop('className')).to.not.contain('selected');
+      expect(dots.at(2).prop('className')).to.contain('selected');
       done();
     });
   });
@@ -232,16 +244,18 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
-      const track = document.querySelector('.carousel-track');
+      let dots = tree.find('.carousel-dot');
+      const track = tree.find('.carousel-track');
       expect(dots.length).to.equal(3);
-      expect(dots[0].className).to.contain('selected');
-      Simulate.mouseDown(track, { clientX: 0 });
+      expect(dots.at(0).prop('className')).to.contain('selected');
+      track.simulate('mouseDown', { clientX: 0 });
       carousel.onMouseMove({ preventDefault: () => {}, clientX: -150 });
       carousel.stopDragging();
+      tree.update();
       setImmediate(() => {
-        expect(dots[0].className).to.not.contain('selected');
-        expect(dots[1].className).to.contain('selected');
+        dots = tree.find('.carousel-dot');
+        expect(dots.at(0).prop('className')).to.not.contain('selected');
+        expect(dots.at(1).prop('className')).to.contain('selected');
         done();
       });
     });
@@ -257,7 +271,7 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const track = document.querySelector('.carousel-viewport');
+      const track = tree.find('.carousel-viewport');
       const setHoverState = (bool) => {
         expect(bool).to.be.true;
         done();
@@ -277,16 +291,18 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
-      const track = document.querySelector('.carousel-track');
+      let dots = tree.find('.carousel-dot');
+      const track = tree.find('.carousel-track');
       expect(dots.length).to.equal(3);
-      expect(dots[0].className).to.contain('selected');
-      Simulate.mouseDown(track, { clientX: 0 });
+      expect(dots.at(0).prop('className')).to.contain('selected');
+      track.simulate('mouseDown', { clientX: 0 });
       carousel.onMouseMove({ preventDefault: () => {}, clientX: 150 });
       carousel.stopDragging();
+      tree.update();
       setImmediate(() => {
-        expect(dots[0].className).to.not.contain('selected');
-        expect(dots[2].className).to.contain('selected');
+        dots = tree.find('.carousel-dot');
+        expect(dots.at(0).prop('className')).to.not.contain('selected');
+        expect(dots.at(2).prop('className')).to.contain('selected');
         done();
       });
     });
@@ -302,17 +318,19 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const dots = document.querySelectorAll('.carousel-dot');
-      const track = document.querySelector('.carousel-track');
+      let dots = tree.find('.carousel-dot');
+      const track = tree.find('.carousel-track');
       expect(dots.length).to.equal(3);
-      expect(dots[0].className).to.contain('selected');
-      Simulate.touchStart(track, { touches: [{ screenX: 0, screenY: 0 }] });
+      expect(dots.at(0).prop('className')).to.contain('selected');
+      track.simulate('touchStart', { touches: [{ screenX: 0, screenY: 0 }] });
       carousel.onTouchMove({ preventDefault: () => {}, touches: [{ screenX: -150, screenY: 0 }] });
       carousel.stopDragging();
+      tree.update();
 
       setImmediate(() => {
-        expect(dots[0].className).to.not.contain('selected');
-        expect(dots[1].className).to.contain('selected');
+        dots = tree.find('.carousel-dot');
+        expect(dots.at(0).prop('className')).to.not.contain('selected');
+        expect(dots.at(1).prop('className')).to.contain('selected');
         done();
       });
     });
@@ -321,24 +339,25 @@ describe('Carousel', () => {
   it('should update the selected index if the selected slide is removed', () => {
     renderToJsdom(
       <Carousel initialSlide={ 2 } slideWidth='300px' viewportWidth='300px' infinite={ false }>
-        <div id='slide1'/>
-        <div id='slide2'/>
-        <div id='slide3'/>
+        <div id='slide1' key='slide1' />
+        <div id='slide2' key='slide2' />
+        <div id='slide3' key='slide3' />
       </Carousel>
     );
 
-    let dots = document.querySelectorAll('.carousel-dot');
+    let dots = tree.find('.carousel-dot');
     expect(dots.length).to.equal(3);
-    expect(dots[2].className).to.contain('selected');
-    renderToJsdom(
-      <Carousel initialSlide={ 2 } slideWidth='300px' viewportWidth='300px' infinite={ false }>
-        <div id='slide1'/>
-        <div id='slide2'/>
-      </Carousel>
-    );
-    dots = document.querySelectorAll('.carousel-dot');
+    expect(dots.at(2).prop('className')).to.contain('selected');
+
+    tree.setProps({
+      children: [
+        <div id='slide1' key='slide1' />,
+        <div id='slide2' key='slide2' />
+      ]
+    });
+    dots = tree.find('.carousel-dot');
     expect(dots.length).to.equal(2);
-    expect(dots[1].className).to.contain('selected');
+    expect(dots.at(1).prop('className')).to.contain('selected');
   });
 
   it('should apply passed inline styling', () => {
@@ -370,25 +389,25 @@ describe('Carousel', () => {
       </Carousel>
     );
 
-    const container = document.querySelector('.carousel');
-    expect(container.style.opacity).to.equal('0.5');
-    const innerContainer = document.querySelector('.carousel-container-inner');
-    expect(innerContainer.style.opacity).to.equal('0.6');
-    const viewport = document.querySelector('.carousel-viewport');
-    expect(viewport.style.opacity).to.equal('0.7');
-    const track = document.querySelector('.carousel-track');
-    expect(track.style.opacity).to.equal('0.8');
-    const slide = document.querySelector('.carousel-slide');
-    expect(slide.style.opacity).to.equal('0.9');
-    const selectedSlide = document.querySelector('.carousel-slide-selected');
-    expect(selectedSlide.style.opacity).to.equal('1');
+    const container = tree.find('.carousel');
+    expect(container.prop('style').opacity).to.equal(0.5);
+    const innerContainer = tree.find('.carousel-container-inner');
+    expect(innerContainer.prop('style').opacity).to.equal(0.6);
+    const viewport = tree.find('.carousel-viewport');
+    expect(viewport.prop('style').opacity).to.equal(0.7);
+    const track = tree.find('.carousel-track');
+    expect(track.prop('style').opacity).to.equal(0.8);
+    const slide = tree.find('.carousel-slide');
+    expect(slide.at(0).prop('style').opacity).to.equal(0.9);
+    const selectedSlide = tree.find('.carousel-slide-selected');
+    expect(selectedSlide.prop('style').opacity).to.equal(1);
   });
 
   it('should have transitions with the given duration and easing', done => {
     let slidingCarousel;
 
-    renderToJsdom(
-      <Fragment>
+    tree = mount(
+      <div>
         <Carousel className='sliding-carousel' slideWidth='300px' viewportWidth='300px' infinite={ false }
           transition='slide' transitionDuration={ 300 } easing='ease-out' ref={ el => { slidingCarousel = el; } }>
           <div id='slide1'/>
@@ -401,17 +420,17 @@ describe('Carousel', () => {
           <div id='slide5'/>
           <div id='slide6'/>
         </Carousel>
-      </Fragment>
+      </div>
     );
 
     setImmediate(() => {
       slidingCarousel.goToSlide(1);
-      const track = document.querySelector('.sliding-carousel .carousel-track');
-      expect(track.style.transition).to.equal('transform 300ms ease-out');
+      tree.update();
+      const track = tree.find('.sliding-carousel .carousel-track');
+      expect(track.prop('style').transition).to.equal('transform 300ms ease-out');
 
-      const slide = document.querySelector('.fading-carousel .carousel-slide');
-      expect(slide.style.transition).to.equal('opacity 700ms linear');
-
+      const slide = tree.find('.fading-carousel .carousel-slide').at(0);
+      expect(slide.prop('style').transition).to.equal('opacity 700ms linear');
       done();
     });
   });
@@ -438,18 +457,18 @@ describe('Carousel', () => {
           <div id='slide10'/>
         </Carousel>
       );
-      const loadingSlides = document.querySelectorAll('.carousel-slide.carousel-slide-loading');
+      const loadingSlides = tree.find('.carousel-slide.carousel-slide-loading');
       expect(loadingSlides.length).to.equal(7);
-      expect(document.getElementById('slide1')).to.not.exist;
-      expect(document.getElementById('slide2')).to.exist;
-      expect(document.getElementById('slide3')).to.exist;
-      expect(document.getElementById('slide4')).to.exist;
-      expect(document.getElementById('slide5')).to.not.exist;
-      expect(document.getElementById('slide6')).to.not.exist;
-      expect(document.getElementById('slide7')).to.not.exist;
-      expect(document.getElementById('slide8')).to.not.exist;
-      expect(document.getElementById('slide9')).to.not.exist;
-      expect(document.getElementById('slide10')).to.not.exist;
+      expect(tree.find('#slide1').exists()).to.be.false;
+      expect(tree.find('#slide2').exists()).to.be.true;
+      expect(tree.find('#slide3').exists()).to.be.true;
+      expect(tree.find('#slide4').exists()).to.be.true;
+      expect(tree.find('#slide5').exists()).to.be.false;
+      expect(tree.find('#slide6').exists()).to.be.false;
+      expect(tree.find('#slide7').exists()).to.be.false;
+      expect(tree.find('#slide8').exists()).to.be.false;
+      expect(tree.find('#slide9').exists()).to.be.false;
+      expect(tree.find('#slide10').exists()).to.be.false;
     });
 
     it('should render the correct slides when infinite is true and the selected slide is near the end', () => {
@@ -473,16 +492,16 @@ describe('Carousel', () => {
           <div id='slide10'/>
         </Carousel>
       );
-      expect(document.getElementById('slide1')).to.exist;
-      expect(document.getElementById('slide2')).to.exist;
-      expect(document.getElementById('slide3')).to.not.exist;
-      expect(document.getElementById('slide4')).to.not.exist;
-      expect(document.getElementById('slide5')).to.not.exist;
-      expect(document.getElementById('slide6')).to.not.exist;
-      expect(document.getElementById('slide7')).to.not.exist;
-      expect(document.getElementById('slide8')).to.not.exist;
-      expect(document.getElementById('slide9')).to.not.exist;
-      expect(document.getElementById('slide10')).to.exist;
+      expect(tree.find('#slide1').exists()).to.be.true;
+      expect(tree.find('#slide2').exists()).to.be.true;
+      expect(tree.find('#slide3').exists()).to.be.false;
+      expect(tree.find('#slide4').exists()).to.be.false;
+      expect(tree.find('#slide5').exists()).to.be.false;
+      expect(tree.find('#slide6').exists()).to.be.false;
+      expect(tree.find('#slide7').exists()).to.be.false;
+      expect(tree.find('#slide8').exists()).to.be.false;
+      expect(tree.find('#slide9').exists()).to.be.false;
+      expect(tree.find('#slide10').exists()).to.be.true;
     });
   });
 
@@ -505,12 +524,12 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const prevButton = document.querySelector('.carousel-left-arrow');
-      const nextButton = document.querySelector('.carousel-right-arrow');
-      expect(prevButton.className).to.contain('test-custom-arrow');
-      expect(nextButton.className).to.contain('test-custom-arrow');
-      expect(document.getElementById('custom-left')).to.exist;
-      expect(document.getElementById('custom-right')).to.exist;
+      const prevButton = tree.find('.carousel-left-arrow');
+      const nextButton = tree.find('.carousel-right-arrow');
+      expect(prevButton.prop('className')).to.contain('test-custom-arrow');
+      expect(nextButton.prop('className')).to.contain('test-custom-arrow');
+      expect(tree.find('#custom-left')).to.exist;
+      expect(tree.find('#custom-right')).to.exist;
       done();
     });
   });
@@ -533,12 +552,12 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      const prevButton = document.querySelector('.carousel-left-arrow');
-      const nextButton = document.querySelector('.carousel-right-arrow');
-      expect(prevButton.className).to.not.contain('carousel-arrow-default');
-      expect(nextButton.className).to.not.contain('carousel-arrow-default');
-      expect(document.getElementById('custom-left')).to.exist;
-      expect(document.getElementById('custom-right')).to.exist;
+      const prevButton = tree.find('.carousel-left-arrow');
+      const nextButton = tree.find('.carousel-right-arrow');
+      expect(prevButton.prop('className')).to.not.contain('carousel-arrow-default');
+      expect(nextButton.prop('className')).to.not.contain('carousel-arrow-default');
+      expect(tree.find('#custom-left')).to.exist;
+      expect(tree.find('#custom-right')).to.exist;
       done();
     });
   });
@@ -548,8 +567,10 @@ describe('Carousel', () => {
     const carousel = renderToJsdom(
       <Carousel slideWidth='300px'
         viewportWidth='300px'
+        lazyLoad={ false }
         infinite={ false }
         autoplay={ true }
+        autoplaySpeed={ 10 }
         pauseOnHover={ true }
         onSlideTransitioned={ onSlideTransitionedStub }>
         <div id='slide1' />
@@ -558,18 +579,18 @@ describe('Carousel', () => {
       </Carousel>
     );
 
-    setImmediate(() => {
-      const track = document.querySelector('.carousel-viewport');
-      const setHoverState = (bool) => {
-        expect(bool).to.be.true;
-        done();
-      };
+    setTimeout(() => {
+      const track = tree.find('.carousel-viewport');
+      const setHoverState = sinon.spy();
       carousel.setHoverState = setHoverState;
       carousel.handleMovement(track);
-      expect(onSlideTransitionedStub).to.have.been.calledWith({
+
+      expect(setHoverState).to.have.been.calledWith(true);
+      expect(onSlideTransitionedStub).to.have.been.calledWithMatch({
         autoPlay: true,
         direction: 'right'
       });
-    });
+      done();
+    }, 20);
   });
 });
