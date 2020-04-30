@@ -177,6 +177,21 @@ export default class Carousel extends Component {
     }
 
     window.addEventListener('resize', this.calcLeftOffset, false);
+
+    if (window.IntersectionObserver) {
+      this._observer = new window.IntersectionObserver(entries => {
+        if (!this.props.autoplay) {
+          return;
+        }
+
+        if (entries && entries[0] && entries[0].isIntersecting) {
+          this.startAutoplay();
+        } else {
+          clearTimeout(this._autoplayTimer);
+        }
+      });
+      this._observer.observe(this._containerRef);
+    }
   }
 
   componentWillUnmount() {
@@ -187,6 +202,7 @@ export default class Carousel extends Component {
     clearTimeout(this._autoplayTimer);
     clearTimeout(this._retryTimer);
     clearTimeout(this._initialLoadTimer);
+    this._observer && this._observer.unobserve(this._containerRef);
     this._isMounted = false;
   }
 
@@ -436,7 +452,7 @@ export default class Carousel extends Component {
     const controls = this.getControls();
 
     return (
-      <div className={ classes } style={ containerStyle }>
+      <div className={ classes } style={ containerStyle } ref={ c => { this._containerRef = c; } }>
         <div className='carousel-container-inner' style={ innerContainerStyle }>
           {
             controls.filter(Control => {
