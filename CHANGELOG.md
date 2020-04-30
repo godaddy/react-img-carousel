@@ -1,3 +1,7 @@
+# 1.7.0 - Apr 2020
+
+***(FEATURE)*** Add support for IntersectionObserver and disable autoplay functionality when the carousel is outside the viewport
+
 # 1.6.0 - Feb 2020
 
 ***(FEATURE)*** Add `onSlideTransitioned` callback and updated `arrows` prop to support custom arrows
