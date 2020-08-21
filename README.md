@@ -11,9 +11,9 @@ you will need to use some kind of module loader/bundler like Webpack or Browseri
 ```js
 import React from 'react';
 import { render } from 'react-dom';
-import Carousel from 'react-carousel';
+import Carousel from 'react-img-carousel';
 
-require('react-carousel/lib/carousel.css');
+require('react-img-carousel/lib/carousel.css');
 
 render(
   <Carousel viewportWidth="400px" cellPadding={ 5 }>
