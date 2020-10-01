@@ -1,4 +1,4 @@
-/* eslint
+/*
   jsx-a11y/mouse-events-have-key-events: 0,
   jsx-a11y/no-noninteractive-element-interactions: 0,
   jsx-a11y/click-events-have-key-events: 0 */
@@ -471,6 +471,7 @@ export default class Carousel extends Component {
           }
           <div className='carousel-viewport' ref={ v => { this._viewport = v; } } style={ viewportStyle }>
             <ul
+              role='tablist'
               className='carousel-track'
               style={ trackStyle }
               ref={ t => { this._track = t; } }
@@ -566,6 +567,8 @@ export default class Carousel extends Component {
 
         return (
           <li
+            role='tab'
+            aria-selected={ index === currentSlide }
             key={ key }
             style={ slideStyle }
             data-index={ index }
