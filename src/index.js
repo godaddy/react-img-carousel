@@ -123,17 +123,17 @@ export default class Carousel extends Component {
     autobind(this);
   }
 
-  // eslint-disable-next-line
-  UNSAFE_componentWillReceiveProps(newProps) {
-    const { currentSlide } = this.state;
-    const numChildren = Children.count(newProps.children);
+  static getDerivedStateFromProps(props, state) {
+    const { currentSlide } = state;
+    const numChildren = Children.count(props.children);
 
     if (currentSlide >= numChildren) {
       // The currentSlide index is no longer valid, so move to the last valid index
-      this.setState({
+      return {
         currentSlide: numChildren ? numChildren - 1 : 0
-      });
+      };
     }
+    return null;
   }
 
   componentDidUpdate(prevProps, prevState) {
