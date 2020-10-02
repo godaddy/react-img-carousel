@@ -1,6 +1,3 @@
-/*
-  jsx-a11y/mouse-events-have-key-events: 0,
-  jsx-a11y/click-events-have-key-events: 0 */
 import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import nth from 'lodash.nth';

@@ -593,4 +593,10 @@ describe('Carousel', () => {
       done();
     }, 20);
   });
+
+  describe('a11y', () => {
+    it('current slide has aria-selected');
+    it('carousel-track calls onMouseOver for onFocus');
+    it('calls handleSlideClick when pressing tab + enter from current slide');
+  })
 });
