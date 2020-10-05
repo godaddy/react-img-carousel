@@ -563,7 +563,7 @@ export default class Carousel extends Component {
         }
 
         return (
-          // key handler is not needed due to the tab role - tab + enter 
+          // key handler is not needed due to the tab role - tab + enter
           // performs the same function as onClick
           // eslint-disable-next-line jsx-a11y/click-events-have-key-events
           <li

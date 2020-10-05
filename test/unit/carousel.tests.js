@@ -594,9 +594,46 @@ describe('Carousel', () => {
     }, 20);
   });
 
-  describe('a11y', () => {
-    it('current slide has aria-selected');
-    it('carousel-track calls onMouseOver for onFocus');
-    it('calls handleSlideClick when pressing tab + enter from current slide');
-  })
+  describe.only('a11y', () => {
+    it('current slide has aria-selected', done => {
+      renderToJsdom(
+        <Carousel initialSlide={ 2 } slideWidth='300px' viewportWidth='300px' infinite={ false }>
+          <div id='slide1'/>
+          <div id='slide2'/>
+          <div id='slide3'/>
+        </Carousel>
+      );
+
+      setImmediate(() => {
+        const current = tree.find('.carousel-slide-selected');
+        const slides = tree.find('.carousel-slide');
+        slides.forEach((slide, i) => {
+          if (i !== 2) {
+            expect(slide.prop('aria-selected')).to.be.false;
+          }
+        });
+        expect(current.prop('aria-selected')).to.be.true;
+        done();
+      });
+    });
+
+    it('carousel-track calls onMouseOver for onFocus', done => {
+      const carousel = renderToJsdom(
+        <Carousel initialSlide={ 1 } slideWidth='300px' viewportWidth='300px' infinite={ false }>
+          <div id='slide1'/>
+          <div id='slide2'/>
+          <div id='slide3'/>
+        </Carousel>
+      );
+
+      setImmediate(() => {
+        const onMouseOver = sinon.spy();
+        carousel.onMouseOver = onMouseOver;
+        const track = tree.find('.carousel-track');
+        track.prop('onFocus')(() => {});
+        expect(onMouseOver).to.have.been.called();
+        done();
+      });
+    });
+  });
 });
