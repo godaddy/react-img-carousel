@@ -594,7 +594,7 @@ describe('Carousel', () => {
     }, 20);
   });
 
-  describe.only('a11y', () => {
+  describe('a11y', () => {
     it('current slide has aria-selected', done => {
       renderToJsdom(
         <Carousel initialSlide={ 2 } slideWidth='300px' viewportWidth='300px' infinite={ false }>
@@ -617,8 +617,8 @@ describe('Carousel', () => {
       });
     });
 
-    it('carousel-track calls onMouseOver for onFocus', done => {
-      const carousel = renderToJsdom(
+    it('carousel-track has onFocus property', done => {
+      renderToJsdom(
         <Carousel initialSlide={ 1 } slideWidth='300px' viewportWidth='300px' infinite={ false }>
           <div id='slide1'/>
           <div id='slide2'/>
@@ -627,11 +627,8 @@ describe('Carousel', () => {
       );
 
       setImmediate(() => {
-        const onMouseOver = sinon.spy();
-        carousel.onMouseOver = onMouseOver;
         const track = tree.find('.carousel-track');
-        track.prop('onFocus')(() => {});
-        expect(onMouseOver).to.have.been.called();
+        expect(track.prop('onFocus')).to.be.a('function');
         done();
       });
     });
