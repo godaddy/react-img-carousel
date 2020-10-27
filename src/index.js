@@ -1,7 +1,3 @@
-/* eslint
-  jsx-a11y/mouse-events-have-key-events: 0,
-  jsx-a11y/no-noninteractive-element-interactions: 0,
-  jsx-a11y/click-events-have-key-events: 0 */
 import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
 import nth from 'lodash.nth';
@@ -471,6 +467,7 @@ export default class Carousel extends Component {
           }
           <div className='carousel-viewport' ref={ v => { this._viewport = v; } } style={ viewportStyle }>
             <ul
+              role='tablist'
               className='carousel-track'
               style={ trackStyle }
               ref={ t => { this._track = t; } }
@@ -478,6 +475,7 @@ export default class Carousel extends Component {
               onMouseDown={ this.onMouseDown }
               onMouseLeave={ this.onMouseLeave }
               onMouseOver={ this.onMouseOver }
+              onFocus={ this.onMouseOver }
               onMouseEnter={ this.onMouseEnter }
               onTouchStart={ this.onTouchStart }
             >
@@ -565,7 +563,12 @@ export default class Carousel extends Component {
         }
 
         return (
+          // key handler is not needed due to the tab role - tab + enter
+          // performs the same function as onClick
+          // eslint-disable-next-line jsx-a11y/click-events-have-key-events
           <li
+            role='tab'
+            aria-selected={ index === currentSlide }
             key={ key }
             style={ slideStyle }
             data-index={ index }
