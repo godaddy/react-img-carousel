@@ -3,17 +3,25 @@ jobs:
   build:
     docker:
       - image: circleci/node:10
-jobs:
-  build-and-test:
-    executor:
-      name: node/default
+
+    working_directory: ~/repo
+
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run: npm install
-            - run: npm test
-workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+
+      # Download and cache dependencies
+      - restore_cache:
+          keys:
+          - v1-dependencies-{{ checksum "package.json" }}
+          # fallback to using the latest cache if no exact match is found
+          - v1-dependencies-
+
+      - run: npm install
+
+      - run: npm run test
+
+      # Save the cache for later use
+      - save_cache:
+          paths:
+            - node_modules
+          key: v1-dependencies-{{ checksum "package.json" }}
