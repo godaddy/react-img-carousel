@@ -121,7 +121,7 @@ Optional callback which will be invoked before a slide change occurs. Should hav
 #### afterChange
 `PropTypes.func`
 
-Optional callback which will be invoked after a slide change occurs. Should have method signature
+Optional callback which will be invoked after a slide change occurs. Should have a method signature
 `function(newIndex)`
 
 #### style
@@ -136,7 +136,7 @@ PropTypes.shape({
 })
 ```
 
-If your app is using inline styles, you can use this property to specify inline styling for the individual carousel
+If your app is using inline styles, you can use this property to specify/define inline styling for the individual carousel
 elements. The properties correspond to the DOM elements with class names `carousel`, `carousel-container-inner`,
 `carousel-viewport`, `carousel-track`, `carousel-slide`, and `carousel-slide-selected` respectively. If both `slide`
 and `selectedSlide` are specified, both will be applied with the latter overriding the former.
