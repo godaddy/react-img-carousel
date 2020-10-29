@@ -53,7 +53,7 @@ Determines the height of the outermost carousel div. Defaults to `auto`.
 #### viewportWidth
 `PropTypes.string`
 
-Determines the width of the viewport which will show the images. If you don't want the previous/next images to be
+Determines the width of the viewport which will show the images that you added. If you don't want the previous/next images to be
 visible, this width should match the `slideWidth` prop or the width of the child images. Defaults to `100%`.
 
 #### viewportHeight
