@@ -1,6 +1,6 @@
 # react-img-carousel
 
-This component renders a carousel with support for lazy loading, autoplay, infinite scrolling, touch events and more.
+This component renders to a carousel with support for lazy loading, autoplay, infinite scrolling, touch events and more.
 
 Usage:
 ----------------
@@ -26,7 +26,7 @@ render(
 
 ```
 
-Running test page:
+Running The test page:
 ----------------
 
 Clone the repository, run `npm i` and then run `npm start` and point your browser to
