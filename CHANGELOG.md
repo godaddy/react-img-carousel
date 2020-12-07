@@ -1,6 +1,6 @@
 # 2.0.0 - Dec 2020
 
-***(Enhancement)*** Breaking change to make lodash a peer dependency and optimize the bundle for modern browsers
+***(Enhancement)*** Breaking change to optimize the bundle for modern browsers (may break legacy browser support)
 
 # 1.7.0 - Apr 2020
 

@@ -4,11 +4,11 @@
   jsx-a11y/click-events-have-key-events: 0 */
 import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import { nth, merge } from 'lodash';
 import ms from 'ms';
 import classnames from 'classnames';
 import { Dots, Arrow } from './controls';
 import areChildImagesEqual from './utils/areChildImagesEqual';
+import nth from './utils/nth';
 
 const SELECTED_CLASS = 'carousel-slide-selected';
 const LOADING_CLASS = 'carousel-slide-loading';
@@ -245,9 +245,10 @@ export default class Carousel extends Component {
         img.onload = img.onerror = () => {
           if (this._isMounted) {
             this.setState({
-              loadedImages: merge({}, this.state.loadedImages, {
+              loadedImages: {
+                ...this.state.loadedImages,
                 [image]: { width: img.width || 'auto', height: img.height || 'auto' }
-              })
+              }
             }, () => {
               if (image === currentImage) {
                 this.handleInitialLoad();
@@ -422,26 +423,26 @@ export default class Carousel extends Component {
     const classes = classnames('carousel', className, {
       loaded: !loading
     });
-    const containerStyle = merge({}, style.container || {}, {
+    const containerStyle = { ...(style.container || {}),
       width,
       height
-    });
-    const innerContainerStyle = merge({}, style.containerInner || {}, {
+    };
+    const innerContainerStyle = { ...(style.containerInner || {}),
       width,
       height,
       marginBottom: dots ? '20px' : 0
-    });
-    const viewportStyle = merge({}, style.viewport || {}, {
+    };
+    const viewportStyle = { ...(style.viewport || {}),
       width: viewportWidth,
       height: viewportHeight || slideHeight || 'auto'
-    });
-    let trackStyle = merge({}, style.track || {});
+    };
+    let trackStyle = { ...style.track };
     if (transition !== 'fade') {
       const leftPos = leftOffset + dragOffset;
-      trackStyle = merge({}, trackStyle, {
+      trackStyle = { ...trackStyle,
         transform: `translateX(${leftPos}px)`,
         transition: transitionDuration ? `transform ${ms('' + transitionDuration)}ms ${easing}` : 'none'
-      });
+      };
     }
     if (!draggable) {
       trackStyle.touchAction = 'auto';
@@ -542,13 +543,13 @@ export default class Carousel extends Component {
         slideStyle.minWidth = slideWidth; // Safari 9 bug
       }
 
-      slideStyle = merge({}, slideStyle, style.slide || {}, index === currentSlide ? style.selectedSlide || {} : {});
+      slideStyle = { ...slideStyle, ...(style.slide || {}), ...(index === currentSlide ? style.selectedSlide || {} : {}) };
 
-      const loadingSlideStyle = merge({}, slideStyle || {}, {
+      const loadingSlideStyle = { ...(slideStyle || {}),
         marginLeft: slideStyle.marginLeft,
         width: slideWidth || slideDimensions.width,
         height: slideHeight || slideDimensions.height
-      });
+      };
       const slidesToRender = this.getIndicesToRender();
 
       // Only render the actual slide content if lazy loading is disabled, the image is already loaded, or we
