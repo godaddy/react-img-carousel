@@ -1,3 +1,7 @@
+# 2.0.0 - Dec 2020
+
+***(Enhancement)*** Breaking change to make lodash a peer dependency and optimize the bundle for modern browsers
+
 # 1.7.0 - Apr 2020
 
 ***(FEATURE)*** Add support for IntersectionObserver and disable autoplay functionality when the carousel is outside the viewport
