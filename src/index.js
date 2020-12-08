@@ -4,13 +4,11 @@
   jsx-a11y/click-events-have-key-events: 0 */
 import React, { Component, Children, cloneElement } from 'react';
 import PropTypes from 'prop-types';
-import nth from 'lodash.nth';
-import merge from 'lodash.merge';
 import ms from 'ms';
-import autobind from 'class-autobind';
 import classnames from 'classnames';
 import { Dots, Arrow } from './controls';
 import areChildImagesEqual from './utils/areChildImagesEqual';
+import nth from './utils/nth';
 
 const SELECTED_CLASS = 'carousel-slide-selected';
 const LOADING_CLASS = 'carousel-slide-loading';
@@ -120,7 +118,6 @@ export default class Carousel extends Component {
       transitionDuration: 0,
       transitioningFrom: null
     };
-    autobind(this);
   }
 
   static getDerivedStateFromProps(props, state) {
@@ -248,9 +245,10 @@ export default class Carousel extends Component {
         img.onload = img.onerror = () => {
           if (this._isMounted) {
             this.setState({
-              loadedImages: merge({}, this.state.loadedImages, {
+              loadedImages: {
+                ...this.state.loadedImages,
                 [image]: { width: img.width || 'auto', height: img.height || 'auto' }
-              })
+              }
             }, () => {
               if (image === currentImage) {
                 this.handleInitialLoad();
@@ -270,7 +268,7 @@ export default class Carousel extends Component {
    * method will clear the loading state causing the carousel to render and will calculate the dimensions of the
    * displayed slide to use as a loading shim if an explicit width/height were not specified.
    */
-  handleInitialLoad() {
+  handleInitialLoad = () => {
     const { currentSlide } = this.state;
     const slides = this._track.childNodes;
     const { slideWidth, slideHeight } = this.props;
@@ -301,7 +299,7 @@ export default class Carousel extends Component {
    * @param {String} direction - The direction to transition, should be 'right' or 'left'.
    * @param {Boolean} autoSlide - The source of slide transition, should be true for autoPlay and false for user click.
    */
-  goToSlide(index, direction, autoSlide = false) {
+  goToSlide = (index, direction, autoSlide = false) => {
     const { beforeChange, transitionDuration, transition, onSlideTransitioned } = this.props;
 
     if (onSlideTransitioned) {
@@ -344,7 +342,7 @@ export default class Carousel extends Component {
    * Transitions to the next slide moving from left to right.
    * @param {Object} e - The event that calls nextSlide, will be undefined for autoPlay.
    */
-  nextSlide(e) {
+  nextSlide = (e) => {
     const { children } = this.props;
     const { currentSlide } = this.state;
     const newIndex = currentSlide < Children.count(children) - 1 ? currentSlide + 1 : 0;
@@ -354,7 +352,7 @@ export default class Carousel extends Component {
   /**
    * Transitions to the previous slide moving from right to left.
    */
-  prevSlide() {
+  prevSlide = () => {
     const { children } = this.props;
     const { currentSlide } = this.state;
     const newIndex = currentSlide > 0 ? currentSlide - 1 : Children.count(children) - 1;
@@ -366,7 +364,7 @@ export default class Carousel extends Component {
    *
    * @param {Object} e Event object
    */
-  slideTransitionEnd(e) {
+  slideTransitionEnd = (e) => {
     const { currentSlide } = this.state;
     const { afterChange } = this.props;
 
@@ -425,26 +423,26 @@ export default class Carousel extends Component {
     const classes = classnames('carousel', className, {
       loaded: !loading
     });
-    const containerStyle = merge({}, style.container || {}, {
+    const containerStyle = { ...(style.container || {}),
       width,
       height
-    });
-    const innerContainerStyle = merge({}, style.containerInner || {}, {
+    };
+    const innerContainerStyle = { ...(style.containerInner || {}),
       width,
       height,
       marginBottom: dots ? '20px' : 0
-    });
-    const viewportStyle = merge({}, style.viewport || {}, {
+    };
+    const viewportStyle = { ...(style.viewport || {}),
       width: viewportWidth,
       height: viewportHeight || slideHeight || 'auto'
-    });
-    let trackStyle = merge({}, style.track || {});
+    };
+    let trackStyle = { ...style.track };
     if (transition !== 'fade') {
       const leftPos = leftOffset + dragOffset;
-      trackStyle = merge({}, trackStyle, {
+      trackStyle = { ...trackStyle,
         transform: `translateX(${leftPos}px)`,
         transition: transitionDuration ? `transform ${ms('' + transitionDuration)}ms ${easing}` : 'none'
-      });
+      };
     }
     if (!draggable) {
       trackStyle.touchAction = 'auto';
@@ -545,13 +543,13 @@ export default class Carousel extends Component {
         slideStyle.minWidth = slideWidth; // Safari 9 bug
       }
 
-      slideStyle = merge({}, slideStyle, style.slide || {}, index === currentSlide ? style.selectedSlide || {} : {});
+      slideStyle = { ...slideStyle, ...(style.slide || {}), ...(index === currentSlide ? style.selectedSlide || {} : {}) };
 
-      const loadingSlideStyle = merge({}, slideStyle || {}, {
+      const loadingSlideStyle = { ...(slideStyle || {}),
         marginLeft: slideStyle.marginLeft,
         width: slideWidth || slideDimensions.width,
         height: slideHeight || slideDimensions.height
-      });
+      };
       const slidesToRender = this.getIndicesToRender();
 
       // Only render the actual slide content if lazy loading is disabled, the image is already loaded, or we
@@ -679,7 +677,7 @@ export default class Carousel extends Component {
    *
    * @param {Number} retryCount Used when retries are needed due to slow slide loading
    */
-  calcLeftOffset(retryCount = 0) {
+  calcLeftOffset = (retryCount = 0) => {
     const { direction, loading } = this.state;
     const viewportWidth = this._viewport && this._viewport.offsetWidth;
 
@@ -744,7 +742,7 @@ export default class Carousel extends Component {
    *
    * @param {Event} e DOM event object.
    */
-  handleSlideClick(e) {
+  handleSlideClick = (e) => {
     const { clickToNavigate } = this.props;
     const { currentSlide } = this.state;
     const clickedIndex = parseInt(e.currentTarget.getAttribute('data-index'), 10);
@@ -767,7 +765,7 @@ export default class Carousel extends Component {
    *
    * @param {Event} e DOM event object.
    */
-  onMouseDown(e) {
+  onMouseDown = (e) => {
     const { draggable, transition } = this.props;
 
     if (e.target.nodeName === 'IMG') {
@@ -796,7 +794,7 @@ export default class Carousel extends Component {
    *
    * @param {Event} e DOM event object.
    */
-  onMouseMove(e) {
+  onMouseMove = (e) => {
     e.preventDefault();
     this.setState({
       dragOffset: e.clientX - this._startPos.x
@@ -806,21 +804,21 @@ export default class Carousel extends Component {
   /**
    * Invoked when the mouse cursor enters over a slide.
    */
-  onMouseEnter() {
+  onMouseEnter = () => {
     document.addEventListener('mousemove', this.handleMovement, false);
   }
 
   /**
    * Invoked when the mouse cursor moves around a slide.
    */
-  handleMovement() {
+  handleMovement = () => {
     this.setHoverState(true);
   }
 
   /**
    * Invoked when the mouse cursor moves over a slide.
    */
-  onMouseOver() {
+  onMouseOver = () => {
     this.setHoverState(true);
   }
 
@@ -850,7 +848,7 @@ export default class Carousel extends Component {
   /**
    * Invoked when the mouse cursor leaves a slide.
    */
-  onMouseLeave() {
+  onMouseLeave = () => {
     document.removeEventListener('mousemove', this.handleMovement, false);
     this.setHoverState(false);
     !this._animating && this._startPos && this.stopDragging();
@@ -861,7 +859,7 @@ export default class Carousel extends Component {
    *
    * @param {Event} e DOM event object.
    */
-  onTouchStart(e) {
+  onTouchStart = (e) => {
     const { draggable, transition } = this.props;
 
     if (draggable && transition !== 'fade' && !this._animating) {
@@ -885,7 +883,7 @@ export default class Carousel extends Component {
    *
    * @param {Event} e DOM event object.
    */
-  onTouchMove(e) {
+  onTouchMove = (e) => {
     const { x, y } = this._prevPos || this._startPos;
     const { screenX, screenY } = e.touches[0];
     const angle = Math.abs(Math.atan2(screenY - y, screenX - x)) * 180 / Math.PI;
@@ -913,7 +911,7 @@ export default class Carousel extends Component {
   /**
    * Completes a dragging operation, deciding whether to transition to another slide or snap back to the current slide.
    */
-  stopDragging() {
+  stopDragging = () => {
     const { dragThreshold, transitionDuration } = this.props;
     const { dragOffset } = this.state;
     const viewportWidth = (this._viewport && this._viewport.offsetWidth) || 1;

@@ -1,3 +1,7 @@
+# 2.0.0 - Dec 2020
+
+***(Enhancement)*** Breaking change to optimize the bundle for modern browsers (may break legacy browser support)
+
 # 1.7.0 - Apr 2020
 
 ***(FEATURE)*** Add support for IntersectionObserver and disable autoplay functionality when the carousel is outside the viewport
