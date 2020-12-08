@@ -28,7 +28,7 @@
     "unit": "mocha --require setup-env \"test/unit/**/*.tests.js\"",
     "posttest": "npm run lint",
     "test": "nyc --reporter=text --reporter=json-summary npm run unit",
-    "prepublish": "npm run test && npm run build",
+    "prepublishOnly": "npm run test && npm run build",
     "storybook": "start-storybook"
   },
   "peerDependencies": {
