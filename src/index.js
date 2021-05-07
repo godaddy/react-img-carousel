@@ -754,13 +754,8 @@ export default class Carousel extends Component {
     if (!clickToNavigate || clickedIndex === currentSlide || Math.abs(this._startPos.x - e.clientX) > 0.01) {
       return;
     }
-    if (clickedIndex === currentSlide - 1) {
-      this.prevSlide();
-    } else if (clickedIndex === currentSlide + 1) {
-      this.nextSlide();
-    } else {
-      this.goToSlide(clickedIndex);
-    }
+
+    this.goToSlide(clickedIndex);
   }
 
   /**
