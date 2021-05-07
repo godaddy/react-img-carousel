@@ -1,3 +1,7 @@
+# 2.0.2 - May 2021
+
+***(Bug Fix)*** Fixes a bug when clicking to navigate to a particular slide and crossing the end or beginning of the list
+
 # 2.0.1 - May 2021
 
 ***(Bug Fix)*** Fixes a bug in Safari 14.1 and Mobile Safari where carousel content is not visible in some scenarios

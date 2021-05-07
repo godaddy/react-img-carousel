@@ -300,18 +300,24 @@ export default class Carousel extends Component {
    * @param {Boolean} autoSlide - The source of slide transition, should be true for autoPlay and false for user click.
    */
   goToSlide = (index, direction, autoSlide = false) => {
-    const { beforeChange, transitionDuration, transition, onSlideTransitioned } = this.props;
+    const { beforeChange, transitionDuration, transition, onSlideTransitioned, children } = this.props;
+    const { currentSlide } = this.state;
+    const lastIndex = Children.count(children) - 1;
+
+    const newIndex = index < 0 ? lastIndex + index + 1 :
+      index <= lastIndex ? index : index - lastIndex - 1;
+
+    direction = direction || (index > currentSlide ? 'right' : 'left');
 
     if (onSlideTransitioned) {
       onSlideTransitioned({
         autoPlay: autoSlide,
-        index,
+        index: newIndex,
         direction
       });
     }
 
-    const { currentSlide } = this.state;
-    if (currentSlide === index) {
+    if (currentSlide === newIndex) {
       return;
     }
 
@@ -326,7 +332,7 @@ export default class Carousel extends Component {
       transitionDuration
     }, () => {
       this.setState({
-        currentSlide: index,
+        currentSlide: newIndex,
         direction,
         transitioningFrom: currentSlide
       }, () => {
@@ -343,20 +349,16 @@ export default class Carousel extends Component {
    * @param {Object} e - The event that calls nextSlide, will be undefined for autoPlay.
    */
   nextSlide = (e) => {
-    const { children } = this.props;
     const { currentSlide } = this.state;
-    const newIndex = currentSlide < Children.count(children) - 1 ? currentSlide + 1 : 0;
-    this.goToSlide(newIndex, 'right', typeof e !== 'object');
+    this.goToSlide(currentSlide + 1, 'right', typeof e !== 'object');
   }
 
   /**
    * Transitions to the previous slide moving from right to left.
    */
   prevSlide = () => {
-    const { children } = this.props;
     const { currentSlide } = this.state;
-    const newIndex = currentSlide > 0 ? currentSlide - 1 : Children.count(children) - 1;
-    this.goToSlide(newIndex, 'left');
+    this.goToSlide(currentSlide - 1, 'left');
   }
 
   /**
@@ -585,6 +587,7 @@ export default class Carousel extends Component {
           style={ loadingSlideStyle }
           data-index={ index }
           className={ classnames(slideClasses, LOADING_CLASS) }
+          onClick={ this.handleSlideClick }
         ></li>
       );
     });
@@ -751,13 +754,8 @@ export default class Carousel extends Component {
     if (!clickToNavigate || clickedIndex === currentSlide || Math.abs(this._startPos.x - e.clientX) > 0.01) {
       return;
     }
-    if (clickedIndex === currentSlide - 1) {
-      this.prevSlide();
-    } else if (clickedIndex === currentSlide + 1) {
-      this.nextSlide();
-    } else {
-      this.goToSlide(clickedIndex);
-    }
+
+    this.goToSlide(clickedIndex);
   }
 
   /**
