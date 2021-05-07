@@ -189,6 +189,44 @@ describe('Carousel', () => {
     });
   });
 
+  it('should jump directly to a slide when the slide is clicked', done => {
+    const onSlideTransitionedStub = sinon.stub();
+
+    renderToJsdom(
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ true }
+        onSlideTransitioned={ onSlideTransitionedStub }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+        <div id='slide4'/>
+        <div id='slide5'/>
+        <div id='slide6'/>
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      let slides = tree.find('.carousel-slide');
+      const track = tree.find('.carousel-track');
+      expect(slides.length).to.equal(10);
+      expect(slides.at(2).prop('className')).to.contain('carousel-slide-selected');
+      expect(slides.at(2).prop('data-index')).to.eql(0);
+      slides.at(0).simulate('mousedown', { clientX: 0, clientY: 0 });
+      slides.at(0).simulate('click', { clientX: 0, clientY: 0 });
+      slides = tree.find('.carousel-slide');
+      expect(slides.at(6).prop('className')).to.contain('carousel-slide-selected');
+      expect(slides.at(6).prop('data-index')).to.eql(4);
+      track.simulate('transitionend', { propertyName: 'transform' });
+      slides.at(9).simulate('mousedown', { clientX: 0, clientY: 0 });
+      slides.at(9).simulate('click', { clientX: 0, clientY: 0 });
+      slides = tree.find('.carousel-slide');
+      expect(slides.at(3).prop('className')).to.contain('carousel-slide-selected');
+      expect(slides.at(3).prop('data-index')).to.eql(1);
+      done();
+    });
+  });
+
   it('should not freeze when a selected dot is clicked', done => {
     renderToJsdom(
       <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false }>

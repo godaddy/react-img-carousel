@@ -5,6 +5,7 @@
     "template-curly-spacing": "off",
     "indent": "off",
     "accessor-pairs": "off",
-    "react/jsx-pascal-case": "off"
+    "react/jsx-pascal-case": "off",
+    "no-nested-ternary": "off"
   }
 }
