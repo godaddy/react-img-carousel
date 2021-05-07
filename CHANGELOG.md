@@ -1,3 +1,7 @@
+# 2.0.1 - May 2021
+
+***(Bug Fix)*** Fixes a bug in Safari 14.1 and Mobile Safari where carousel content is not visible in some scenarios
+
 # 2.0.0 - Dec 2020
 
 ***(Enhancement)*** Breaking change to optimize the bundle for modern browsers (may break legacy browser support)
