@@ -1,3 +1,7 @@
+# 2.0.3 - May 2021
+
+***(Bug Fix)*** Fixes an issue introduced by 2.0.1 where long text content on slides is no longer wrapping
+
 # 2.0.2 - May 2021
 
 ***(Bug Fix)*** Fixes a bug when clicking to navigate to a particular slide and crossing the end or beginning of the list
