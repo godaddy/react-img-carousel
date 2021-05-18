@@ -227,3 +227,13 @@ export const addImages = () => {
     </Fragment>
   );
 };
+
+export const leftAlignedSlides = () =>
+  <Carousel width='450px' cellPadding={ 5 } slideAlignment='left'>
+    { imgElements }
+  </Carousel>;
+
+export const rightAlignedSlides = () =>
+  <Carousel width='450px' cellPadding={ 5 } slideAlignment='right'>
+    { imgElements }
+  </Carousel>;

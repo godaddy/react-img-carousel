@@ -46,6 +46,7 @@ export default class Carousel extends Component {
       cellPadding: PropTypes.number,
       slideWidth: PropTypes.string,
       slideHeight: PropTypes.string,
+      slideAlignment: PropTypes.oneOf(['left', 'center', 'right']),
       beforeChange: PropTypes.func,
       afterChange: PropTypes.func,
       transitionDuration: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
@@ -92,6 +93,7 @@ export default class Carousel extends Component {
       imagesToPrefetch: 5,
       maxRenderedSlides: 5,
       cellPadding: 0,
+      slideAlignment: 'center',
       transitionDuration: 500,
       autoplay: false,
       autoplaySpeed: 4000,
@@ -135,7 +137,7 @@ export default class Carousel extends Component {
 
   componentDidUpdate(prevProps, prevState) {
     const { children, autoplay, slideWidth } = this.props;
-    const { currentSlide, loadedImages, direction, loading, slideDimensions } = this.state;
+    const { currentSlide, loadedImages, direction, loading, slideDimensions, slideAlignment } = this.state;
     const oldChildren = prevProps.children;
 
     if (direction !== prevState.direction ||
@@ -143,7 +145,8 @@ export default class Carousel extends Component {
         loadedImages !== prevState.loadedImages ||
         slideWidth !== prevProps.slideWidth ||
         slideDimensions.width !== prevState.slideDimensions.width ||
-        slideDimensions.height !== prevState.slideDimensions.height) {
+        slideDimensions.height !== prevState.slideDimensions.height ||
+        slideAlignment !== prevProps.slideAlignment) {
       // Whenever new images are loaded, the current slide index changes, the transition direction changes, or the
       // slide width changes, we need to recalculate the left offset positioning of the slides.
       this.calcLeftOffset();
@@ -691,7 +694,7 @@ export default class Carousel extends Component {
       return;
     }
 
-    const { infinite, children, cellPadding } = this.props;
+    const { infinite, children, cellPadding, slideAlignment } = this.props;
     let { currentSlide } = this.state;
     const slides = this._track.childNodes;
     const numChildren = Children.count(children);
@@ -721,8 +724,13 @@ export default class Carousel extends Component {
       leftOffset -= currentSlideWidth;
     }
 
-    // Center the current slide within the viewport
-    leftOffset += (viewportWidth - currentSlideWidth) / 2;
+    // Adjust the offset to get the correct alignment of current slide within the viewport
+    if (slideAlignment === 'center') {
+      leftOffset += (viewportWidth - currentSlideWidth) / 2;
+    } else if (slideAlignment === 'right') {
+      leftOffset += (viewportWidth - currentSlideWidth);
+    }
+
     const shouldRetry = foundZeroWidthSlide && retryCount < MAX_LOAD_RETRIES;
 
     if (leftOffset !== this.state.leftOffset) {
