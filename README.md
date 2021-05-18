@@ -29,8 +29,7 @@ render(
 Running test page:
 ----------------
 
-Clone the repository, run `npm i` and then run `npm start` and point your browser to
-`localhost:8080/webpack-dev-server/`
+Clone the repository, run `npm i` and then run `npm run storybook`. The Storybook should open in your browser automatically.
 
 Available props:
 ----------------
