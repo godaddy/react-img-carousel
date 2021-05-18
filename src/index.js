@@ -136,8 +136,8 @@ export default class Carousel extends Component {
   }
 
   componentDidUpdate(prevProps, prevState) {
-    const { children, autoplay, slideWidth } = this.props;
-    const { currentSlide, loadedImages, direction, loading, slideDimensions, slideAlignment } = this.state;
+    const { children, autoplay, slideWidth, slideAlignment } = this.props;
+    const { currentSlide, loadedImages, direction, loading, slideDimensions } = this.state;
     const oldChildren = prevProps.children;
 
     if (direction !== prevState.direction ||
