@@ -1,3 +1,7 @@
+# 2.1.0 - May 2021
+
+***(Feature)*** Adds support for a slideAlignment prop
+
 # 2.0.3 - May 2021
 
 ***(Bug Fix)*** Fixes an issue introduced by 2.0.1 where long text content on slides is no longer wrapping
