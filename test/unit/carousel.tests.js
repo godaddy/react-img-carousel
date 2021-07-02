@@ -109,13 +109,15 @@ describe('Carousel', () => {
 
   it('should wrap around from the last to first slide if infinite is true and next is clicked', done => {
     const onSlideTransitionedStub = sinon.stub();
+    const beforeChangeStub = sinon.stub();
 
     renderToJsdom(
       <Carousel initialSlide={ 2 }
         slideWidth='300px'
         viewportWidth='300px'
         infinite={ true }
-        onSlideTransitioned={ onSlideTransitionedStub }>
+        onSlideTransitioned={ onSlideTransitionedStub }
+        beforeChange={ beforeChangeStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -136,6 +138,7 @@ describe('Carousel', () => {
         index: 0,
         direction: 'right'
       });
+      expect(beforeChangeStub).to.have.been.calledWith(0, 2, 'right');
       done();
     });
   });
