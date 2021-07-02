@@ -141,8 +141,10 @@ describe('Carousel', () => {
   });
 
   it('should wrap around from the first to last slide if infinite is true and prev is clicked', done => {
+    const beforeChangeStub = sinon.stub();
+
     renderToJsdom(
-      <Carousel initialSlide={ 2 } slideWidth='300px' viewportWidth='300px' infinite={ true }>
+      <Carousel initialSlide={ 0 } slideWidth='300px' viewportWidth='300px' infinite={ true } beforeChange={ beforeChangeStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -152,12 +154,13 @@ describe('Carousel', () => {
     setImmediate(() => {
       let dots = tree.find('.carousel-dot');
       expect(dots.length).to.equal(3);
-      expect(dots.at(2).prop('className')).to.contain('selected');
-      const nextButton = tree.find('.carousel-right-arrow');
-      nextButton.simulate('click');
-      dots = tree.find('.carousel-dot');
-      expect(dots.at(2).prop('className')).to.not.contain('selected');
       expect(dots.at(0).prop('className')).to.contain('selected');
+      const prevButton = tree.find('.carousel-left-arrow');
+      prevButton.simulate('click');
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(0).prop('className')).to.not.contain('selected');
+      expect(dots.at(2).prop('className')).to.contain('selected');
+      expect(beforeChangeStub).to.have.been.calledWith(2, 0, 'left');
       done();
     });
   });
