@@ -330,7 +330,7 @@ export default class Carousel extends Component {
 
     this._animating = true;
 
-    beforeChange && beforeChange(index, currentSlide, direction);
+    beforeChange && beforeChange(newIndex, currentSlide, direction);
     this.setState({
       transitionDuration
     }, () => {
