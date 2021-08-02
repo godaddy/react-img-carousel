@@ -1,3 +1,7 @@
+# 2.1.1 - Aug 2021
+
+***(Bug Fix)*** Fixes the index passed to beforeChange callback when infinite scrolling is enabled.
+
 # 2.1.0 - May 2021
 
 ***(Feature)*** Adds support for a slideAlignment prop
