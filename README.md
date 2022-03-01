@@ -27,7 +27,10 @@ render(
 
 ```
 
-### Available props
+Running test page:
+----------------
+
+Clone the repository, run `npm i` and then run `npm run storybook`. The Storybook should open in your browser automatically.
 
 ----------------
 
@@ -122,6 +125,11 @@ Used to specify a fixed width for all slides. Without specifying this, slides wi
 
 Used to specify a fixed height for all slides. Without specifying this, slides will simply be the height of their
 content.
+
+#### slideAlignment
+`PropTypes.oneOf(['left', 'center', 'right'])`
+
+Used to set the alignment of the currently selected slide in the carousel's viewport. Defaults to `center`.
 
 #### beforeChange
 

@@ -109,13 +109,15 @@ describe('Carousel', () => {
 
   it('should wrap around from the last to first slide if infinite is true and next is clicked', done => {
     const onSlideTransitionedStub = sinon.stub();
+    const beforeChangeStub = sinon.stub();
 
     renderToJsdom(
       <Carousel initialSlide={ 2 }
         slideWidth='300px'
         viewportWidth='300px'
         infinite={ true }
-        onSlideTransitioned={ onSlideTransitionedStub }>
+        onSlideTransitioned={ onSlideTransitionedStub }
+        beforeChange={ beforeChangeStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -136,13 +138,16 @@ describe('Carousel', () => {
         index: 0,
         direction: 'right'
       });
+      expect(beforeChangeStub).to.have.been.calledWith(0, 2, 'right');
       done();
     });
   });
 
   it('should wrap around from the first to last slide if infinite is true and prev is clicked', done => {
+    const beforeChangeStub = sinon.stub();
+
     renderToJsdom(
-      <Carousel initialSlide={ 2 } slideWidth='300px' viewportWidth='300px' infinite={ true }>
+      <Carousel initialSlide={ 0 } slideWidth='300px' viewportWidth='300px' infinite={ true } beforeChange={ beforeChangeStub }>
         <div id='slide1'/>
         <div id='slide2'/>
         <div id='slide3'/>
@@ -152,12 +157,13 @@ describe('Carousel', () => {
     setImmediate(() => {
       let dots = tree.find('.carousel-dot');
       expect(dots.length).to.equal(3);
-      expect(dots.at(2).prop('className')).to.contain('selected');
-      const nextButton = tree.find('.carousel-right-arrow');
-      nextButton.simulate('click');
-      dots = tree.find('.carousel-dot');
-      expect(dots.at(2).prop('className')).to.not.contain('selected');
       expect(dots.at(0).prop('className')).to.contain('selected');
+      const prevButton = tree.find('.carousel-left-arrow');
+      prevButton.simulate('click');
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(0).prop('className')).to.not.contain('selected');
+      expect(dots.at(2).prop('className')).to.contain('selected');
+      expect(beforeChangeStub).to.have.been.calledWith(2, 0, 'left');
       done();
     });
   });
@@ -185,6 +191,44 @@ describe('Carousel', () => {
       expect(dots.at(0).prop('className')).to.not.contain('selected');
       expect(dots.at(2).prop('className')).to.contain('selected');
       expect(onSlideTransitionedStub).to.have.been.calledOnce;
+      done();
+    });
+  });
+
+  it('should jump directly to a slide when the slide is clicked', done => {
+    const onSlideTransitionedStub = sinon.stub();
+
+    renderToJsdom(
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ true }
+        onSlideTransitioned={ onSlideTransitionedStub }>
+        <div id='slide1'/>
+        <div id='slide2'/>
+        <div id='slide3'/>
+        <div id='slide4'/>
+        <div id='slide5'/>
+        <div id='slide6'/>
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      let slides = tree.find('.carousel-slide');
+      const track = tree.find('.carousel-track');
+      expect(slides.length).to.equal(10);
+      expect(slides.at(2).prop('className')).to.contain('carousel-slide-selected');
+      expect(slides.at(2).prop('data-index')).to.eql(0);
+      slides.at(0).simulate('mousedown', { clientX: 0, clientY: 0 });
+      slides.at(0).simulate('click', { clientX: 0, clientY: 0 });
+      slides = tree.find('.carousel-slide');
+      expect(slides.at(6).prop('className')).to.contain('carousel-slide-selected');
+      expect(slides.at(6).prop('data-index')).to.eql(4);
+      track.simulate('transitionend', { propertyName: 'transform' });
+      slides.at(9).simulate('mousedown', { clientX: 0, clientY: 0 });
+      slides.at(9).simulate('click', { clientX: 0, clientY: 0 });
+      slides = tree.find('.carousel-slide');
+      expect(slides.at(3).prop('className')).to.contain('carousel-slide-selected');
+      expect(slides.at(3).prop('data-index')).to.eql(1);
       done();
     });
   });
