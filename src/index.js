@@ -77,7 +77,8 @@ export default class Carousel extends Component {
         track: PropTypes.object,
         slide: PropTypes.object,
         selectedSlide: PropTypes.object
-      })
+      }),
+      dir: PropTypes.oneOf(['ltr', 'rtl'])
     };
   }
 
@@ -105,7 +106,8 @@ export default class Carousel extends Component {
       dragThreshold: 0.2,
       clickToNavigate: true,
       easing: 'ease-in-out',
-      style: {}
+      style: {},
+      dir: 'ltr'
     };
   }
 
@@ -422,7 +424,7 @@ export default class Carousel extends Component {
    */
   render() {
     const { className, viewportWidth, viewportHeight, width, height, dots, infinite,
-      children, slideHeight, transition, style, draggable, easing, arrows } = this.props;
+      children, slideHeight, transition, style, draggable, easing, arrows, dir } = this.props;
     const { loading, transitionDuration, dragOffset, currentSlide, leftOffset } = this.state;
     const numSlides = Children.count(children);
     const classes = classnames('carousel', className, {
@@ -441,11 +443,12 @@ export default class Carousel extends Component {
       width: viewportWidth,
       height: viewportHeight || slideHeight || 'auto'
     };
+    const isRTL = dir === 'rtl';
     let trackStyle = { ...style.track };
     if (transition !== 'fade') {
       const leftPos = leftOffset + dragOffset;
       trackStyle = { ...trackStyle,
-        transform: `translateX(${leftPos}px)`,
+        transform: `translateX(${isRTL ? -leftPos : leftPos}px)`,
         transition: transitionDuration ? `transform ${ms('' + transitionDuration)}ms ${easing}` : 'none'
       };
     }

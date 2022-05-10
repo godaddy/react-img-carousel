@@ -237,3 +237,10 @@ export const rightAlignedSlides = () =>
   <Carousel width='450px' cellPadding={ 5 } slideAlignment='right'>
     { imgElements }
   </Carousel>;
+
+export const rtl = () =>
+  <div dir='rtl'>
+    <Carousel width='450px' cellPadding={ 5 } dir='rtl'>
+      { imgElements }
+    </Carousel>
+  </div>;

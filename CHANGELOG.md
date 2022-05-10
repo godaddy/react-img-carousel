@@ -1,3 +1,7 @@
+# 2.2.0 - May 2022
+
+***(Feature)*** Add support for RTL languages
+
 # 2.1.1 - Aug 2021
 
 ***(Bug Fix)*** Fixes the index passed to beforeChange callback when infinite scrolling is enabled.
