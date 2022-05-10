@@ -201,6 +201,11 @@ it indicates the number of milliseconds. Strings are parsed using [ms](https://w
 
 Controls whether mouse/touch swiping is enabled, defaults to `true`.
 
+#### dir
+`PropTypes.oneOf(['rtl', 'ltr'])`
+
+Optional, used to specify the direction of the carousel. Must pass `rtl` to support RTL languages, and a parent DOM element must have the `dir` attribute set to `rtl` as well.
+
 #### pauseOnHover
 `PropTypes.bool`
 

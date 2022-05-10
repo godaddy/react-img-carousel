@@ -1,0 +1,33 @@
+[dir="rtl"] .carousel {
+  .carousel-viewport {
+    text-align: right;
+  }
+
+  .carousel-left-arrow {
+    left: unset;
+    right: 23px;
+  }
+
+  .carousel-right-arrow {
+    right: unset;
+    left: 23px;
+  }
+
+  .carousel-left-arrow {
+    &.carousel-arrow-default {
+      &:before {
+        padding-left: 2px;
+        padding-right: unset;
+      }
+    }
+  }
+
+  .carousel-right-arrow {
+    &.carousel-arrow-default {
+      &:before {
+        padding-right: 2px;
+        padding-left: unset;
+      }
+    }
+  }
+}
