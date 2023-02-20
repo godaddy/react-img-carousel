@@ -17,17 +17,13 @@
   }
 
   .carousel-arrow-default {
-    border: 3px solid !important;
-    border-radius: 50%;
-    color: rgba(255, 255, 255, 0.9);
     height: 32px;
     width: 32px;
     font-weight: 900;
-    background: rgba(0, 0, 0, 0.15);
+    background: none;
   }
 
   .carousel-arrow {
-    position: absolute;
     z-index: 1;
     bottom: 23px;
     padding: 0;
@@ -40,7 +36,6 @@
 
     &:before {
       font-size: 19px;
-      display: block;
       margin-top: -2px;
     }
 
@@ -52,28 +47,12 @@
 
   .carousel-left-arrow {
     left: 23px;
+    padding-top: 10px;
   }
 
   .carousel-right-arrow {
     right: 23px;
-  }
-
-  .carousel-left-arrow {
-    &.carousel-arrow-default {
-      &:before {
-        content: '<';
-        padding-right: 2px;
-      }
-    }
-  }
-
-  .carousel-right-arrow {
-    &.carousel-arrow-default {
-      &:before {
-        content: '>';
-        padding-left: 2px;
-      }
-    }
+    padding-top: 10px;
   }
 
   .carousel-track {
@@ -88,7 +67,6 @@
       transition: opacity 0.5s ease-in-out;
 
       & > * {
-        display: block;
         white-space: normal;
       }
       &.carousel-slide-loading {

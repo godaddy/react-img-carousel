@@ -1,6 +1,9 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Carousel from '../index';
+import UpImage from '../../test/images/test-up-arrow.svg';
+import DownImage from '../../test/images/test-down-arrow.svg';
+
 
 require('../carousel.less');
 
@@ -59,6 +62,32 @@ CustomDots.propTypes = {
   goToSlide: PropTypes.func.isRequired,
   title: PropTypes.node
 };
+
+const testButtons = ['test1', 'test2', 'test3', 'test4'].map((item) => <button style={{fontSize: '20px'}}>{item}</button>);
+
+export const verticalInfiniteWithCellPadding = () =>
+    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ true } arrows={ true }
+              dots={ false } isVertical={ true } >
+      { imgElements }
+    </Carousel>;
+
+export const verticalNonInfiniteWithCellPadding = () =>
+    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
+              dots={ false } isVertical={ true } >
+      { imgElements }
+    </Carousel>;
+
+export const verticalNonInfiniteWithCellPaddingWithCustomArrows = () =>
+    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
+              dots={ false } isVertical={ true } upArrowImage={<UpImage/>} downArrowImage={<DownImage/>} >
+      { imgElements }
+    </Carousel>;
+
+export const verticalNonInfiniteButtonsWithCellPadding = () =>
+    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
+              dots={ false } isVertical={ true } verticalArrowPadding={ 30 } >
+      { testButtons }
+    </Carousel>;
 
 export const infiniteWithCellPadding = () =>
   <Carousel width='450px' cellPadding={ 5 }>

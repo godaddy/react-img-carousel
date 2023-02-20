@@ -1,5 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import DefaultUpArrow from '../images/arrow-up.svg';
+import DefaultDownArrow from '../images/arrow-down.svg';
+import DefaultLeftArrow from '../images/arrow-left.svg';
+import DefaultRightArrow from '../images/arrow-right.svg';
 
 /**
  * Renders an arrow component used to transition from right-to-left or left-to-right through the carousel slides.
@@ -13,7 +17,7 @@ export default class Arrow extends Component {
       infinite: PropTypes.bool.isRequired,
       prevSlide: PropTypes.func.isRequired,
       nextSlide: PropTypes.func.isRequired,
-      direction: PropTypes.oneOf(['left', 'right']).isRequired,
+      direction: PropTypes.oneOf(['left', 'right', 'top', 'bottom']).isRequired,
       arrows: PropTypes.oneOfType([
         PropTypes.bool,
         PropTypes.shape({
@@ -21,7 +25,11 @@ export default class Arrow extends Component {
           right: PropTypes.node.isRequired,
           className: PropTypes.string
         })
-      ])
+      ]),
+      upArrowImage: PropTypes.node,
+      downArrowImage: PropTypes.node,
+      leftArrowImage: PropTypes.node,
+      rightArrowImage: PropTypes.node,
     };
   }
 
@@ -31,11 +39,11 @@ export default class Arrow extends Component {
   hasNext() {
     const { direction, infinite, numSlides, selectedIndex } = this.props;
 
-    return infinite || (direction === 'left' ? selectedIndex > 0 : selectedIndex < numSlides - 1);
+    return infinite || (['top', 'left'].includes(direction) ? selectedIndex > 0 : selectedIndex < numSlides - 1);
   }
 
   render() {
-    const { prevSlide, nextSlide, direction, arrows } = this.props;
+    const { prevSlide, nextSlide, direction, arrows, upArrowImage, downArrowImage, leftArrowImage, rightArrowImage } = this.props;
     let arrowComponent = null;
     let buttonClass = 'carousel-arrow-default';
 
@@ -48,9 +56,13 @@ export default class Arrow extends Component {
       <button
         type='button'
         disabled={ !this.hasNext() }
-        onClick={ direction === 'left' ? prevSlide : nextSlide }
+        onClick={ ['top', 'left'].includes(direction) ? prevSlide : nextSlide }
         className={ `carousel-arrow carousel-${direction}-arrow ${buttonClass}` }>
         { arrowComponent }
+        { direction === 'top' && (upArrowImage || <DefaultUpArrow/>)}
+        { direction === 'bottom' && (downArrowImage || <DefaultDownArrow/>)}
+        { direction === 'left' && (leftArrowImage || <DefaultLeftArrow/>)}
+        { direction === 'right' && (rightArrowImage || <DefaultRightArrow/>)}
       </button>
     );
   }

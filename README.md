@@ -224,6 +224,59 @@ Optional array of controls to be rendered in the carousel container. Each contro
 component constructor, and will be passed callback props `nextSlide`, `prevSlide` and `goToSlide` for controlling
 navigation, and `numSlides`, `selectedIndex` and `infinite` for rendering the state of the carousel.
 
+#### isVertical
+```
+PropTypes.bool
+```
+
+Defaults to `false`. Setting `isVertical` to `true` will render vertical carousal.
+
+#### verticalArrowPadding
+```
+PropTypes.number
+```
+
+Defaults to `0`. This prop can used to customize the positioning of vertical arrows in case of a vertical carousal. 
+
+#### upArrowImage
+```
+PropTypes.node
+```
+
+This prop can used to pass a custom `.svg` image to replace the default up arrow.
+
+#### downArrowImage
+```
+PropTypes.node
+```
+
+This prop can used to pass a custom `.svg` image to replace the default down arrow.
+
+#### leftArrowImage
+```
+PropTypes.node
+```
+
+This prop can used to pass a custom `.svg` image to replace the default left arrow.
+
+#### rightArrowImage
+```
+PropTypes.node
+```
+
+This prop can used to pass a custom `.svg` image to replace the default right arrow.
+
+```
+// Example for custom svg image :
+import UpImage from '../../test/images/test-up-arrow.svg';
+import DownImage from '../../test/images/test-down-arrow.svg';
+
+<Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
+  dots={ false } isVertical={ true } upArrowImage={<UpImage/>} downArrowImage={<DownImage/>} >
+  { imgElements }
+</Carousel>;
+```
+
 Tests:
 ----------------
 

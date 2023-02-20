@@ -69,6 +69,7 @@
     "postcss-cli": "^8.3.0",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
+    "react-svg-loader": "^3.0.3",
     "rimraf": "^3.0.2",
     "setup-env": "^1.2.3",
     "sinon": "^9.2.0",
