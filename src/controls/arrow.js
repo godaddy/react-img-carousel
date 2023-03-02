@@ -29,7 +29,7 @@ export default class Arrow extends Component {
       upArrowImage: PropTypes.node,
       downArrowImage: PropTypes.node,
       leftArrowImage: PropTypes.node,
-      rightArrowImage: PropTypes.node,
+      rightArrowImage: PropTypes.node
     };
   }
 

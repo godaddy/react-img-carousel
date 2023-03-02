@@ -84,7 +84,7 @@ export default class Carousel extends Component {
       upArrowImage: PropTypes.node,
       downArrowImage: PropTypes.node,
       leftArrowImage: PropTypes.node,
-      rightArrowImage: PropTypes.node,
+      rightArrowImage: PropTypes.node
     };
   }
 
@@ -417,8 +417,8 @@ export default class Carousel extends Component {
 
     if (arrows) {
       arr = arr.concat([
-        { component: Arrow, props: { ...isVertical ? {direction: 'top', upArrowImage} : {direction: 'left', leftArrowImage} } },
-        { component: Arrow, props: { ...isVertical ? {direction: 'bottom', downArrowImage} : {direction: 'right', rightArrowImage} } }
+        { component: Arrow, props: { ...isVertical ? { direction: 'top', upArrowImage } : { direction: 'left', leftArrowImage } } },
+        { component: Arrow, props: { ...isVertical ? { direction: 'bottom', downArrowImage } : { direction: 'right', rightArrowImage } } }
       ]);
     }
 
@@ -468,14 +468,13 @@ export default class Carousel extends Component {
     }
 
     const controls = this.getControls();
-    let arrowOffset = 0, visibleSlideCount = 0;
-    if(this._viewport && this._track){
-      const slides = this._track.childNodes;
-      arrowOffset += this._viewport.offsetHeight /2;
+    let arrowOffset = 0;
+    if (this._viewport && this._track) {
+      arrowOffset += this._viewport.offsetHeight / 2;
       arrowOffset -= this.props.verticalArrowPadding;
     }
 
-    const arrowStyle = {...isVertical && { transform: `translateY(${arrowOffset}px)` }};
+    const arrowStyle = { ...isVertical && { transform: `translateY(${ arrowOffset }px)` } };
 
     return (
       <div className={ classes } style={ containerStyle } ref={ c => { this._containerRef = c; } }>
@@ -498,7 +497,7 @@ export default class Carousel extends Component {
           <div className='carousel-viewport' ref={ v => { this._viewport = v; } } style={ viewportStyle }>
             <ul
               className='carousel-track'
-              style={ {...trackStyle, ...isVertical && { display: 'flex', flexDirection: 'column' } } }
+              style={{ ...trackStyle, ...isVertical && { display: 'flex', flexDirection: 'column' } }}
               ref={ t => { this._track = t; } }
               onTransitionEnd={ this.slideTransitionEnd }
               onMouseDown={ this.onMouseDown }
@@ -510,7 +509,7 @@ export default class Carousel extends Component {
               { this.renderSlides() }
             </ul>
           </div>
-          <div style={{...arrowStyle}}>
+          <div style={{ ...arrowStyle }}>
           {
             controls.filter(Control => {
               return Control.position !== 'top';

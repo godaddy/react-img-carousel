@@ -1,3 +1,5 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable id-length */
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Carousel from '../index';
@@ -63,7 +65,7 @@ CustomDots.propTypes = {
   title: PropTypes.node
 };
 
-const testButtons = ['test1', 'test2', 'test3', 'test4'].map((item) => <button style={{fontSize: '20px'}}>{item}</button>);
+const testButtons = ['test1', 'test2', 'test3', 'test4'].map((item) => <button style={{ fontSize: '20px' }}>{item}</button>);
 
 export const verticalInfiniteWithCellPadding = () =>
     <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ true } arrows={ true }
@@ -79,7 +81,7 @@ export const verticalNonInfiniteWithCellPadding = () =>
 
 export const verticalNonInfiniteWithCellPaddingWithCustomArrows = () =>
     <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
-              dots={ false } isVertical={ true } upArrowImage={<UpImage/>} downArrowImage={<DownImage/>} >
+              dots={ false } isVertical={ true } upArrowImage={ <UpImage/> } downArrowImage={ <DownImage/> } >
       { imgElements }
     </Carousel>;
 
