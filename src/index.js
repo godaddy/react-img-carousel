@@ -470,7 +470,7 @@ export default class Carousel extends Component {
       arrowOffset -= this.props.verticalArrowPadding;
     }
 
-    const arrowStyle = { ...isVertical && { ...!arrows ? { transform: `translateY(${ arrowOffset }px)` } : { paddingRight: '50px' } } };
+    const arrowStyle = { ...isVertical && { ...!arrows && { transform: `translateY(${ arrowOffset }px)` } } };
 
     return (
       <div className={ classes } style={ containerStyle } ref={ c => { this._containerRef = c; } }>

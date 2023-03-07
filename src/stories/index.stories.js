@@ -79,12 +79,6 @@ export const verticalNonInfiniteWithCellPaddingWithDefaultArrows = () =>
       { imgElements }
     </Carousel>;
 
-export const verticalNonInfiniteButtonsWithCellPaddingWithDefaultArrows = () =>
-    <Carousel height='200px' width='200px' cellPadding={ 5 } infinite={ false } arrows={ true }
-              dots={ false } isVertical={ true } >
-      { testButtons }
-    </Carousel>;
-
 export const verticalNonInfiniteButtonsWithCellPaddingWithCustomArrows = () =>
     <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ false }
               dots={ false } isVertical={ true } verticalArrowPadding={ 30 } controls={ [{
