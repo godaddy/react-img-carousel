@@ -236,46 +236,7 @@ Defaults to `false`. Setting `isVertical` to `true` will render vertical carousa
 PropTypes.number
 ```
 
-Defaults to `0`. This prop can used to customize the positioning of vertical arrows in case of a vertical carousal. 
-
-#### upArrowImage
-```
-PropTypes.node
-```
-
-This prop can used to pass a custom `.svg` image to replace the default up arrow.
-
-#### downArrowImage
-```
-PropTypes.node
-```
-
-This prop can used to pass a custom `.svg` image to replace the default down arrow.
-
-#### leftArrowImage
-```
-PropTypes.node
-```
-
-This prop can used to pass a custom `.svg` image to replace the default left arrow.
-
-#### rightArrowImage
-```
-PropTypes.node
-```
-
-This prop can used to pass a custom `.svg` image to replace the default right arrow.
-
-```
-// Example for custom svg image :
-import UpImage from '../../test/images/test-up-arrow.svg';
-import DownImage from '../../test/images/test-down-arrow.svg';
-
-<Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
-  dots={ false } isVertical={ true } upArrowImage={<UpImage/>} downArrowImage={<DownImage/>} >
-  { imgElements }
-</Carousel>;
-```
+Defaults to `0`. This prop can used to customize the positioning of vertical arrows in case of a vertical carousal.
 
 Tests:
 ----------------

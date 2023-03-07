@@ -1,6 +1,6 @@
 # 2.3.0 - March 2023
 
-***(Feature)*** Add support for vertical carousal. Replace existing css arrows with .svg arrows and ability to pass in custom .svg files for arrows.
+***(Feature)*** Add support for vertical carousal.
 
 # 2.2.0 - May 2022
 
