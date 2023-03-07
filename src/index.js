@@ -79,8 +79,7 @@ export default class Carousel extends Component {
         selectedSlide: PropTypes.object
       }),
       dir: PropTypes.oneOf(['ltr', 'rtl']),
-      isVertical: PropTypes.bool,
-      verticalArrowPadding: PropTypes.number
+      isVertical: PropTypes.bool
     };
   }
 
@@ -110,8 +109,7 @@ export default class Carousel extends Component {
       easing: 'ease-in-out',
       style: {},
       dir: 'ltr',
-      isVertical: false,
-      verticalArrowPadding: 0
+      isVertical: false
     };
   }
 

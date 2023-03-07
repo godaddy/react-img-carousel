@@ -231,13 +231,6 @@ PropTypes.bool
 
 Defaults to `false`. Setting `isVertical` to `true` will render vertical carousal.
 
-#### verticalArrowPadding
-```
-PropTypes.number
-```
-
-Defaults to `0`. This prop can used to customize the positioning of vertical arrows in case of a vertical carousal.
-
 Tests:
 ----------------
 

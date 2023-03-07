@@ -81,7 +81,7 @@ export const verticalNonInfiniteWithCellPaddingWithDefaultArrows = () =>
 
 export const verticalNonInfiniteButtonsWithCellPaddingWithCustomArrows = () =>
     <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ false }
-              dots={ false } isVertical={ true } verticalArrowPadding={ 30 } controls={ [{
+              dots={ false } isVertical={ true } controls={ [{
       component: CustomArrows,
       props: { overrideArrowStyle: { border: 'none', background: 'none' }, topArrowImage: <UpArrow/>, bottomArrowImage: <DownArrow/>, arrowDivStyle: { transform: 'translate(-450px, 196px)' } }
     }] }>
