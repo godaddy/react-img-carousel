@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-const CustomArrows = ({ nextSlide, prevSlide, overrideArrowStyle = {}, infinite, numSlides, selectedIndex, topArrowImage, bottomArrowImage, customArrowStyle }) => {
+const CustomArrows = ({ nextSlide, prevSlide, overrideArrowStyle = {}, infinite, numSlides, selectedIndex, topArrowImage, bottomArrowImage, arrowDivStyle }) => {
     const hasNext = (direction) => {
         return infinite || (['top', 'left'].includes(direction) ? selectedIndex > 0 : selectedIndex < numSlides - 1);
     }
@@ -10,7 +10,7 @@ const CustomArrows = ({ nextSlide, prevSlide, overrideArrowStyle = {}, infinite,
     const hasNextTop = hasNext('top');
 
     return (
-        <div style={ customArrowStyle } className='custom-arrows-div'>
+        <div style={ arrowDivStyle } className='custom-arrows-div'>
             <button className='carousel-custom-arrow' disabled={ !hasNextTop } onClick={ hasNextTop ? prevSlide : nextSlide } style={{ ...overrideArrowStyle, ...{ opacity: !hasNextTop ? 0.5 : 1 }, ...{ cursor: !hasNextTop ? 'not-allowed' : 'pointer' } }}>
                 {topArrowImage}
             </button>
@@ -32,7 +32,7 @@ CustomArrows.propTypes = {
     selectedIndex: PropTypes.number,
     topArrowImage: PropTypes.node,
     bottomArrowImage: PropTypes.node,
-    customArrowStyle: PropTypes.object
+    arrowDivStyle: PropTypes.object
 };
 
 export default CustomArrows;
