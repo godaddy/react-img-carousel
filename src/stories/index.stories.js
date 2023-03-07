@@ -3,9 +3,9 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Carousel from '../index';
-import UpImage from '../../test/images/test-up-arrow.svg';
-import DownImage from '../../test/images/test-down-arrow.svg';
-
+import CustomArrow from './CustomArrow';
+import DownArrow from '../../test/images/test-down-arrow.svg';
+import UpArrow from '../../test/images/test-up-arrow.svg';
 
 require('../carousel.less');
 
@@ -73,21 +73,27 @@ export const verticalInfiniteWithCellPadding = () =>
       { imgElements }
     </Carousel>;
 
-export const verticalNonInfiniteWithCellPadding = () =>
+export const verticalNonInfiniteWithCellPaddingWithDefaultArrows = () =>
     <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
+              dots={ false } isVertical={ true }  >
+      { imgElements }
+    </Carousel>;
+
+export const verticalNonInfiniteButtonsWithCellPaddingWithDefaultArrows = () =>
+    <Carousel height='200px' width='200px' cellPadding={ 5 } infinite={ false } arrows={ true }
               dots={ false } isVertical={ true } >
-      { imgElements }
+      { testButtons }
     </Carousel>;
 
-export const verticalNonInfiniteWithCellPaddingWithCustomArrows = () =>
-    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
-              dots={ false } isVertical={ true } upArrowImage={ <UpImage/> } downArrowImage={ <DownImage/> } >
-      { imgElements }
-    </Carousel>;
-
-export const verticalNonInfiniteButtonsWithCellPadding = () =>
-    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
-              dots={ false } isVertical={ true } verticalArrowPadding={ 30 } >
+export const verticalNonInfiniteButtonsWithCellPaddingWithCustomArrows = () =>
+    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ false }
+              dots={ false } isVertical={ true } verticalArrowPadding={ 30 } controls={ [{
+      component: CustomArrow,
+      props: { direction: 'top', overrideArrowStyle: { border: 'none', background: 'none' }, customImage: <UpArrow/> }
+    }, {
+      component: CustomArrow,
+      props: { direction: 'bottom', overrideArrowStyle: { border: 'none', background: 'none' }, customImage: <DownArrow/> }
+    }] }>
       { testButtons }
     </Carousel>;
 

@@ -1,9 +1,5 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import DefaultUpArrow from '../images/arrow-up.svg';
-import DefaultDownArrow from '../images/arrow-down.svg';
-import DefaultLeftArrow from '../images/arrow-left.svg';
-import DefaultRightArrow from '../images/arrow-right.svg';
 
 /**
  * Renders an arrow component used to transition from right-to-left or left-to-right through the carousel slides.
@@ -25,11 +21,7 @@ export default class Arrow extends Component {
           right: PropTypes.node.isRequired,
           className: PropTypes.string
         })
-      ]),
-      upArrowImage: PropTypes.node,
-      downArrowImage: PropTypes.node,
-      leftArrowImage: PropTypes.node,
-      rightArrowImage: PropTypes.node
+      ])
     };
   }
 
@@ -43,7 +35,7 @@ export default class Arrow extends Component {
   }
 
   render() {
-    const { prevSlide, nextSlide, direction, arrows, upArrowImage, downArrowImage, leftArrowImage, rightArrowImage } = this.props;
+    const { prevSlide, nextSlide, direction, arrows } = this.props;
     let arrowComponent = null;
     let buttonClass = 'carousel-arrow-default';
 
@@ -59,10 +51,6 @@ export default class Arrow extends Component {
         onClick={ ['top', 'left'].includes(direction) ? prevSlide : nextSlide }
         className={ `carousel-arrow carousel-${direction}-arrow ${buttonClass}` }>
         { arrowComponent }
-        { direction === 'top' && (upArrowImage || <DefaultUpArrow/>)}
-        { direction === 'bottom' && (downArrowImage || <DefaultDownArrow/>)}
-        { direction === 'left' && (leftArrowImage || <DefaultLeftArrow/>)}
-        { direction === 'right' && (rightArrowImage || <DefaultRightArrow/>)}
       </button>
     );
   }

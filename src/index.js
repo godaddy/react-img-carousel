@@ -80,11 +80,7 @@ export default class Carousel extends Component {
       }),
       dir: PropTypes.oneOf(['ltr', 'rtl']),
       isVertical: PropTypes.bool,
-      verticalArrowPadding: PropTypes.number,
-      upArrowImage: PropTypes.node,
-      downArrowImage: PropTypes.node,
-      leftArrowImage: PropTypes.node,
-      rightArrowImage: PropTypes.node
+      verticalArrowPadding: PropTypes.number
     };
   }
 
@@ -408,7 +404,7 @@ export default class Carousel extends Component {
    * @returns {Array} Controls to be rendered with the carousel.
    */
   getControls() {
-    const { arrows, dots, controls, isVertical, upArrowImage, downArrowImage, leftArrowImage, rightArrowImage } = this.props;
+    const { arrows, dots, controls, isVertical } = this.props;
     let arr = controls.slice(0);
 
     if (dots) {
@@ -417,8 +413,8 @@ export default class Carousel extends Component {
 
     if (arrows) {
       arr = arr.concat([
-        { component: Arrow, props: { ...isVertical ? { direction: 'top', upArrowImage } : { direction: 'left', leftArrowImage } } },
-        { component: Arrow, props: { ...isVertical ? { direction: 'bottom', downArrowImage } : { direction: 'right', rightArrowImage } } }
+        { ...isVertical ? { component: Arrow, props: { direction: 'top' } } : { component: Arrow, props: { direction: 'left' } } },
+        { ...isVertical ? { component: Arrow, props: { direction: 'bottom' } } : { component: Arrow, props: { direction: 'right' } } }
       ]);
     }
 
@@ -474,7 +470,7 @@ export default class Carousel extends Component {
       arrowOffset -= this.props.verticalArrowPadding;
     }
 
-    const arrowStyle = { ...isVertical && { transform: `translateY(${ arrowOffset }px)` } };
+    const arrowStyle = { ...isVertical && { ...!arrows ? { transform: `translateY(${ arrowOffset }px)` } : { paddingRight: '50px' } } };
 
     return (
       <div className={ classes } style={ containerStyle } ref={ c => { this._containerRef = c; } }>
@@ -509,7 +505,7 @@ export default class Carousel extends Component {
               { this.renderSlides() }
             </ul>
           </div>
-          <div style={{ ...arrowStyle }}>
+          <div className='control-div' style={{ ...arrowStyle }}>
           {
             controls.filter(Control => {
               return Control.position !== 'top';
