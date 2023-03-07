@@ -442,7 +442,8 @@ export default class Carousel extends Component {
       width,
       height,
       marginBottom: dots ? '20px' : 0,
-      ...isVertical && { display: 'flex', flexDirection: 'row-reverse' }
+      ...(isVertical && !arrows) && { display: 'flex', flexDirection: 'row-reverse' },
+      ...(isVertical && arrows) && { display: 'flex', flexDirection: 'row' }
     };
     const viewportStyle = { ...(style.viewport || {}),
       width: viewportWidth,
@@ -470,7 +471,7 @@ export default class Carousel extends Component {
       arrowOffset -= this.props.verticalArrowPadding;
     }
 
-    const arrowStyle = { ...isVertical && { ...!arrows && { transform: `translateY(${ arrowOffset }px)` } } };
+    const customArrowStyle = { ...(isVertical && !arrows) && { transform: `translateY(${ arrowOffset }px)` } };
 
     return (
       <div className={ classes } style={ containerStyle } ref={ c => { this._containerRef = c; } }>
@@ -505,7 +506,6 @@ export default class Carousel extends Component {
               { this.renderSlides() }
             </ul>
           </div>
-          <div className='control-div' style={{ ...arrowStyle }}>
           {
             controls.filter(Control => {
               return Control.position !== 'top';
@@ -519,10 +519,10 @@ export default class Carousel extends Component {
                 prevSlide={ this.prevSlide }
                 goToSlide={ this.goToSlide }
                 arrows={ arrows }
-                infinite={ infinite } />
+                infinite={ infinite }
+                customArrowStyle={ customArrowStyle }/>
             ))
           }
-          </div>
         </div>
       </div>
     );

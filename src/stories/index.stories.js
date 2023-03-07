@@ -3,7 +3,7 @@
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Carousel from '../index';
-import CustomArrow from './CustomArrow';
+import CustomArrows from './CustomArrows';
 import DownArrow from '../../test/images/test-down-arrow.svg';
 import UpArrow from '../../test/images/test-up-arrow.svg';
 
@@ -67,9 +67,9 @@ CustomDots.propTypes = {
 
 const testButtons = ['test1', 'test2', 'test3', 'test4'].map((item) => <button style={{ fontSize: '20px' }}>{item}</button>);
 
-export const verticalInfiniteWithCellPadding = () =>
+export const verticalInfiniteWithCellPaddingWithDotsAndDefaultArrows = () =>
     <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ true } arrows={ true }
-              dots={ false } isVertical={ true } >
+              dots={ true } isVertical={ true } >
       { imgElements }
     </Carousel>;
 
@@ -82,11 +82,8 @@ export const verticalNonInfiniteWithCellPaddingWithDefaultArrows = () =>
 export const verticalNonInfiniteButtonsWithCellPaddingWithCustomArrows = () =>
     <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ false }
               dots={ false } isVertical={ true } verticalArrowPadding={ 30 } controls={ [{
-      component: CustomArrow,
-      props: { direction: 'top', overrideArrowStyle: { border: 'none', background: 'none' }, customImage: <UpArrow/> }
-    }, {
-      component: CustomArrow,
-      props: { direction: 'bottom', overrideArrowStyle: { border: 'none', background: 'none' }, customImage: <DownArrow/> }
+      component: CustomArrows,
+      props: { overrideArrowStyle: { border: 'none', background: 'none' }, topArrowImage: <UpArrow/>, bottomArrowImage: <DownArrow/> }
     }] }>
       { testButtons }
     </Carousel>;
