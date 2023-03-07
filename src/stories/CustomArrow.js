@@ -9,7 +9,7 @@ const CustomArrow = ({ nextSlide, prevSlide, overrideArrowStyle = {}, direction,
 
     const hasNextSlide = hasNext();
     return (
-        <button disabled={ !hasNextSlide } onClick={ isTopOrLeft ? prevSlide : nextSlide } style={{ ...overrideArrowStyle, opacity: !hasNextSlide ? 0.5 : 1 }}>
+        <button className='carousel-custom-arrow' disabled={ !hasNextSlide } onClick={ isTopOrLeft ? prevSlide : nextSlide } style={{ ...overrideArrowStyle, ...{ opacity: !hasNextSlide ? 0.5 : 1 }, ...{ cursor: !hasNextSlide ? 'not-allowed' : 'pointer' } }}>
             {customImage}
         </button>
     );
