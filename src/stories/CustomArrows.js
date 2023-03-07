@@ -11,12 +11,12 @@ const CustomArrows = ({ nextSlide, prevSlide, overrideArrowStyle = {}, infinite,
 
     return (
         <div style={ customArrowStyle } className='custom-arrows-div'>
-        <button className='carousel-custom-arrow' disabled={ !hasNextTop } onClick={ hasNextTop ? prevSlide : nextSlide } style={{ ...overrideArrowStyle, ...{ opacity: !hasNextTop ? 0.5 : 1 }, ...{ cursor: !hasNextTop ? 'not-allowed' : 'pointer' } }}>
-            {topArrowImage}
-        </button>
-        <button className='carousel-custom-arrow' disabled={ !hasNextBottom } onClick={ hasNextBottom ? nextSlide : prevSlide } style={{ ...overrideArrowStyle, ...{ opacity: !hasNextBottom ? 0.5 : 1 }, ...{ cursor: !hasNextBottom ? 'not-allowed' : 'pointer' } }}>
-            {bottomArrowImage}
-        </button>
+            <button className='carousel-custom-arrow' disabled={ !hasNextTop } onClick={ hasNextTop ? prevSlide : nextSlide } style={{ ...overrideArrowStyle, ...{ opacity: !hasNextTop ? 0.5 : 1 }, ...{ cursor: !hasNextTop ? 'not-allowed' : 'pointer' } }}>
+                {topArrowImage}
+            </button>
+            <button className='carousel-custom-arrow' disabled={ !hasNextBottom } onClick={ hasNextBottom ? nextSlide : prevSlide } style={{ ...overrideArrowStyle, ...{ opacity: !hasNextBottom ? 0.5 : 1 }, ...{ cursor: !hasNextBottom ? 'not-allowed' : 'pointer' } }}>
+                {bottomArrowImage}
+            </button>
         </div>
     );
 };
