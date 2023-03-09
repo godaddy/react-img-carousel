@@ -5,7 +5,9 @@ import chai, { expect } from 'chai';
 import sinon from 'sinon';
 import sinonChai from 'sinon-chai';
 import Carousel from '../../src/index';
-
+import CustomArrows from '../../src/stories/CustomArrows';
+import UpArrow from '../images/test-up-arrow.svg';
+import DownArrow from '../images/test-down-arrow.svg';
 
 chai.use(sinonChai);
 let imagesFetched;
@@ -445,6 +447,51 @@ describe('Carousel', () => {
     expect(slide.at(0).prop('style').opacity).to.equal(0.9);
     const selectedSlide = tree.find('.carousel-slide-selected');
     expect(selectedSlide.prop('style').opacity).to.equal(1);
+  });
+
+  it('should render vertical carousal with default arrows.', () => {
+    renderToJsdom(
+        <Carousel slideWidth='300px'
+                  viewportWidth='300px'
+                  lazyLoad={ false }
+                  infinite={ false }
+                  isVertical={ true }>
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>);
+    const topArrow = tree.find('.carousel-top-arrow');
+    const bottomArrow = tree.find('.carousel-bottom-arrow');
+    const carousalDiv = tree.find('.carousel-container-inner');
+
+    expect(carousalDiv.prop('style').display).to.eql('flex');
+    expect(topArrow.length).to.eql(1);
+    expect(topArrow.html()).to.eql('<button type="button" disabled="" class="carousel-arrow carousel-top-arrow carousel-arrow-default"></button>');
+    expect(bottomArrow.length).to.eql(1);
+    expect(bottomArrow.html()).to.eql('<button type="button" class="carousel-arrow carousel-bottom-arrow carousel-arrow-default"></button>');
+  });
+
+  it('should render vertical carousal with custom arrows.', () => {
+    renderToJsdom(
+        <Carousel slideWidth='300px'
+                  viewportWidth='300px'
+                  lazyLoad={ false }
+                  infinite={ false }
+                  isVertical={ true }
+                  arrows={ false }
+                  controls={ [{
+                    component: CustomArrows,
+                    props: { overrideArrowStyle: { border: 'none', background: 'none' }, topArrowImage: <UpArrow/>, bottomArrowImage: <DownArrow/> }
+                  }] }>
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>);
+
+    const controlComponent = tree.find('.custom-arrows-div');
+    expect(controlComponent.childAt(0).html()).to.eql('<button class="carousel-custom-arrow" disabled="" style="background: none; opacity: 0.5; cursor: not-allowed;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="m0 16.67 2.829 2.83 9.175-9.339 9.167 9.339L24 16.67 12.004 4.5z"></path></svg></button>');
+    expect(controlComponent.childAt(1).html()).to.eql('<button class="carousel-custom-arrow" style="background: none; opacity: 1; cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M0 7.33 2.829 4.5l9.175 9.339L21.171 4.5 24 7.33 12.004 19.5z"></path></svg></button>');
+
   });
 
   it('should have transitions with the given duration and easing', done => {

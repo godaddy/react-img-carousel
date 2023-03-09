@@ -1,3 +1,7 @@
+# 2.3.0 - March 2023
+
+***(Feature)*** Add support for vertical carousal.
+
 # 2.2.0 - May 2022
 
 ***(Feature)*** Add support for RTL languages

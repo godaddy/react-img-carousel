@@ -13,7 +13,7 @@ export default class Arrow extends Component {
       infinite: PropTypes.bool.isRequired,
       prevSlide: PropTypes.func.isRequired,
       nextSlide: PropTypes.func.isRequired,
-      direction: PropTypes.oneOf(['left', 'right']).isRequired,
+      direction: PropTypes.oneOf(['left', 'right', 'top', 'bottom']).isRequired,
       arrows: PropTypes.oneOfType([
         PropTypes.bool,
         PropTypes.shape({
@@ -31,7 +31,7 @@ export default class Arrow extends Component {
   hasNext() {
     const { direction, infinite, numSlides, selectedIndex } = this.props;
 
-    return infinite || (direction === 'left' ? selectedIndex > 0 : selectedIndex < numSlides - 1);
+    return infinite || (['top', 'left'].includes(direction) ? selectedIndex > 0 : selectedIndex < numSlides - 1);
   }
 
   render() {
@@ -48,7 +48,7 @@ export default class Arrow extends Component {
       <button
         type='button'
         disabled={ !this.hasNext() }
-        onClick={ direction === 'left' ? prevSlide : nextSlide }
+        onClick={ ['top', 'left'].includes(direction) ? prevSlide : nextSlide }
         className={ `carousel-arrow carousel-${direction}-arrow ${buttonClass}` }>
         { arrowComponent }
       </button>

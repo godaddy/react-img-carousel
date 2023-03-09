@@ -76,6 +76,32 @@
     }
   }
 
+  .carousel-top-arrow {
+    top: 75px;
+  }
+
+  .carousel-bottom-arrow {
+    bottom: 75px;
+  }
+
+  .carousel-top-arrow {
+    &.carousel-arrow-default {
+      &:before {
+        content: '\1431';
+        padding-bottom: 2px;
+      }
+    }
+  }
+
+  .carousel-bottom-arrow {
+    &.carousel-arrow-default {
+      &:before {
+        content: '\142F';
+        padding-top: 2px;
+      }
+    }
+  }
+
   .carousel-track {
     list-style: none;
     padding: 0;

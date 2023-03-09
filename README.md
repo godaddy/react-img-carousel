@@ -224,6 +224,13 @@ Optional array of controls to be rendered in the carousel container. Each contro
 component constructor, and will be passed callback props `nextSlide`, `prevSlide` and `goToSlide` for controlling
 navigation, and `numSlides`, `selectedIndex` and `infinite` for rendering the state of the carousel.
 
+#### isVertical
+```
+PropTypes.bool
+```
+
+Defaults to `false`. Setting `isVertical` to `true` will render vertical carousal.
+
 Tests:
 ----------------
 

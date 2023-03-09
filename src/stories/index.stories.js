@@ -1,6 +1,11 @@
+/* eslint-disable react/jsx-key */
+/* eslint-disable id-length */
 import React, { Fragment, useState } from 'react';
 import PropTypes from 'prop-types';
 import Carousel from '../index';
+import CustomArrows from './CustomArrows';
+import DownArrow from '../../test/images/test-down-arrow.svg';
+import UpArrow from '../../test/images/test-up-arrow.svg';
 
 require('../carousel.less');
 
@@ -59,6 +64,29 @@ CustomDots.propTypes = {
   goToSlide: PropTypes.func.isRequired,
   title: PropTypes.node
 };
+
+const testButtons = ['test1', 'test2', 'test3', 'test4'].map((item) => <button style={{ fontSize: '20px' }}>{item}</button>);
+
+export const verticalInfiniteWithCellPaddingWithDotsAndDefaultArrows = () =>
+    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ true } arrows={ true }
+              dots={ true } isVertical={ true } >
+      { imgElements }
+    </Carousel>;
+
+export const verticalNonInfiniteWithCellPaddingWithDefaultArrows = () =>
+    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
+              dots={ false } isVertical={ true }  >
+      { imgElements }
+    </Carousel>;
+
+export const verticalNonInfiniteButtonsWithCellPaddingWithCustomArrows = () =>
+    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ false }
+              dots={ false } isVertical={ true } controls={ [{
+      component: CustomArrows,
+      props: { overrideArrowStyle: { border: 'none', background: 'none' }, topArrowImage: <UpArrow/>, bottomArrowImage: <DownArrow/>, arrowDivStyle: { transform: 'translate(-450px, 196px)' } }
+    }] }>
+      { testButtons }
+    </Carousel>;
 
 export const infiniteWithCellPadding = () =>
   <Carousel width='450px' cellPadding={ 5 }>

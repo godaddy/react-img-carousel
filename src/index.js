@@ -78,7 +78,8 @@ export default class Carousel extends Component {
         slide: PropTypes.object,
         selectedSlide: PropTypes.object
       }),
-      dir: PropTypes.oneOf(['ltr', 'rtl'])
+      dir: PropTypes.oneOf(['ltr', 'rtl']),
+      isVertical: PropTypes.bool
     };
   }
 
@@ -107,7 +108,8 @@ export default class Carousel extends Component {
       clickToNavigate: true,
       easing: 'ease-in-out',
       style: {},
-      dir: 'ltr'
+      dir: 'ltr',
+      isVertical: false
     };
   }
 
@@ -400,7 +402,7 @@ export default class Carousel extends Component {
    * @returns {Array} Controls to be rendered with the carousel.
    */
   getControls() {
-    const { arrows, dots, controls } = this.props;
+    const { arrows, dots, controls, isVertical } = this.props;
     let arr = controls.slice(0);
 
     if (dots) {
@@ -409,8 +411,8 @@ export default class Carousel extends Component {
 
     if (arrows) {
       arr = arr.concat([
-        { component: Arrow, props: { direction: 'left' } },
-        { component: Arrow, props: { direction: 'right' } }
+        { ...isVertical ? { component: Arrow, props: { direction: 'top' } } : { component: Arrow, props: { direction: 'left' } } },
+        { ...isVertical ? { component: Arrow, props: { direction: 'bottom' } } : { component: Arrow, props: { direction: 'right' } } }
       ]);
     }
 
@@ -424,7 +426,7 @@ export default class Carousel extends Component {
    */
   render() {
     const { className, viewportWidth, viewportHeight, width, height, dots, infinite,
-      children, slideHeight, transition, style, draggable, easing, arrows, dir } = this.props;
+      children, slideHeight, transition, style, draggable, easing, arrows, dir, isVertical } = this.props;
     const { loading, transitionDuration, dragOffset, currentSlide, leftOffset } = this.state;
     const numSlides = Children.count(children);
     const classes = classnames('carousel', className, {
@@ -437,7 +439,8 @@ export default class Carousel extends Component {
     const innerContainerStyle = { ...(style.containerInner || {}),
       width,
       height,
-      marginBottom: dots ? '20px' : 0
+      marginBottom: dots ? '20px' : 0,
+      ...isVertical && { display: 'flex' }
     };
     const viewportStyle = { ...(style.viewport || {}),
       width: viewportWidth,
@@ -448,13 +451,16 @@ export default class Carousel extends Component {
     if (transition !== 'fade') {
       const leftPos = leftOffset + dragOffset;
       trackStyle = { ...trackStyle,
-        transform: `translateX(${isRTL ? -leftPos : leftPos}px)`,
+        ...isVertical && { transform: `translateY(${isRTL ? -leftPos : leftPos}px)` },
+        ...!isVertical && { transform: `translateX(${isRTL ? -leftPos : leftPos}px)` },
         transition: transitionDuration ? `transform ${ms('' + transitionDuration)}ms ${easing}` : 'none'
       };
     }
+
     if (!draggable) {
       trackStyle.touchAction = 'auto';
     }
+
     const controls = this.getControls();
 
     return (
@@ -478,7 +484,7 @@ export default class Carousel extends Component {
           <div className='carousel-viewport' ref={ v => { this._viewport = v; } } style={ viewportStyle }>
             <ul
               className='carousel-track'
-              style={ trackStyle }
+              style={{ ...trackStyle, ...isVertical && { display: 'flex', flexDirection: 'column' } }}
               ref={ t => { this._track = t; } }
               onTransitionEnd={ this.slideTransitionEnd }
               onMouseDown={ this.onMouseDown }
@@ -503,7 +509,7 @@ export default class Carousel extends Component {
                 prevSlide={ this.prevSlide }
                 goToSlide={ this.goToSlide }
                 arrows={ arrows }
-                infinite={ infinite } />
+                infinite={ infinite }/>
             ))
           }
         </div>
@@ -518,7 +524,7 @@ export default class Carousel extends Component {
    */
   renderSlides() {
     const { children, infinite, cellPadding, slideWidth, slideHeight, transition, transitionDuration,
-      style, easing, lazyLoad } = this.props;
+      style, easing, lazyLoad, isVertical } = this.props;
     const { slideDimensions, currentSlide, loadedImages } = this.state;
     this._allImagesLoaded = true;
     let childrenToRender = Children.map(children, (child, index) => {
@@ -532,7 +538,8 @@ export default class Carousel extends Component {
         }
       );
       let slideStyle = {
-        marginLeft: `${cellPadding}px`,
+        ...!isVertical && { marginLeft: `${cellPadding}px` },
+        ...isVertical && { marginTop: `${cellPadding}px` },
         height: slideHeight,
         width: slideWidth
       };
@@ -688,7 +695,8 @@ export default class Carousel extends Component {
    */
   calcLeftOffset = (retryCount = 0) => {
     const { direction, loading } = this.state;
-    const viewportWidth = this._viewport && this._viewport.offsetWidth;
+    const { isVertical } = this.props;
+    const viewportWidth = this._viewport && (isVertical ? this._viewport.offsetHeight : this._viewport.offsetWidth);
 
     clearTimeout(this._retryTimer);
 
@@ -719,7 +727,7 @@ export default class Carousel extends Component {
       selectedSlide = slides[i];
       leftOffset -= cellPadding;
       isCurrentSlideLoading = selectedSlide.className.indexOf(LOADING_CLASS) !== -1;
-      currentSlideWidth = selectedSlide.offsetWidth;
+      currentSlideWidth = isVertical ? selectedSlide.offsetHeight : selectedSlide.offsetWidth;
       foundZeroWidthSlide = foundZeroWidthSlide || (!currentSlideWidth && !isCurrentSlideLoading);
       if (parseInt(selectedSlide.getAttribute('data-index'), 10) === currentSlide) {
         break;
