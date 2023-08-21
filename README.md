@@ -1,6 +1,12 @@
-# react-img-carousel
+<p align="center">
+  <img alt="React Image Carousal Logo" src="images/react-img-carousal-logo.png" width="496">
+</p>
 
+<p align="center" style="font-size: large">
 This component renders a carousel with support for lazy loading, autoplay, infinite scrolling, touch events and more.
+</p>
+
+---
 
 Usage:
 ----------------
