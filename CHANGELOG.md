@@ -1,3 +1,7 @@
+# 2.3.1 - March 2024
+
+***(Enhancement)*** Update peer dependencies to explicitly allow Node.js 18.
+
 # 2.3.0 - March 2023
 
 ***(Feature)*** Add support for vertical carousal.
