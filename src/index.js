@@ -25,7 +25,7 @@ export default class Carousel extends Component {
     return {
       initialSlide: PropTypes.number,
       className: PropTypes.string,
-      transition: PropTypes.oneOf(['slide', 'fade']),
+      transition: PropTypes.oneOf(['slide', 'fade', 'none']),
       dots: PropTypes.bool,
       arrows: PropTypes.oneOfType([
         PropTypes.bool,
@@ -343,7 +343,7 @@ export default class Carousel extends Component {
         direction,
         transitioningFrom: currentSlide
       }, () => {
-        if (!transitionDuration || transition === 'fade') {
+        if (!transitionDuration || transition === 'fade' || transition === 'none') {
           // We don't actually animate if transitionDuration is 0, so immediately call the transition end callback
           this.slideTransitionEnd();
         }
@@ -448,7 +448,7 @@ export default class Carousel extends Component {
     };
     const isRTL = dir === 'rtl';
     let trackStyle = { ...style.track };
-    if (transition !== 'fade') {
+    if (transition === 'slide') {
       const leftPos = leftOffset + dragOffset;
       trackStyle = { ...trackStyle,
         ...isVertical && { transform: `translateY(${isRTL ? -leftPos : leftPos}px)` },
@@ -534,7 +534,7 @@ export default class Carousel extends Component {
         'carousel-slide',
         {
           [SELECTED_CLASS]: index === currentSlide,
-          'carousel-slide-fade': transition === 'fade'
+          'carousel-slide-fade': transition === 'fade' || transition === 'none' // Absolute positioning for fade/none transition
         }
       );
       let slideStyle = {
@@ -546,6 +546,8 @@ export default class Carousel extends Component {
 
       if (transition === 'fade') {
         slideStyle.transition = `opacity ${ms('' + transitionDuration)}ms ${easing}`;
+      } else if (transition === 'none') {
+        slideStyle.transition = 'none';
       }
 
       if (slideHeight) {
@@ -605,7 +607,7 @@ export default class Carousel extends Component {
       );
     });
 
-    if (infinite && transition !== 'fade') {
+    if (infinite && transition === 'slide') {
       // For infinite mode, create 2 clones on each side of the track
       childrenToRender = this.addClones(childrenToRender);
     }
@@ -791,7 +793,7 @@ export default class Carousel extends Component {
     }
 
 
-    if (draggable && transition !== 'fade' && !this._animating) {
+    if (draggable && transition === 'slide' && !this._animating) {
       if (this._autoplayTimer) {
         clearTimeout(this._autoplayTimer);
       }
@@ -879,7 +881,7 @@ export default class Carousel extends Component {
   onTouchStart = (e) => {
     const { draggable, transition } = this.props;
 
-    if (draggable && transition !== 'fade' && !this._animating) {
+    if (draggable && transition === 'slide' && !this._animating) {
       if (this._autoplayTimer) {
         clearTimeout(this._autoplayTimer);
       }
