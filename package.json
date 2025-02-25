@@ -1,6 +1,6 @@
 {
   "name": "react-img-carousel",
-  "version": "2.4.0",
+  "version": "2.4.1",
   "description": "Provides an image carousel React component.",
   "main": "lib/index.js",
   "repository": {
@@ -32,7 +32,7 @@
     "storybook": "start-storybook"
   },
   "peerDependencies": {
-    "react": "^15.0.0 || ^16.0.0 || ^17.0.0"
+    "react": "15.x || 16.x || 17.x || 18.x"
   },
   "dependencies": {
     "classnames": "^2.3.1",
