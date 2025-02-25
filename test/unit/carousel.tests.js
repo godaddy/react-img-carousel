@@ -526,6 +526,28 @@ describe('Carousel', () => {
     });
   });
 
+  it('should support passing none for the transition type', done => {
+    let noneCarousel;
+
+    tree = mount(
+      <Carousel className='none-carousel' slideWidth='300px' viewportWidth='300px' infinite={ false }
+        transition='none' ref={ el => { noneCarousel = el; } }>
+        <div id='slide1' />
+        <div id='slide2' />
+        <div id='slide3' />
+      </Carousel>
+    );
+
+    setImmediate(() => {
+      noneCarousel.goToSlide(1);
+      tree.update();
+      const track = tree.find('.none-carousel .carousel-track');
+      expect(track.prop('style').transition).to.not.exist;
+
+      done();
+    });
+  });
+
   describe('maxRenderedSlides', () => {
     it('should only render the specified maxRenderedSlides', () => {
       renderToJsdom(

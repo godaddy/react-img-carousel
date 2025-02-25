@@ -170,7 +170,7 @@ Example:
 ```
 
 #### transition
-`PropTypes.oneOf(['fade', 'slide'])`
+`PropTypes.oneOf(['fade', 'slide', 'none'])`
 
 The type of transition to use between slides, defaults to `slide`.
 

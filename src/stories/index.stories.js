@@ -109,6 +109,17 @@ export const fadeTransition = () =>
     { imgElements }
   </Carousel>;
 
+export const noneTransition = () =>
+  <Carousel
+    width='450px'
+    slideHeight='300px'
+    draggable={ false }
+    transition='none'
+    autoplay={ true }
+  >
+    {imgElements}
+  </Carousel>;
+
 export const infiniteWithOnly2Slides = () =>
   <Carousel width='450px' arrows={ false } slideHeight='300px'>
     <img src='http://picsum.photos/325/300' alt='A sample' />

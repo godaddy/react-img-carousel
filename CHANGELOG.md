@@ -1,6 +1,9 @@
-# 2.3.1 - March 2024
+# 2.4.1 - Feb 2025
 
 ***(Enhancement)*** Update peer dependencies to explicitly allow Node.js 18.
+# 2.4.0 - Oct 2024
+
+***(Feature)*** Add support for disabling slide transition.
 
 # 2.3.0 - March 2023
 
