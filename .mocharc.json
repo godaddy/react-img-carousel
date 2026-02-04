@@ -1,0 +1,5 @@
+{
+  "require": ["setup-env", "./test/setup.js"],
+  "extension": ["js", "jsx"],
+  "spec": "test/unit/**/*.test.{js,jsx}"
+}
