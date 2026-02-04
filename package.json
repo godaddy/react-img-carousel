@@ -27,7 +27,7 @@
     "clean": "rimraf ./lib",
     "prebuild": "npm run clean",
     "build": "babel src -d lib --extensions '.js,.jsx' && lessc src/carousel.less lib/carousel.css && postcss --no-map --use autoprefixer -o lib/carousel.css lib/carousel.css",
-    "lint": "eslint --ext .js,.jsx src/ test/",
+    "lint": "eslint --ext .js,.jsx src/ test/ --fix",
     "unit": "vitest run",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
