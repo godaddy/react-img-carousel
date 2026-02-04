@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 const CustomArrows = ({ nextSlide, prevSlide, overrideArrowStyle = {}, infinite, numSlides, selectedIndex, topArrowImage, bottomArrowImage, arrowDivStyle }) => {
     const hasNext = (direction) => {
         return infinite || (['top', 'left'].includes(direction) ? selectedIndex > 0 : selectedIndex < numSlides - 1);
-    }
+    };
 
     const hasNextBottom = hasNext('bottom');
     const hasNextTop = hasNext('top');
