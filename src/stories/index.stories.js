@@ -238,7 +238,7 @@ export const customDotsComponent = () =>
     { imgElements }
   </Carousel>;
 
-export const addImages = () => {
+export const AddImages = () => {
   const [images, setImages] = useState([IMAGES[0]]);
 
   const addImage = () => {
