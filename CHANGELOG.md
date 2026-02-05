@@ -1,3 +1,6 @@
+# 3.0.0 - Feb 2026
+***(Enhancement)*** Update to node 24 and React 18
+
 # 2.4.1 - Feb 2025
 
 ***(Enhancement)*** Update peer dependencies to explicitly allow Node.js 18.

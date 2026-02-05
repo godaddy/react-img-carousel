@@ -646,7 +646,7 @@ export default class Carousel extends Component {
     const nextSlidesToRender = Math.floor(maxSlides / 2);
     let indices = genIndices(currentSlide - prevSlidesToRender, currentSlide + nextSlidesToRender);
 
-    if (transitioningFrom !== null) {
+    if (transitioningFrom != null) {
       // Also render the slides around the previous slide during a transition
       indices = indices.concat(genIndices(transitioningFrom - prevSlidesToRender, transitioningFrom + nextSlidesToRender));
     }
