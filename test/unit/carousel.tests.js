@@ -1,5 +1,7 @@
 /* eslint max-statements: 0, jsx-a11y/alt-text: 0 */
 import React from 'react';
+import { act } from 'react';
+import { flushSync } from 'react-dom';
 import { mount } from 'enzyme';
 import chai, { expect } from 'chai';
 import sinon from 'sinon';
@@ -291,19 +293,22 @@ describe('Carousel', () => {
 
     setImmediate(() => {
       let dots = tree.find('.carousel-dot');
-      const track = tree.find('.carousel-track');
       expect(dots.length).to.equal(3);
       expect(dots.at(0).prop('className')).to.contain('selected');
-      track.simulate('mouseDown', { clientX: 0 });
-      carousel.onMouseMove({ preventDefault: () => {}, clientX: -150 });
-      carousel.stopDragging();
-      tree.update();
-      setImmediate(() => {
-        dots = tree.find('.carousel-dot');
-        expect(dots.at(0).prop('className')).to.not.contain('selected');
-        expect(dots.at(1).prop('className')).to.contain('selected');
-        done();
+      flushSync(() => {
+        carousel.onMouseDown({ target: { nodeName: 'DIV' }, clientX: 0, clientY: 0 });
       });
+      flushSync(() => {
+        carousel.onMouseMove({ preventDefault: () => {}, clientX: -150 });
+      });
+      flushSync(() => {
+        carousel.stopDragging();
+      });
+      tree.update();
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(0).prop('className')).to.not.contain('selected');
+      expect(dots.at(1).prop('className')).to.contain('selected');
+      done();
     });
   });
 
@@ -338,19 +343,22 @@ describe('Carousel', () => {
 
     setImmediate(() => {
       let dots = tree.find('.carousel-dot');
-      const track = tree.find('.carousel-track');
       expect(dots.length).to.equal(3);
       expect(dots.at(0).prop('className')).to.contain('selected');
-      track.simulate('mouseDown', { clientX: 0 });
-      carousel.onMouseMove({ preventDefault: () => {}, clientX: 150 });
-      carousel.stopDragging();
-      tree.update();
-      setImmediate(() => {
-        dots = tree.find('.carousel-dot');
-        expect(dots.at(0).prop('className')).to.not.contain('selected');
-        expect(dots.at(2).prop('className')).to.contain('selected');
-        done();
+      flushSync(() => {
+        carousel.onMouseDown({ target: { nodeName: 'DIV' }, clientX: 0, clientY: 0 });
       });
+      flushSync(() => {
+        carousel.onMouseMove({ preventDefault: () => {}, clientX: 150 });
+      });
+      flushSync(() => {
+        carousel.stopDragging();
+      });
+      tree.update();
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(0).prop('className')).to.not.contain('selected');
+      expect(dots.at(2).prop('className')).to.contain('selected');
+      done();
     });
   });
 
@@ -365,20 +373,22 @@ describe('Carousel', () => {
 
     setImmediate(() => {
       let dots = tree.find('.carousel-dot');
-      const track = tree.find('.carousel-track');
       expect(dots.length).to.equal(3);
       expect(dots.at(0).prop('className')).to.contain('selected');
-      track.simulate('touchStart', { touches: [{ screenX: 0, screenY: 0 }] });
-      carousel.onTouchMove({ preventDefault: () => {}, touches: [{ screenX: -150, screenY: 0 }] });
-      carousel.stopDragging();
-      tree.update();
-
-      setImmediate(() => {
-        dots = tree.find('.carousel-dot');
-        expect(dots.at(0).prop('className')).to.not.contain('selected');
-        expect(dots.at(1).prop('className')).to.contain('selected');
-        done();
+      flushSync(() => {
+        carousel.onTouchStart({ touches: [{ screenX: 0, screenY: 0 }] });
       });
+      flushSync(() => {
+        carousel.onTouchMove({ preventDefault: () => {}, touches: [{ screenX: -150, screenY: 0 }] });
+      });
+      flushSync(() => {
+        carousel.stopDragging();
+      });
+      tree.update();
+      dots = tree.find('.carousel-dot');
+      expect(dots.at(0).prop('className')).to.not.contain('selected');
+      expect(dots.at(1).prop('className')).to.contain('selected');
+      done();
     });
   });
 
@@ -515,7 +525,9 @@ describe('Carousel', () => {
     );
 
     setImmediate(() => {
-      slidingCarousel.goToSlide(1);
+      act(() => {
+        slidingCarousel.goToSlide(1);
+      });
       tree.update();
       const track = tree.find('.sliding-carousel .carousel-track');
       expect(track.prop('style').transition).to.equal('transform 300ms ease-out');
