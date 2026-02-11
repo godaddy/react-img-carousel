@@ -1,3 +1,6 @@
+# 3.0.1 - Feb 2026
+***(Enhancement)*** Migrate test framework from Enzyme/Mocha/Chai to Vitest and React Testing Library. Remove deprecated dependencies.
+
 # 3.0.0 - Feb 2026
 ***(Enhancement)*** Update to node 24 and React 18
 
