@@ -297,7 +297,7 @@ export default class Carousel extends Component {
         }
       }
     }
-  }
+  };
 
   /**
    * Navigates to the specified slide index, moving in the specified direction.
@@ -349,7 +349,7 @@ export default class Carousel extends Component {
         }
       });
     });
-  }
+  };
 
   /**
    * Transitions to the next slide moving from left to right.
@@ -358,7 +358,7 @@ export default class Carousel extends Component {
   nextSlide = (e) => {
     const { currentSlide } = this.state;
     this.goToSlide(currentSlide + 1, 'right', typeof e !== 'object');
-  }
+  };
 
   /**
    * Transitions to the previous slide moving from right to left.
@@ -366,7 +366,7 @@ export default class Carousel extends Component {
   prevSlide = () => {
     const { currentSlide } = this.state;
     this.goToSlide(currentSlide - 1, 'left');
-  }
+  };
 
   /**
    * Invoked whenever a slide transition (CSS) completes.
@@ -396,7 +396,7 @@ export default class Carousel extends Component {
 
       afterChange && afterChange(currentSlide);
     }
-  }
+  };
 
   /**
    * @returns {Array} Controls to be rendered with the carousel.
@@ -759,7 +759,7 @@ export default class Carousel extends Component {
       // We have correctly positioned the slides and are done loading images, so reveal the carousel
       this.setState({ loading: false });
     }
-  }
+  };
 
   /**
    * Invoked when a slide is clicked.
@@ -777,7 +777,7 @@ export default class Carousel extends Component {
     }
 
     this.goToSlide(clickedIndex);
-  }
+  };
 
   /**
    * Invoked when mousedown occurs on a slide.
@@ -806,7 +806,7 @@ export default class Carousel extends Component {
       document.addEventListener('mousemove', this.onMouseMove, { passive: false });
       document.addEventListener('mouseup', this.stopDragging, false);
     }
-  }
+  };
 
   /**
    * Invoked when the mouse is moved over a slide while dragging.
@@ -818,28 +818,28 @@ export default class Carousel extends Component {
     this.setState({
       dragOffset: e.clientX - this._startPos.x
     });
-  }
+  };
 
   /**
    * Invoked when the mouse cursor enters over a slide.
    */
   onMouseEnter = () => {
     document.addEventListener('mousemove', this.handleMovement, false);
-  }
+  };
 
   /**
    * Invoked when the mouse cursor moves around a slide.
    */
   handleMovement = () => {
     this.setHoverState(true);
-  }
+  };
 
   /**
    * Invoked when the mouse cursor moves over a slide.
    */
   onMouseOver = () => {
     this.setHoverState(true);
-  }
+  };
 
   /**
    * Keeps track of the current hover state.
@@ -871,7 +871,7 @@ export default class Carousel extends Component {
     document.removeEventListener('mousemove', this.handleMovement, false);
     this.setHoverState(false);
     !this._animating && this._startPos && this.stopDragging();
-  }
+  };
 
   /**
    * Invoked when a touchstart event occurs on a slide.
@@ -895,7 +895,7 @@ export default class Carousel extends Component {
         document.addEventListener('touchend', this.stopDragging, false);
       }
     }
-  }
+  };
 
   /**
    * Invoked when a touchmove event occurs on a slide.
@@ -915,7 +915,7 @@ export default class Carousel extends Component {
         dragOffset: screenX - this._startPos.x
       });
     }
-  }
+  };
 
   /**
    * Removes event listeners that were added when starting a swipe operation
@@ -985,5 +985,5 @@ export default class Carousel extends Component {
     if (this.props.autoplay) {
       this.startAutoplay();
     }
-  }
+  };
 }

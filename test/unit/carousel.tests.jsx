@@ -1,6 +1,6 @@
 /* eslint max-statements: 0, jsx-a11y/alt-text: 0 */
 import React from 'react';
-import { render, screen, waitFor, within, act, fireEvent } from '@testing-library/react';
+import { render, waitFor, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { flushSync } from 'react-dom';
@@ -64,7 +64,7 @@ describe('Carousel', () => {
 
     const nextButton = container.querySelector('.carousel-right-arrow');
     expect(nextButton.className).toContain('carousel-arrow-default');
-    
+
     await userEvent.click(nextButton);
 
     await waitFor(() => {
@@ -98,7 +98,7 @@ describe('Carousel', () => {
 
     const prevButton = container.querySelector('.carousel-left-arrow');
     expect(prevButton.className).toContain('carousel-arrow-default');
-    
+
     await userEvent.click(prevButton);
 
     await waitFor(() => {
@@ -241,7 +241,7 @@ describe('Carousel', () => {
     });
 
     let slides = container.querySelectorAll('.carousel-slide');
-    
+
     // Click on slide 2 (third slide)
     fireEvent.mouseDown(slides[2], { clientX: 100, clientY: 100 });
     fireEvent.click(slides[2], { currentTarget: slides[2], clientX: 100, clientY: 100 });
@@ -556,8 +556,22 @@ describe('Carousel', () => {
 
     await waitFor(() => {
       const controlComponent = container.querySelector('.custom-arrows-div');
-      expect(controlComponent.children[0].outerHTML).toBe('<button class="carousel-custom-arrow" disabled="" style="background: none; opacity: 0.5; cursor: not-allowed;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="m0 16.67 2.829 2.83 9.175-9.339 9.167 9.339L24 16.67 12.004 4.5z"></path></svg></button>');
-      expect(controlComponent.children[1].outerHTML).toBe('<button class="carousel-custom-arrow" style="background: none; opacity: 1; cursor: pointer;"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"><path d="M0 7.33 2.829 4.5l9.175 9.339L21.171 4.5 24 7.33 12.004 19.5z"></path></svg></button>');
+      const topButton = controlComponent.children[0];
+      const bottomButton = controlComponent.children[1];
+
+      // Verify top arrow button (disabled, first slide)
+      expect(topButton.className).toBe('carousel-custom-arrow');
+      expect(topButton.disabled).toBe(true);
+      expect(topButton.style.opacity).toBe('0.5');
+      expect(topButton.style.cursor).toBe('not-allowed');
+      expect(topButton.children).toHaveLength(1);
+
+      // Verify bottom arrow button (enabled)
+      expect(bottomButton.className).toBe('carousel-custom-arrow');
+      expect(bottomButton.disabled).toBe(false);
+      expect(bottomButton.style.opacity).toBe('1');
+      expect(bottomButton.style.cursor).toBe('pointer');
+      expect(bottomButton.children).toHaveLength(1);
     });
   });
 

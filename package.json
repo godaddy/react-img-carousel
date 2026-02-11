@@ -26,8 +26,8 @@
   "scripts": {
     "clean": "rimraf ./lib",
     "prebuild": "npm run clean",
-    "build": "babel src -d lib && lessc src/carousel.less lib/carousel.css && postcss --no-map --use autoprefixer -o lib/carousel.css lib/carousel.css",
-    "lint": "eslint src/ test/",
+    "build": "babel src -d lib --extensions '.js,.jsx' && lessc src/carousel.less lib/carousel.css && postcss --no-map --use autoprefixer -o lib/carousel.css lib/carousel.css",
+    "lint": "eslint --ext .js,.jsx src/ test/",
     "unit": "vitest run",
     "test": "vitest run --coverage",
     "test:watch": "vitest",
@@ -74,6 +74,7 @@
     "eslint-plugin-json": "^4.0.1",
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.4",
+    "happy-dom": "^20.6.1",
     "jsdom": "^26.1.0",
     "less": "^4.2.2",
     "less-loader": "^12.2.0",
@@ -84,7 +85,6 @@
     "rimraf": "^6.0.1",
     "storybook": "^8.5.3",
     "style-loader": "^4.0.0",
-    "vite-plugin-babel": "^1.5.1",
     "vitest": "^4.0.18"
   }
 }
