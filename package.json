@@ -75,7 +75,6 @@
     "eslint-plugin-jsx-a11y": "^6.10.2",
     "eslint-plugin-react": "^7.37.4",
     "happy-dom": "^20.6.1",
-    "jsdom": "^26.1.0",
     "less": "^4.2.2",
     "less-loader": "^12.2.0",
     "postcss": "^8.5.2",
