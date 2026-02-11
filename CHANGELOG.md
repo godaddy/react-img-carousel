@@ -1,3 +1,6 @@
+# 3.0.1 - Feb 2026
+***(Enhancement)*** Lower Node requirement to >=20 (from >=24) for broader compatibility. Migrate CI from CircleCI to GitHub Actions with multi-version testing. Add .npmrc for streamlined dependency installation.
+
 # 3.0.0 - Feb 2026
 ***(Enhancement)*** Update to node 24 and React 18
 

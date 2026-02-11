@@ -1,6 +1,6 @@
 {
   "name": "react-img-carousel",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Provides an image carousel React component.",
   "main": "lib/index.js",
   "repository": {
@@ -21,7 +21,7 @@
   },
   "homepage": "https://github.com/godaddy/react-img-carousel#readme",
   "engines": {
-    "node": ">=24.0.0"
+    "node": ">=20.0.0"
   },
   "scripts": {
     "clean": "rimraf ./lib",
