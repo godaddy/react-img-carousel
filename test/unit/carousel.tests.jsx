@@ -2,7 +2,6 @@
 import React from 'react';
 import { render, waitFor, act, fireEvent } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
 import { flushSync } from 'react-dom';
 import Carousel from '../../src/index';
 import CustomArrows from '../../src/stories/CustomArrows';
