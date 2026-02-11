@@ -1,6 +1,17 @@
 {
   "root": true,
   "extends": ["godaddy-react"],
+  "globals": {
+    "describe": "readonly",
+    "it": "readonly",
+    "expect": "readonly",
+    "beforeEach": "readonly",
+    "afterEach": "readonly",
+    "vi": "readonly",
+    "test": "readonly",
+    "beforeAll": "readonly",
+    "afterAll": "readonly"
+  },
   "rules": {
     "template-curly-spacing": "off",
     "indent": "off",

@@ -1,3 +1,6 @@
+# 3.0.2 - Feb 2026
+***(Enhancement)*** Migrate test framework from Enzyme/Mocha/Chai to Vitest and React Testing Library. Remove deprecated dependencies.
+
 # 3.0.1 - Feb 2026
 ***(Enhancement)*** Lower Node requirement to >=20 (from >=24) for broader compatibility. Migrate CI from CircleCI to GitHub Actions with multi-version testing. Add .npmrc for streamlined dependency installation.
 
