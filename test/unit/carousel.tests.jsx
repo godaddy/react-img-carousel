@@ -9,6 +9,7 @@ import UpArrow from '../images/test-up-arrow.svg';
 import DownArrow from '../images/test-down-arrow.svg';
 
 let imagesFetched;
+const OriginalImage = global.Image;
 
 global.Image = class MyImage {
   set src(val) {
@@ -26,6 +27,10 @@ describe('Carousel', () => {
 
   afterEach(() => {
     container = null;
+  });
+
+  afterAll(() => {
+    global.Image = OriginalImage;
   });
 
   it('should render a carousel with the specified index selected', async () => {
@@ -340,7 +345,12 @@ describe('Carousel', () => {
   it('should pause when mouse is moving', async () => {
     let carouselRef;
     const { container: c } = render(
-      <Carousel slideWidth='300px' viewportWidth='300px' infinite={ false } autoplay={ true } pauseOnHover={ true } ref={ ref => { carouselRef = ref; } }>
+      <Carousel slideWidth='300px'
+        viewportWidth='300px'
+        infinite={ false }
+        autoplay={ true }
+        pauseOnHover={ true }
+        ref={ ref => { carouselRef = ref; } }>
         <div id='slide1' />
         <div id='slide2' />
         <div id='slide3' />
@@ -507,7 +517,7 @@ describe('Carousel', () => {
     });
   });
 
-  it('should render vertical carousal with default arrows.', async () => {
+  it('should render vertical carousel with default arrows.', async () => {
     const { container: c } = render(
       <Carousel slideWidth='300px'
                 viewportWidth='300px'
@@ -528,13 +538,17 @@ describe('Carousel', () => {
 
       expect(carouselDiv.style.display).toBe('flex');
       expect(topArrow).toBeTruthy();
-      expect(topArrow.outerHTML).toBe('<button type="button" disabled="" class="carousel-arrow carousel-top-arrow carousel-arrow-default"></button>');
+      expect(topArrow).toBeDisabled();
+      expect(topArrow).toHaveAttribute('type', 'button');
+      expect(topArrow).toHaveClass('carousel-arrow', 'carousel-top-arrow', 'carousel-arrow-default');
       expect(bottomArrow).toBeTruthy();
-      expect(bottomArrow.outerHTML).toBe('<button type="button" class="carousel-arrow carousel-bottom-arrow carousel-arrow-default"></button>');
+      expect(bottomArrow).not.toBeDisabled();
+      expect(bottomArrow).toHaveAttribute('type', 'button');
+      expect(bottomArrow).toHaveClass('carousel-arrow', 'carousel-bottom-arrow', 'carousel-arrow-default');
     });
   });
 
-  it('should render vertical carousal with custom arrows.', async () => {
+  it('should render vertical carousel with custom arrows.', async () => {
     const { container: c } = render(
       <Carousel slideWidth='300px'
                 viewportWidth='300px'
@@ -544,7 +558,11 @@ describe('Carousel', () => {
                 arrows={ false }
                 controls={ [{
                   component: CustomArrows,
-                  props: { overrideArrowStyle: { border: 'none', background: 'none' }, topArrowImage: <UpArrow/>, bottomArrowImage: <DownArrow/> }
+                  props: {
+                    overrideArrowStyle: { border: 'none', background: 'none' },
+                    topArrowImage: <UpArrow/>,
+                    bottomArrowImage: <DownArrow/>
+                  }
                 }] }>
         <div id='slide1' />
         <div id='slide2' />
@@ -595,11 +613,11 @@ describe('Carousel', () => {
     );
     container = c;
 
-    await waitFor(() => {
-      act(() => {
-        slidingCarousel.goToSlide(1);
-      });
+    act(() => {
+      slidingCarousel.goToSlide(1);
+    });
 
+    await waitFor(() => {
       const track = container.querySelector('.sliding-carousel .carousel-track');
       expect(track.style.transition).toBe('transform 300ms ease-out');
 
@@ -621,8 +639,11 @@ describe('Carousel', () => {
     );
     container = c;
 
-    await waitFor(() => {
+    act(() => {
       noneCarousel.goToSlide(1);
+    });
+
+    await waitFor(() => {
       const track = container.querySelector('.none-carousel .carousel-track');
       expect(track.style.transition).toBeFalsy();
     });
@@ -764,6 +785,8 @@ describe('Carousel', () => {
   });
 
   it('should call onSlideTransitioned with autoPlay true', async () => {
+    vi.useFakeTimers();
+
     const onSlideTransitionedStub = vi.fn();
     let carouselRef;
     const { container: c } = render(
@@ -783,7 +806,9 @@ describe('Carousel', () => {
     );
     container = c;
 
-    await new Promise(resolve => setTimeout(resolve, 20));
+    await vi.advanceTimersByTimeAsync(20);
+
+    vi.useRealTimers();
 
     await waitFor(() => {
       const track = container.querySelector('.carousel-viewport');
