@@ -161,7 +161,7 @@ export const InfiniteWithOnly2Slides = {
     slideHeight: '300px'
   },
   render: (args) => (
-    <Carousel {...args}>
+    <Carousel { ...args }>
       <img src='http://picsum.photos/325/300' alt='A sample' />
       <img src='http://picsum.photos/350/300' alt='A sample' />
     </Carousel>
@@ -176,7 +176,7 @@ export const InfiniteWithOnly1Slide = {
     dots: false
   },
   render: (args) => (
-    <Carousel {...args}>
+    <Carousel { ...args }>
       <img src='http://picsum.photos/325/300' alt='A sample' />
     </Carousel>
   )
@@ -191,7 +191,7 @@ export const AutoplayWithBackgroundImages = {
     autoplay: true
   },
   render: (args) => (
-    <Carousel {...args}>
+    <Carousel { ...args }>
       <div style={{
         backgroundImage: 'url(http://picsum.photos/600/300)',
         backgroundSize: 'cover',
@@ -231,7 +231,7 @@ export const BackgroundImagesWithFade = {
     arrows: true
   },
   render: (args) => (
-    <Carousel {...args}>
+    <Carousel { ...args }>
       <div style={{
         backgroundImage: 'url(http://picsum.photos/600/300)',
         backgroundSize: 'cover',
@@ -292,35 +292,37 @@ export const CustomDotsComponent = {
   }
 };
 
+const AddImagesComponent = () => {
+  const [images, setImages] = useState([IMAGES[0]]);
+
+  const addImage = () => {
+    if (images.length < IMAGES.length) {
+      setImages(images.concat(IMAGES[images.length]));
+    }
+  };
+
+  return (
+    <Fragment>
+      <Carousel
+        width='450px'
+        cellPadding={ 5 }
+        infinite={ true }
+        dots={ false }
+        arrows={ false }
+        autoplay={ false }
+        controls={ [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }] }
+      >
+        {
+          images.map((image, index) => <img key={ index } src={ image } alt='A sample' />)
+        }
+      </Carousel>
+      <button onClick={ addImage }>Add Image</button>
+    </Fragment>
+  );
+};
+
 export const AddImages = {
-  render: () => {
-    const [images, setImages] = useState([IMAGES[0]]);
-
-    const addImage = () => {
-      if (images.length < IMAGES.length) {
-        setImages(images.concat(IMAGES[images.length]));
-      }
-    };
-
-    return (
-      <Fragment>
-        <Carousel
-          width='450px'
-          cellPadding={ 5 }
-          infinite={ true }
-          dots={ false }
-          arrows={ false }
-          autoplay={ false }
-          controls={ [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }] }
-        >
-          {
-            images.map((image, index) => <img key={ index } src={ image } alt='A sample' />)
-          }
-        </Carousel>
-        <button onClick={ addImage }>Add Image</button>
-      </Fragment>
-    );
-  }
+  render: AddImagesComponent
 };
 
 export const LeftAlignedSlides = {
@@ -350,7 +352,7 @@ export const Rtl = {
   },
   render: (args) => (
     <div dir='rtl'>
-      <Carousel {...args} />
+      <Carousel { ...args } />
     </div>
   )
 };
