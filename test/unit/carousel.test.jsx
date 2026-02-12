@@ -825,4 +825,284 @@ describe('Carousel', () => {
       );
     });
   });
+
+  describe('calcLeftOffset', () => {
+    /**
+     * Reads the track's translate value from the DOM (reflects leftOffset).
+     * @param {Element} container - Rendered container
+     * @param {{ vertical?: boolean }} options - vertical for translateY
+     * @returns {number|null} - Parsed px value or null
+     */
+    function getTrackTranslatePx(container, { vertical = false } = {}) {
+      const track = container.querySelector('.carousel-track');
+      if (!track) return null;
+      const key = vertical ? 'translateY' : 'translateX';
+      const re = new RegExp(`${key}\\((-?\\d+)px\\)`);
+      const m = track.style.transform.match(re);
+      return m ? parseInt(m[1], 10) : null;
+    }
+
+    function fireTrackTransitionEnd(container) {
+      const track = container.querySelector('.carousel-track');
+      if (track) {
+        fireEvent.transitionEnd(track, { propertyName: 'transform' });
+      }
+    }
+
+    it('should calculate left offset for center alignment (default)', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          viewportWidth='600px'
+          lazyLoad={ false }
+          infinite={ false }
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => {
+        const translate = getTrackTranslatePx(c);
+        expect(translate).toBe(150);
+      });
+    });
+
+    it('should calculate left offset for left alignment', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          viewportWidth='600px'
+          lazyLoad={ false }
+          infinite={ false }
+          slideAlignment='left'
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => {
+        expect(getTrackTranslatePx(c)).toBe(0);
+      });
+    });
+
+    it('should calculate left offset for right alignment', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          viewportWidth='600px'
+          lazyLoad={ false }
+          infinite={ false }
+          slideAlignment='right'
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => {
+        expect(getTrackTranslatePx(c)).toBe(300);
+      });
+    });
+
+    it('should not transition when at first slide and prev is clicked in non-infinite mode', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          viewportWidth='300px'
+          lazyLoad={ false }
+          infinite={ false }
+          initialSlide={ 0 }
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => expect(getTrackTranslatePx(c)).not.toBeNull());
+      const initialTranslate = getTrackTranslatePx(c);
+
+      const prevButton = c.querySelector('.carousel-left-arrow');
+      await userEvent.click(prevButton);
+
+      await waitFor(() => {
+        const dots = c.querySelectorAll('.carousel-dot');
+        expect(dots[0].className).toContain('selected');
+      });
+      expect(getTrackTranslatePx(c)).toBe(initialTranslate);
+    });
+
+    it('should not transition when at last slide and next is clicked in non-infinite mode', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          viewportWidth='300px'
+          lazyLoad={ false }
+          infinite={ false }
+          initialSlide={ 2 }
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => expect(getTrackTranslatePx(c)).not.toBeNull());
+      const initialTranslate = getTrackTranslatePx(c);
+
+      const nextButton = c.querySelector('.carousel-right-arrow');
+      await userEvent.click(nextButton);
+
+      await waitFor(() => {
+        const dots = c.querySelectorAll('.carousel-dot');
+        expect(dots[2].className).toContain('selected');
+      });
+      expect(getTrackTranslatePx(c)).toBe(initialTranslate);
+    });
+
+    it('should position track correctly when looping left from first to last slide', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          viewportWidth='300px'
+          lazyLoad={ false }
+          infinite={ true }
+          initialSlide={ 0 }
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => expect(getTrackTranslatePx(c)).not.toBeNull());
+
+      const prevButton = c.querySelector('.carousel-left-arrow');
+      await userEvent.click(prevButton);
+      act(() => fireTrackTransitionEnd(c));
+
+      await waitFor(() => {
+        const dots = c.querySelectorAll('.carousel-dot');
+        expect(dots[2].className).toContain('selected');
+      });
+      expect(getTrackTranslatePx(c)).toBe(-300);
+    });
+
+    it('should position track correctly when looping right from last to first slide', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          viewportWidth='300px'
+          lazyLoad={ false }
+          infinite={ true }
+          initialSlide={ 2 }
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => expect(getTrackTranslatePx(c)).not.toBeNull());
+
+      const nextButton = c.querySelector('.carousel-right-arrow');
+      await userEvent.click(nextButton);
+      act(() => fireTrackTransitionEnd(c));
+
+      await waitFor(() => {
+        const dots = c.querySelectorAll('.carousel-dot');
+        expect(dots[0].className).toContain('selected');
+      });
+      expect(getTrackTranslatePx(c)).toBe(-1500);
+    });
+
+    it('should handle cellPadding in offset calculation', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          viewportWidth='300px'
+          lazyLoad={ false }
+          infinite={ false }
+          cellPadding={ 10 }
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => {
+        expect(getTrackTranslatePx(c)).toBe(-10);
+      });
+    });
+
+    it('should handle vertical carousel offset calculation', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          slideHeight='300px'
+          viewportWidth='600px'
+          viewportHeight='600px'
+          lazyLoad={ false }
+          infinite={ false }
+          isVertical={ true }
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => {
+        expect(getTrackTranslatePx(c, { vertical: true })).toBe(150);
+      });
+    });
+
+    it('should update track position when navigating in infinite mode with multiple slides', async () => {
+      const { container: c } = render(
+        <Carousel
+          slideWidth='300px'
+          viewportWidth='300px'
+          lazyLoad={ false }
+          infinite={ true }
+          initialSlide={ 1 }
+        >
+          <div id='slide1' />
+          <div id='slide2' />
+          <div id='slide3' />
+          <div id='slide4' />
+          <div id='slide5' />
+        </Carousel>
+      );
+      container = c;
+
+      await waitFor(() => expect(getTrackTranslatePx(c)).not.toBeNull());
+      const initialTranslate = getTrackTranslatePx(c);
+
+      const prevButton = c.querySelector('.carousel-left-arrow');
+      await userEvent.click(prevButton);
+      act(() => fireTrackTransitionEnd(c));
+
+      await waitFor(() => {
+        const dots = c.querySelectorAll('.carousel-dot');
+        expect(dots[0].className).toContain('selected');
+      });
+      expect(getTrackTranslatePx(c)).not.toBeNull();
+      expect(getTrackTranslatePx(c)).not.toBe(initialTranslate);
+    });
+  });
 });

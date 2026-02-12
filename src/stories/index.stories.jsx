@@ -25,7 +25,94 @@ const IMAGES = [
   'http://picsum.photos/325/300'
 ];
 
-const imgElements = IMAGES.map((image, index) => <img src={ image } key={ index } alt='A sample' />);
+const imgElements = IMAGES.map((image, index) => (
+  <img src={ image } key={ index } alt='A sample' />
+));
+
+const SLIDES_TO_ADVANCE = 2;
+
+const CustomArrowsTwoSlides = ({
+  goToSlide,
+  selectedIndex,
+  numSlides,
+  infinite,
+  leftArrow,
+  rightArrow,
+  arrowStyle = {}
+}) => {
+  const goPrev = () => {
+    const target = infinite
+      ? selectedIndex - SLIDES_TO_ADVANCE
+      : Math.max(0, selectedIndex - SLIDES_TO_ADVANCE);
+    goToSlide(target, 'left');
+  };
+  const goNext = () => {
+    const target = infinite
+      ? selectedIndex + SLIDES_TO_ADVANCE
+      : Math.min(numSlides - 1, selectedIndex + SLIDES_TO_ADVANCE);
+    goToSlide(target, 'right');
+  };
+  const canGoPrev = infinite || selectedIndex >= SLIDES_TO_ADVANCE;
+  const canGoNext = infinite || selectedIndex < numSlides - SLIDES_TO_ADVANCE;
+  const baseStyle = {
+    position: 'absolute',
+    top: '50%',
+    transform: 'translateY(-50%)',
+    border: 'none',
+    background: 'rgba(0,0,0,0.5)',
+    color: '#fff',
+    cursor: 'pointer',
+    padding: '12px 16px',
+    fontSize: '24px',
+    zIndex: 1,
+    ...arrowStyle
+  };
+  return (
+    <>
+      <button
+        type='button'
+        className='carousel-custom-arrow carousel-custom-arrow-left'
+        onClick={ goPrev }
+        disabled={ !canGoPrev }
+        style={{
+          ...baseStyle,
+          left: 0,
+          opacity: canGoPrev ? 1 : 0.4,
+          cursor: canGoPrev ? 'pointer' : 'not-allowed'
+        }}
+        aria-label={ `Previous ${SLIDES_TO_ADVANCE} slides` }
+      >
+        {leftArrow || '‹'}
+      </button>
+      <button
+        type='button'
+        className='carousel-custom-arrow carousel-custom-arrow-right'
+        onClick={ goNext }
+        disabled={ !canGoNext }
+        style={{
+          ...baseStyle,
+          right: 0,
+          left: 'auto',
+          opacity: canGoNext ? 1 : 0.4,
+          cursor: canGoNext ? 'pointer' : 'not-allowed'
+        }}
+        aria-label={ `Next ${SLIDES_TO_ADVANCE} slides` }
+      >
+        {rightArrow || '›'}
+      </button>
+    </>
+  );
+};
+
+CustomArrowsTwoSlides.propTypes = {
+  goToSlide: PropTypes.func.isRequired,
+  selectedIndex: PropTypes.number.isRequired,
+  numSlides: PropTypes.number.isRequired,
+  infinite: PropTypes.bool,
+  leftArrow: PropTypes.node,
+  rightArrow: PropTypes.node,
+  arrowStyle: PropTypes.object
+};
 
 const CustomDots = ({ numSlides, selectedIndex, goToSlide, title }) => {
   const dots = [];
@@ -43,17 +130,25 @@ const CustomDots = ({ numSlides, selectedIndex, goToSlide, title }) => {
 
     dots.push(
       <li key={ `dot-${index}` } style={{ display: 'inline-block' }}>
-        <button style={ buttonStyle } onClick={ goToSlide.bind(null, index) }>•</button>
+        <button style={ buttonStyle } onClick={ goToSlide.bind(null, index) }>
+          •
+        </button>
       </li>
     );
   }
 
   return (
-    <div style={{ position: 'absolute', top: '10px', right: '10px', background: 'rgba(114, 114, 114, 0.6)', zIndex: '1' }}>
-      <h2>{ title }</h2>
-      <ul style={{ listStyle: 'none', padding: '0' }}>
-        { dots }
-      </ul>
+    <div
+      style={{
+        position: 'absolute',
+        top: '10px',
+        right: '10px',
+        background: 'rgba(114, 114, 114, 0.6)',
+        zIndex: '1'
+      }}
+    >
+      <h2>{title}</h2>
+      <ul style={{ listStyle: 'none', padding: '0' }}>{dots}</ul>
     </div>
   );
 };
@@ -65,7 +160,9 @@ CustomDots.propTypes = {
   title: PropTypes.node
 };
 
-const testButtons = ['test1', 'test2', 'test3', 'test4'].map((item) => <button style={{ fontSize: '20px' }}>{item}</button>);
+const testButtons = ['test1', 'test2', 'test3', 'test4'].map((item) => (
+  <button style={{ fontSize: '20px' }}>{item}</button>
+));
 
 export const VerticalInfiniteWithCellPaddingWithDotsAndDefaultArrows = {
   args: {
@@ -114,6 +211,30 @@ export const VerticalNonInfiniteButtonsWithCellPaddingWithCustomArrows = {
     children: testButtons
   }
 };
+
+export const twoSlidesAtATimeWithCustomArrows = () => (
+  <Carousel
+    width='600px'
+    cellPadding={ 5 }
+    infinite={ true }
+    arrows={ false }
+    dots={ false }
+    slideAlignment='left'
+    slideWidth='50%'
+    slideHeight='100%'
+    lazyLoad={ false }
+    controls={ [
+      {
+        component: CustomArrowsTwoSlides,
+        props: {
+          arrowStyle: { borderRadius: '8px', fontWeight: 'bold' }
+        }
+      }
+    ] }
+  >
+    {imgElements}
+  </Carousel>
+);
 
 export const InfiniteWithCellPadding = {
   args: {
@@ -310,11 +431,17 @@ const AddImagesComponent = () => {
         dots={ false }
         arrows={ false }
         autoplay={ false }
-        controls={ [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }] }
+        controls={ [
+          {
+            component: CustomDots,
+            props: { title: 'My Slides' },
+            position: 'top'
+          }
+        ] }
       >
-        {
-          images.map((image, index) => <img key={ index } src={ image } alt='A sample' />)
-        }
+        {images.map((image, index) => (
+          <img key={ index } src={ image } alt='A sample' />
+        ))}
       </Carousel>
       <button onClick={ addImage }>Add Image</button>
     </Fragment>
