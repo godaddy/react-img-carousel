@@ -1,3 +1,6 @@
+# 3.0.3 - Feb 2026
+***(Bug Fix)*** Fix animation bug when transitioning multiple slides
+
 # 3.0.2 - Feb 2026
 ***(Enhancement)*** Migrate test framework from Enzyme/Mocha/Chai to Vitest and React Testing Library. Remove deprecated dependencies.
 
