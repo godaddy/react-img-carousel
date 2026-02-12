@@ -9,7 +9,6 @@
     "@babel/preset-react"
   ],
   "plugins": [
-    "@babel/plugin-transform-runtime",
-    "inline-react-svg"
+    "@babel/plugin-transform-runtime"
   ]
 }

@@ -54,11 +54,9 @@
     "@babel/plugin-transform-runtime": "^7.26.9",
     "@babel/preset-env": "^7.26.9",
     "@babel/preset-react": "^7.26.3",
-    "@storybook/addon-essentials": "^8.5.3",
-    "@storybook/addon-webpack5-compiler-babel": "^3.0.3",
-    "@storybook/react": "^8.5.3",
-    "@storybook/react-webpack5": "^8.5.3",
-    "@storybook/test": "^8.5.3",
+    "@storybook/addon-webpack5-compiler-babel": "^4.0.0",
+    "@storybook/react": "^10.2.8",
+    "@storybook/react-webpack5": "^10.2.8",
     "@svgr/webpack": "^8.1.0",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -67,7 +65,6 @@
     "@vitest/ui": "^4.0.18",
     "autoprefixer": "^10.4.20",
     "babel-loader": "^9.2.1",
-    "babel-plugin-inline-react-svg": "^2.0.2",
     "css-loader": "^7.1.2",
     "eslint": "^8.57.1",
     "eslint-config-godaddy-react": "^9.1.0",
@@ -82,8 +79,9 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "rimraf": "^6.0.1",
-    "storybook": "^8.5.3",
+    "storybook": "^10.2.8",
     "style-loader": "^4.0.0",
-    "vitest": "^4.0.18"
+    "vitest": "^4.0.18",
+    "@storybook/addon-docs": "^10.2.8"
   }
 }
