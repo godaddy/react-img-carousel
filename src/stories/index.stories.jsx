@@ -7,7 +7,7 @@ import CustomArrows from './CustomArrows';
 import DownArrow from '../../test/images/test-down-arrow.svg';
 import UpArrow from '../../test/images/test-up-arrow.svg';
 
-require('../carousel.less');
+import '../carousel.less';
 
 export default {
   component: Carousel,
@@ -67,219 +67,290 @@ CustomDots.propTypes = {
 
 const testButtons = ['test1', 'test2', 'test3', 'test4'].map((item) => <button style={{ fontSize: '20px' }}>{item}</button>);
 
-export const verticalInfiniteWithCellPaddingWithDotsAndDefaultArrows = () =>
-    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ true } arrows={ true }
-              dots={ true } isVertical={ true } >
-      { imgElements }
-    </Carousel>;
-
-export const verticalNonInfiniteWithCellPaddingWithDefaultArrows = () =>
-    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ true }
-              dots={ false } isVertical={ true }  >
-      { imgElements }
-    </Carousel>;
-
-export const verticalNonInfiniteButtonsWithCellPaddingWithCustomArrows = () =>
-    <Carousel height='450px' width='450px' cellPadding={ 5 } infinite={ false } arrows={ false }
-              dots={ false } isVertical={ true } controls={ [{
-      component: CustomArrows,
-      props: { overrideArrowStyle: { border: 'none', background: 'none' }, topArrowImage: <UpArrow/>, bottomArrowImage: <DownArrow/>, arrowDivStyle: { transform: 'translate(-450px, 196px)' } }
-    }] }>
-      { testButtons }
-    </Carousel>;
-
-export const infiniteWithCellPadding = () =>
-  <Carousel width='450px' cellPadding={ 5 }>
-    { imgElements }
-  </Carousel>;
-
-export const nonInfiniteWithCellPadding = () =>
-  <Carousel infinite={ false } width='450px' cellPadding={ 5 }>
-    { imgElements }
-  </Carousel>;
-
-export const fadeTransition = () =>
-  <Carousel
-    width='450px'
-    slideHeight='300px'
-    transitionDuration={ 1000 }
-    draggable={ false }
-    transition='fade'
-  >
-    { imgElements }
-  </Carousel>;
-
-export const noneTransition = () =>
-  <Carousel
-    width='450px'
-    slideHeight='300px'
-    draggable={ false }
-    transition='none'
-    autoplay={ true }
-  >
-    {imgElements}
-  </Carousel>;
-
-export const infiniteWithOnly2Slides = () =>
-  <Carousel width='450px' arrows={ false } slideHeight='300px'>
-    <img src='http://picsum.photos/325/300' alt='A sample' />
-    <img src='http://picsum.photos/350/300' alt='A sample' />
-  </Carousel>;
-
-export const infiniteWithOnly1Slide = () =>
-  <Carousel
-    width='450px'
-    infinite={ true }
-    arrows={ false }
-    dots={ false }
-  >
-    <img src='http://picsum.photos/325/300' alt='A sample' />
-  </Carousel>;
-
-export const autoplayWithBackgroundImages = () =>
-  <Carousel
-    width='100%'
-    slideWidth='100%'
-    slideHeight='70vh'
-    arrows={ false }
-    autoplay={ true }
-  >
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/600/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/650/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/675/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/700/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-  </Carousel>;
-
-export const backgroundImagesWithFade = () =>
-  <Carousel
-    width='100%'
-    slideWidth='100%'
-    slideHeight='70vh'
-    transition='fade'
-    transitionDuration={ 1000 }
-    autoplay={ true }
-    arrows={ true }
-  >
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/600/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/650/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/675/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/700/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/750/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/725/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-    <div style={{
-      backgroundImage: 'url(http://picsum.photos/625/300)',
-      backgroundSize: 'cover',
-      height: '100%',
-      width: '100%'
-    }}/>
-  </Carousel>;
-
-export const customDotsComponent = () =>
-  <Carousel
-    width='450px'
-    cellPadding={ 5 }
-    infinite={ false }
-    dots={ false }
-    arrows={ false }
-    autoplay={ true }
-    controls={ [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }] }
-    transitionDuration={ 0 }
-  >
-    { imgElements }
-  </Carousel>;
-
-export const AddImages = () => {
-  const [images, setImages] = useState([IMAGES[0]]);
-
-  const addImage = () => {
-    if (images.length < IMAGES.length) {
-      setImages(images.concat(IMAGES[images.length]));
-    }
-  };
-
-  return (
-    <Fragment>
-      <Carousel
-        width='450px'
-        cellPadding={ 5 }
-        infinite={ true }
-        dots={ false }
-        arrows={ false }
-        autoplay={ false }
-        controls={ [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }] }
-      >
-        {
-          images.map((image, index) => <img key={ index } src={ image } alt='A sample' />)
-        }
-      </Carousel>
-      <button onClick={ addImage }>Add Image</button>
-    </Fragment>
-  );
+export const VerticalInfiniteWithCellPaddingWithDotsAndDefaultArrows = {
+  args: {
+    height: '450px',
+    width: '450px',
+    cellPadding: 5,
+    infinite: true,
+    arrows: true,
+    dots: true,
+    isVertical: true,
+    children: imgElements
+  }
 };
 
-export const leftAlignedSlides = () =>
-  <Carousel width='450px' cellPadding={ 5 } slideAlignment='left'>
-    { imgElements }
-  </Carousel>;
+export const VerticalNonInfiniteWithCellPaddingWithDefaultArrows = {
+  args: {
+    height: '450px',
+    width: '450px',
+    cellPadding: 5,
+    infinite: false,
+    arrows: true,
+    dots: false,
+    isVertical: true,
+    children: imgElements
+  }
+};
 
-export const rightAlignedSlides = () =>
-  <Carousel width='450px' cellPadding={ 5 } slideAlignment='right'>
-    { imgElements }
-  </Carousel>;
+export const VerticalNonInfiniteButtonsWithCellPaddingWithCustomArrows = {
+  args: {
+    height: '450px',
+    width: '450px',
+    cellPadding: 5,
+    infinite: false,
+    arrows: false,
+    dots: false,
+    isVertical: true,
+    controls: [{
+      component: CustomArrows,
+      props: {
+        overrideArrowStyle: { border: 'none', background: 'none' },
+        topArrowImage: <UpArrow/>,
+        bottomArrowImage: <DownArrow/>,
+        arrowDivStyle: { transform: 'translate(-450px, 196px)' }
+      }
+    }],
+    children: testButtons
+  }
+};
 
-export const rtl = () =>
-  <div dir='rtl'>
-    <Carousel width='450px' cellPadding={ 5 } dir='rtl'>
-      { imgElements }
+export const InfiniteWithCellPadding = {
+  args: {
+    width: '450px',
+    cellPadding: 5,
+    children: imgElements
+  }
+};
+
+export const NonInfiniteWithCellPadding = {
+  args: {
+    infinite: false,
+    width: '450px',
+    cellPadding: 5,
+    children: imgElements
+  }
+};
+
+export const FadeTransition = {
+  args: {
+    width: '450px',
+    slideHeight: '300px',
+    transitionDuration: 1000,
+    draggable: false,
+    transition: 'fade',
+    children: imgElements
+  }
+};
+
+export const NoneTransition = {
+  args: {
+    width: '450px',
+    slideHeight: '300px',
+    draggable: false,
+    transition: 'none',
+    autoplay: true,
+    children: imgElements
+  }
+};
+
+export const InfiniteWithOnly2Slides = {
+  args: {
+    width: '450px',
+    arrows: false,
+    slideHeight: '300px'
+  },
+  render: (args) => (
+    <Carousel {...args}>
+      <img src='http://picsum.photos/325/300' alt='A sample' />
+      <img src='http://picsum.photos/350/300' alt='A sample' />
     </Carousel>
-  </div>;
+  )
+};
+
+export const InfiniteWithOnly1Slide = {
+  args: {
+    width: '450px',
+    infinite: true,
+    arrows: false,
+    dots: false
+  },
+  render: (args) => (
+    <Carousel {...args}>
+      <img src='http://picsum.photos/325/300' alt='A sample' />
+    </Carousel>
+  )
+};
+
+export const AutoplayWithBackgroundImages = {
+  args: {
+    width: '100%',
+    slideWidth: '100%',
+    slideHeight: '70vh',
+    arrows: false,
+    autoplay: true
+  },
+  render: (args) => (
+    <Carousel {...args}>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/600/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/650/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/675/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/700/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+    </Carousel>
+  )
+};
+
+export const BackgroundImagesWithFade = {
+  args: {
+    width: '100%',
+    slideWidth: '100%',
+    slideHeight: '70vh',
+    transition: 'fade',
+    transitionDuration: 1000,
+    autoplay: true,
+    arrows: true
+  },
+  render: (args) => (
+    <Carousel {...args}>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/600/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/650/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/675/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/700/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/750/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/725/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+      <div style={{
+        backgroundImage: 'url(http://picsum.photos/625/300)',
+        backgroundSize: 'cover',
+        height: '100%',
+        width: '100%'
+      }}/>
+    </Carousel>
+  )
+};
+
+export const CustomDotsComponent = {
+  args: {
+    width: '450px',
+    cellPadding: 5,
+    infinite: false,
+    dots: false,
+    arrows: false,
+    autoplay: true,
+    controls: [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }],
+    transitionDuration: 0,
+    children: imgElements
+  }
+};
+
+export const AddImages = {
+  render: () => {
+    const [images, setImages] = useState([IMAGES[0]]);
+
+    const addImage = () => {
+      if (images.length < IMAGES.length) {
+        setImages(images.concat(IMAGES[images.length]));
+      }
+    };
+
+    return (
+      <Fragment>
+        <Carousel
+          width='450px'
+          cellPadding={ 5 }
+          infinite={ true }
+          dots={ false }
+          arrows={ false }
+          autoplay={ false }
+          controls={ [{ component: CustomDots, props: { title: 'My Slides' }, position: 'top' }] }
+        >
+          {
+            images.map((image, index) => <img key={ index } src={ image } alt='A sample' />)
+          }
+        </Carousel>
+        <button onClick={ addImage }>Add Image</button>
+      </Fragment>
+    );
+  }
+};
+
+export const LeftAlignedSlides = {
+  args: {
+    width: '450px',
+    cellPadding: 5,
+    slideAlignment: 'left',
+    children: imgElements
+  }
+};
+
+export const RightAlignedSlides = {
+  args: {
+    width: '450px',
+    cellPadding: 5,
+    slideAlignment: 'right',
+    children: imgElements
+  }
+};
+
+export const Rtl = {
+  args: {
+    width: '450px',
+    cellPadding: 5,
+    dir: 'rtl',
+    children: imgElements
+  },
+  render: (args) => (
+    <div dir='rtl'>
+      <Carousel {...args} />
+    </div>
+  )
+};

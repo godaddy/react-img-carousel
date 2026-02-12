@@ -2,10 +2,7 @@ const path = require('path');
 
 module.exports = {
   stories: ['../src/**/*.stories.@(js|jsx|ts|tsx)'],
-  addons: [
-    '@storybook/addon-essentials',
-    '@storybook/addon-webpack5-compiler-babel'
-  ],
+  addons: ['@storybook/addon-webpack5-compiler-babel', '@storybook/addon-docs'],
   framework: {
     name: '@storybook/react-webpack5',
     options: {}
