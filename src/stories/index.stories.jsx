@@ -470,12 +470,37 @@ export const RightAlignedSlides = {
   }
 };
 
+const RTL_TEXT_SLIDES = [
+  { label: 'RTL ←', text: 'Hello' },
+  { label: 'RTL ←', text: 'World' },
+  { label: 'RTL ←', text: 'Test' },
+  { label: 'RTL ←', text: '1' },
+  { label: 'RTL ←', text: '2' },
+  { label: 'RTL ←', text: '3' }
+].map(({ label, text }, index) => (
+  <div
+    key={ index }
+    style={{
+      minHeight: '200px',
+      padding: '24px',
+      background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+      color: '#fff',
+      fontSize: '24px',
+      width: '250px',
+      borderRadius: '8px'
+    }}
+  >
+    <span style={{ fontSize: '14px', opacity: 0.9 }}>{label}</span>
+    <span>{text}</span>
+  </div>
+));
+
 export const Rtl = {
   args: {
     width: '450px',
     cellPadding: 5,
     dir: 'rtl',
-    children: imgElements
+    children: RTL_TEXT_SLIDES
   },
   render: (args) => (
     <div dir='rtl'>
